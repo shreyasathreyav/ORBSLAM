@@ -1,0 +1,36 @@
+    Not in Edge SLAM
+    //std::mutex mMutexTracks;
+    std::mutex mMutexImuQueue;
+    std::mutex mMutexPoseImage;
+    std::mutex mMutexAtlas;
+    std::mutex mMutexImuInit;
+===================================================
+    std::mutex mMutexNewKFs;
+    std::mutex mMutexAccept;
+    std::mutex mMutexStop;
+    std::mutex mMutexStop;
+    std::mutex mMutex;
+    std::mutex mMutex;
+    std::mutex mMutex;
+    std::mutex mMutexMode;
+    std::mutex mMutexCamera;
+    std::mutex mMutexState;
+    std::mutex mMutexReset;
+    std::mutex mMutexReset;
+    std::mutex mMutexReset;
+    std::mutex mMutexLoopQueue;
+    std::mutex mMutexGBA;
+    std::mutex mMutexFinish;
+    std::mutex mMutexFinish;
+    std::mutex mMutexFinish;
+    std::mutex mMutexMapUpdate;
+    std::mutex mMutexPointCreation;
+    std::mutex mMutexPose; // for pose, velocity and biases
+    std::mutex mMutexConnections;
+    std::mutex mMutexStop;
+    std::mutex mMutexPos;
+    std::mutex mMutexFeatures; - Keyframe
+    std::mutex mMutexFeatures; - Map
+    std::mutex mMutexMap; - Map
+    std::mutex mMutexMap; - KeyFrame
+    std::mutex mMutexMap; - MapPoint

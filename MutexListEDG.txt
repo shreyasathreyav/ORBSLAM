@@ -1,0 +1,35 @@
+    Not in ORB SLAM
+    std::mutex mMutexLC;
+    std::mutex mMutexAMU;
+    std::mutex mMutexAMU;
+    std::mutex mMutexCallBackUpdate;
+===================================================
+    std::mutex mMutexNewKFs;
+    std::mutex mMutexAccept;
+    static std::mutex mMutexId;
+    std::mutex mMutexStop;
+    std::mutex mMutex;
+    std::mutex mMutex;
+    std::mutex mMutexMode;
+    std::mutex mMutexCamera;
+    std::mutex mMutexState;
+    std::mutex mMutexReset;
+    std::mutex mMutexReset;
+    std::mutex mMutexReset;
+    std::mutex mMutexReset;
+    std::mutex mMutexLoopQueue;
+    std::mutex mMutexGBA;
+    std::mutex mMutexFinish;
+    std::mutex mMutexFinish;
+    std::mutex mMutexFinish;
+    std::mutex mMutexFinish;
+    std::mutex mMutexMapUpdate;
+    std::mutex mMutexPointCreation;
+    std::mutex mMutexPose;
+    std::mutex mMutexConnections;
+    std::mutex mMutexStop;
+    std::mutex mMutexPos;
+    std::mutex mMutexFeatures;     
+    std::mutex mMutexFeatures;
+    std::mutex mMutexMap;
+    std::mutex mMutexGarbageLists;
