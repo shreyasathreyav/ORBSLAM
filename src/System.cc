@@ -213,6 +213,10 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLoopCloser = new LoopClosing(mpAtlas, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR, activeLC); // mSensor!=MONOCULAR);
     mptLoopClosing = new thread(&ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
 
+
+    // mpMapGarbageCollector = new MapGarbageCollector(mpMap, mpLocalMapper);
+    // mptMapGarbageCollector = new thread(&ORB_SLAM3::MapGarbageCollector::Run, mpMapGarbageCollector);
+
     //Set pointers between threads
     mpTracker->SetLocalMapper(mpLocalMapper);
     mpTracker->SetLoopClosing(mpLoopCloser);

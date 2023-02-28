@@ -22,7 +22,7 @@
 
 #include "MapPoint.h"
 #include "KeyFrame.h"
-
+#include <shared_mutex>
 #include <set>
 #include <pangolin/pangolin.h>
 #include <mutex>
@@ -72,7 +72,7 @@ public:
     Map();
     Map(int initKFid);
     ~Map();
-
+    mutable std::shared_mutex mMutexKFMPDeletion;
     void AddKeyFrame(KeyFrame* pKF);
     void AddMapPoint(MapPoint* pMP);
     void EraseMapPoint(MapPoint* pMP);
