@@ -57,6 +57,16 @@ Map::~Map()
     mvpKeyFrameOrigins.clear();
 }
 
+std::set<MapPoint*> * Map::GetGarbageMapPoints() {
+    unique_lock<mutex> lock(mMutexGarbageLists);
+    return &garbageMapPoints;
+}
+
+std::set<KeyFrame*> * Map::GetGarbageKeyFrames() {
+    unique_lock<mutex> lock(mMutexGarbageLists);
+    return &garbageKeyframes;
+}
+
 void Map::AddKeyFrame(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutexMap);
@@ -75,6 +85,12 @@ void Map::AddKeyFrame(KeyFrame *pKF)
     {
         mpKFlowerID = pKF;
     }
+}
+
+void Map::AddToDeletionQueue(KeyFrame *pKF)
+{
+    unique_lock<mutex> lock(mMutexGarbageLists);
+    garbageKeyframes.insert(pKF);
 }
 
 void Map::AddMapPoint(MapPoint *pMP)
@@ -231,6 +247,7 @@ void Map::clear()
     mvpKeyFrameOrigins.clear();
     mbIMU_BA1 = false;
     mbIMU_BA2 = false;
+    garbageKeyframes.clear();
 }
 
 bool Map::IsInUse()

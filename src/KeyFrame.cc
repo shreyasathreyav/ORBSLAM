@@ -364,6 +364,11 @@ int KeyFrame::TrackedMapPoints(const int &minObs)
     return nPoints;
 }
 
+bool KeyFrame::safeToErase()
+{
+    return !mbNotErase;
+}
+
 vector<MapPoint*> KeyFrame::GetMapPointMatches()
 {
     unique_lock<mutex> lock(mMutexFeatures);

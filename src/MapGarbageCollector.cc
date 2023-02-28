@@ -17,32 +17,32 @@ void MapGarbageCollector::Run() {
     {
         {
             unique_lock lock(map->mMutexKFMPDeletion);
-            // DeleteKFs();
+            DeleteKFs();
             // DeleteMPs();
         }
         std::this_thread::sleep_for (std::chrono::seconds(5));
     }
 }
 
-// void MapGarbageCollector::DeleteKFs() {
-//     std::set<KeyFrame*> * KFsLive = map->GetGarbageKeyFrames();
-//     std::set<KeyFrame*> KFsSnapshot = *KFsLive;
-//     if (KFsSnapshot.size() == 0) {
-//         return;
-//     }
+void MapGarbageCollector::DeleteKFs() {
+    std::set<KeyFrame*> * KFsLive = map->GetGarbageKeyFrames();
+    std::set<KeyFrame*> KFsSnapshot = *KFsLive;
+    if (KFsSnapshot.size() == 0) {
+        return;
+    }
 
-//     cout << "log,MapGarbageCollector::DeleteKFs,deleted KFs: ";
-//     for (auto it = KFsSnapshot.begin(); it != KFsSnapshot.end(); it++) {
-//         KeyFrame * kf = *it;
-//         if (kf->safeToErase()) {
-//             unique_lock<mutex> lock(map->mMutexGarbageLists);
-//             cout << kf->mnId << " ";
-//             KFsLive->erase(kf);
-//             delete kf;
-//         }
-//     }
-//     cout << endl;
-// }
+    cout << "log,MapGarbageCollector::DeleteKFs,deleted KFs: ";
+    for (auto it = KFsSnapshot.begin(); it != KFsSnapshot.end(); it++) {
+        KeyFrame * kf = *it;
+        if (kf->safeToErase()) {
+            unique_lock<mutex> lock(map->mMutexGarbageLists);
+            cout << kf->mnId << " ";
+            KFsLive->erase(kf);
+            delete kf;
+        }
+    }
+    cout << endl;
+}
 
 // void MapGarbageCollector::DeleteMPs() {
 //     std::set<MapPoint *> * MPsLive = map->GetGarbageMapPoints();

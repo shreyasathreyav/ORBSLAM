@@ -200,6 +200,7 @@ public:
     // Pose functions
     void SetPose(const Sophus::SE3f &Tcw);
     void SetVelocity(const Eigen::Vector3f &Vw_);
+    bool safeToErase();
 
     Sophus::SE3f GetPose();
 
@@ -307,7 +308,6 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
-
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;

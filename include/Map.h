@@ -72,7 +72,6 @@ public:
     Map();
     Map(int initKFid);
     ~Map();
-    mutable std::shared_mutex mMutexKFMPDeletion;
     void AddKeyFrame(KeyFrame* pKF);
     void AddMapPoint(MapPoint* pMP);
     void EraseMapPoint(MapPoint* pMP);
@@ -80,6 +79,12 @@ public:
     void SetReferenceMapPoints(const std::vector<MapPoint*> &vpMPs);
     void InformNewBigChange();
     int GetLastBigChangeIdx();
+
+    std::set<KeyFrame*> garbageKeyframes;
+    std::set<MapPoint*> garbageMapPoints;
+    std::set<KeyFrame*> * GetGarbageKeyFrames();
+    std::set<MapPoint*> * GetGarbageMapPoints();
+    void AddToDeletionQueue(KeyFrame* pKF);
 
     std::vector<KeyFrame*> GetAllKeyFrames();
     std::vector<MapPoint*> GetAllMapPoints();
@@ -140,7 +145,9 @@ public:
     KeyFrame* mpFirstRegionKF;
     std::mutex mMutexMapUpdate;
 
+    mutable std::shared_mutex mMutexKFMPDeletion;
     // This avoid that two points are created simultaneously in separate threads (id conflict)
+    std::mutex mMutexGarbageLists;
     std::mutex mMutexPointCreation;
 
     bool mbFail;
