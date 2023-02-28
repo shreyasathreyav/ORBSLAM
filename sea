@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "What do you want to search for : "
+read SEARCHTERM
+grep -nrw ${SEARCHTERM} *
