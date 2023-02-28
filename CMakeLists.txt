@@ -115,7 +115,6 @@ include/SerializationUtils.h
 include/Config.h
 include/Settings.h
 include/MapGarbageCollector.h)
-
 add_subdirectory(Thirdparty/g2o)
 
 target_link_libraries(${PROJECT_NAME}

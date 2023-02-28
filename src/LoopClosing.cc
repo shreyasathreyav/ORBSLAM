@@ -983,7 +983,6 @@ void LoopClosing::CorrectLoop()
         mbStopGBA = true;
 
         mnFullBAIdx = true;
-
         if(mpThreadGBA)
         {
             mpThreadGBA->detach();
