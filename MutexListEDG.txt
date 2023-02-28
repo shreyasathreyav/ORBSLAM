@@ -26,7 +26,7 @@
     std::mutex mMutexMapUpdate;
     std::mutex mMutexPointCreation;
     std::mutex mMutexPose;
-    std::mutex mMutexConnections;
+    std::mutex mMutexConnections; =======>> Done
     std::mutex mMutexStop;
     std::mutex mMutexPos;
     std::mutex mMutexFeatures;     
