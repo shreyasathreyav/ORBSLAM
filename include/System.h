@@ -188,6 +188,8 @@ public:
     void ChangeDataset();
 
     float GetImageScale();
+    MapGarbageCollector * mpMapGarbageCollector;
+    std::thread* mptMapGarbageCollector;
 
 #ifdef REGISTER_TIMES
     void InsertRectTime(double& time);

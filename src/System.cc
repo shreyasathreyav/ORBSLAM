@@ -214,8 +214,8 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mptLoopClosing = new thread(&ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
 
 
-    // mpMapGarbageCollector = new MapGarbageCollector(mpMap, mpLocalMapper);
-    // mptMapGarbageCollector = new thread(&ORB_SLAM3::MapGarbageCollector::Run, mpMapGarbageCollector);
+    mpMapGarbageCollector = new MapGarbageCollector(mpAtlas->mpCurrentMap, mpLocalMapper);
+    mptMapGarbageCollector = new thread(&ORB_SLAM3::MapGarbageCollector::Run, mpMapGarbageCollector);
 
     //Set pointers between threads
     mpTracker->SetLocalMapper(mpLocalMapper);

@@ -17,7 +17,6 @@ void MapGarbageCollector::Run() {
     {
         {
             unique_lock lock(map->mMutexKFMPDeletion);
-
             // DeleteKFs();
             // DeleteMPs();
         }
