@@ -52,6 +52,7 @@ class MapPoint
         ar & mnFirstKFid;
         ar & mnFirstFrame;
         ar & nObs;
+        ar & mbToBeErased;
         // Variables used by the tracking
         //ar & mTrackProjX;
         //ar & mTrackProjY;
@@ -94,7 +95,7 @@ class MapPoint
         //ar & mnVisible;
         //ar & mnFound;
 
-        ar & mbBad;
+        // ar & mbBad;
         ar & mBackupReplacedId;
 
         ar & mfMinDistance;
@@ -207,6 +208,9 @@ public:
 
     unsigned int mnOriginMapId;
 
+    bool mbToBeErased;
+
+
 protected:    
 
      // Position in absolute coordinates
@@ -233,7 +237,7 @@ protected:
      int mnFound;
 
      // Bad flag (we do not currently erase MapPoint from memory)
-     bool mbBad;
+    //  bool mbBad;
      MapPoint* mpReplaced;
      // For save relation without pointer, this is necessary for save/load function
      long long int mBackupReplacedId;

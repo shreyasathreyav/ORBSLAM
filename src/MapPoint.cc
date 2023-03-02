@@ -30,7 +30,7 @@ mutex MapPoint::mGlobalMutex;
 MapPoint::MapPoint():
     mnFirstKFid(0), mnFirstFrame(0), nObs(0), mnTrackReferenceForFrame(0),
     mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
-    mnCorrectedReference(0), mnBAGlobalForKF(0), mnVisible(1), mnFound(1), mbBad(false),
+    mnCorrectedReference(0), mnBAGlobalForKF(0), mnVisible(1), mnFound(1),
     mpReplaced(static_cast<MapPoint*>(NULL))
 {
     mpReplaced = static_cast<MapPoint*>(NULL);
@@ -39,7 +39,7 @@ MapPoint::MapPoint():
 MapPoint::MapPoint(const Eigen::Vector3f &Pos, KeyFrame *pRefKF, Map* pMap):
     mnFirstKFid(pRefKF->mnId), mnFirstFrame(pRefKF->mnFrameId), nObs(0), mnTrackReferenceForFrame(0),
     mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
-    mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
+    mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1),
     mpReplaced(static_cast<MapPoint*>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
     mnOriginMapId(pMap->GetId())
 {
@@ -58,7 +58,7 @@ MapPoint::MapPoint(const Eigen::Vector3f &Pos, KeyFrame *pRefKF, Map* pMap):
 MapPoint::MapPoint(const double invDepth, cv::Point2f uv_init, KeyFrame* pRefKF, KeyFrame* pHostKF, Map* pMap):
     mnFirstKFid(pRefKF->mnId), mnFirstFrame(pRefKF->mnFrameId), nObs(0), mnTrackReferenceForFrame(0),
     mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
-    mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
+    mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1),
     mpReplaced(static_cast<MapPoint*>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
     mnOriginMapId(pMap->GetId())
 {
@@ -79,7 +79,7 @@ MapPoint::MapPoint(const Eigen::Vector3f &Pos, Map* pMap, Frame* pFrame, const i
     mnFirstKFid(-1), mnFirstFrame(pFrame->mnId), nObs(0), mnTrackReferenceForFrame(0), mnLastFrameSeen(0),
     mnBALocalForKF(0), mnFuseCandidateForKF(0),mnLoopPointForKF(0), mnCorrectedByKF(0),
     mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(static_cast<KeyFrame*>(NULL)), mnVisible(1),
-    mnFound(1), mbBad(false), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId())
+    mnFound(1), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId())
 {
     SetWorldPos(Pos);
 
@@ -219,7 +219,7 @@ void MapPoint::SetBadFlag()
     {
         unique_lock<mutex> lock1(mMutexFeatures);
         unique_lock<mutex> lock2(mMutexPos);
-        mbBad=true;
+        mbToBeErased=true;
         obs = mObservations;
         mObservations.clear();
     }
@@ -257,7 +257,7 @@ void MapPoint::Replace(MapPoint* pMP)
         unique_lock<mutex> lock2(mMutexPos);
         obs=mObservations;
         mObservations.clear();
-        mbBad=true;
+        mbToBeErased=true;
         nvisible = mnVisible;
         nfound = mnFound;
         mpReplaced = pMP;
@@ -305,7 +305,7 @@ bool MapPoint::isBad()
     unique_lock<mutex> lock2(mMutexPos,std::defer_lock);
     lock(lock1, lock2);
 
-    return mbBad;
+    return mbToBeErased;
 }
 
 void MapPoint::IncreaseVisible(int n)
@@ -335,7 +335,7 @@ void MapPoint::ComputeDistinctiveDescriptors()
 
     {
         unique_lock<mutex> lock1(mMutexFeatures);
-        if(mbBad)
+        if(mbToBeErased)
             return;
         observations=mObservations;
     }
@@ -431,7 +431,7 @@ void MapPoint::UpdateNormalAndDepth()
     {
         unique_lock<mutex> lock1(mMutexFeatures);
         unique_lock<mutex> lock2(mMutexPos);
-        if(mbBad)
+        if(mbToBeErased)
             return;
         observations = mObservations;
         pRefKF = mpRefKF;

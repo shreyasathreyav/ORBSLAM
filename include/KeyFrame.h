@@ -64,6 +64,7 @@ class KeyFrame
         ar & const_cast<int&>(mnGridRows);
         ar & const_cast<float&>(mfGridElementWidthInv);
         ar & const_cast<float&>(mfGridElementHeightInv);
+        ar & mbNotErase & mbToBeErased & mbStagedEraseForFuture;    
 
         // Variables of tracking
         //ar & mnTrackReferenceForFrame;
@@ -161,7 +162,7 @@ class KeyFrame
         // Bad flags
         ar & mbNotErase;
         ar & mbToBeErased;
-        ar & mbBad;
+        // ar & mbBad;
 
         ar & mHalfBaseline;
 
@@ -201,6 +202,7 @@ public:
     void SetPose(const Sophus::SE3f &Tcw);
     void SetVelocity(const Eigen::Vector3f &Vw_);
     bool safeToErase();
+    
 
     Sophus::SE3f GetPose();
 
@@ -300,7 +302,7 @@ public:
     void PreSave(set<KeyFrame*>& spKF,set<MapPoint*>& spMP, set<GeometricCamera*>& spCam);
     void PostLoad(map<long unsigned int, KeyFrame*>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid, map<unsigned int, GeometricCamera*>& mpCamId);
 
-
+    void StageEraseForFuture();    
     void SetORBVocabulary(ORBVocabulary* pORBVoc);
     void SetKeyFrameDatabase(KeyFrameDatabase* pKFDB);
 
@@ -308,6 +310,8 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
+    // bool mbStagedEraseForFuture; // kf may be deleted at next loop closing run
+
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;
@@ -478,7 +482,9 @@ protected:
     // Bad flags
     bool mbNotErase;
     bool mbToBeErased;
-    bool mbBad;    
+    // bool mbBad;    
+    bool mbStagedEraseForFuture; // kf may be deleted at next loop closing run
+
 
     float mHalfBaseline; // Only for visualization
 
