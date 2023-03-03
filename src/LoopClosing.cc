@@ -588,8 +588,8 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame*> &vpBowCand, 
 
     int nNumCovisibles = 10;
 
-    ORBmatcher matcherBoW(0.9, true);
-    ORBmatcher matcher(0.75, true);
+    ORBmatcher matcherBoW(mpAtlas->mpCurrentMap,0.9, true);
+    ORBmatcher matcher(mpAtlas->mpCurrentMap,0.75, true);
 
     // Varibles to select the best numbe
     KeyFrame* pBestMatchedKF;
@@ -958,7 +958,7 @@ int LoopClosing::FindMatchesByProjection(KeyFrame* pCurrentKF, KeyFrame* pMatche
     }
 
     Sophus::Sim3f mScw = Converter::toSophus(g2oScw);
-    ORBmatcher matcher(0.9, true);
+    ORBmatcher matcher(mpAtlas->mpCurrentMap,0.9, true);
 
     vpMatchedMapPoints.resize(pCurrentKF->GetMapPointMatches().size(), static_cast<MapPoint*>(NULL));
     int num_matches = matcher.SearchByProjection(pCurrentKF, mScw, vpMapPoints, vpMatchedMapPoints, 3, 1.5);
@@ -1526,7 +1526,8 @@ void LoopClosing::MergeLocal()
             pKFi->UpdateMap(pMergeMap);
             pKFi->mnMergeCorrectedForKF = mpCurrentKF->mnId;
             pMergeMap->AddKeyFrame(pKFi);
-            pCurrentMap->EraseKeyFrame(pKFi);
+            pCurrentMap->EraseKeyFrame(pKFi, false);
+
 
             if(pCurrentMap->isImuInitialized())
             {
@@ -1734,7 +1735,7 @@ void LoopClosing::MergeLocal()
                 // Make sure connections are updated
                 pKFi->UpdateMap(pMergeMap);
                 pMergeMap->AddKeyFrame(pKFi);
-                pCurrentMap->EraseKeyFrame(pKFi);
+                pCurrentMap->EraseKeyFrame(pKFi, false);
             }
 
             for(MapPoint* pMPi : vpCurrentMapMPs)
@@ -1896,7 +1897,7 @@ void LoopClosing::MergeLocal2()
             // Make sure connections are updated
             pKFi->UpdateMap(pCurrentMap);
             pCurrentMap->AddKeyFrame(pKFi);
-            pMergeMap->EraseKeyFrame(pKFi);
+            pMergeMap->EraseKeyFrame(pKFi, false);
         }
 
         for(MapPoint* pMPi : vpMergeMapMPs)
@@ -2113,7 +2114,7 @@ void LoopClosing::CheckObservations(set<KeyFrame*> &spKFsMap1, set<KeyFrame*> &s
 
 void LoopClosing::SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap, vector<MapPoint*> &vpMapPoints)
 {
-    ORBmatcher matcher(0.8);
+    ORBmatcher matcher(mpAtlas->mpCurrentMap,0.8);
 
     int total_replaces = 0;
 
@@ -2155,7 +2156,7 @@ void LoopClosing::SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap, vector
 
 void LoopClosing::SearchAndFuse(const vector<KeyFrame*> &vConectedKFs, vector<MapPoint*> &vpMapPoints)
 {
-    ORBmatcher matcher(0.8);
+    ORBmatcher matcher(mpAtlas->mpCurrentMap,0.8);
 
     int total_replaces = 0;
 
@@ -2326,6 +2327,8 @@ void LoopClosing::RunGlobalBundleAdjustment(Map* pActiveMap, unsigned long nLoop
 
             // Get Map Mutex
             unique_lock<mutex> lock(pActiveMap->mMutexMapUpdate);
+            shared_lock lock_added(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
+
             // cout << "LC: Update Map Mutex adquired" << endl;
 
             //pActiveMap->PrintEssentialGraph();

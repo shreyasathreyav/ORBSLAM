@@ -134,6 +134,9 @@ bool MapDrawer::ParseViewerParamFile(cv::FileStorage &fSettings)
 
 void MapDrawer::DrawMapPoints()
 {
+    
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
+
     Map* pActiveMap = mpAtlas->GetCurrentMap();
     if(!pActiveMap)
         return;

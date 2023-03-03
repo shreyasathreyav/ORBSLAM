@@ -39,9 +39,15 @@ namespace ORB_SLAM3
     ORBmatcher::ORBmatcher(float nnratio, bool checkOri): mfNNratio(nnratio), mbCheckOrientation(checkOri)
     {
     }
+    ORBmatcher::ORBmatcher(Map * map,float nnratio, bool checkOri): mfNNratio(nnratio), mbCheckOrientation(checkOri)
+    {
+        this->map = map;
+    }
 
     int ORBmatcher::SearchByProjection(Frame &F, const vector<MapPoint*> &vpMapPoints, const float th, const bool bFarPoints, const float thFarPoints)
     {
+        shared_lock lock(map->mMutexKFMPDeletion);
+
         int nmatches=0, left = 0, right = 0;
 
         const bool bFactor = th!=1.0;

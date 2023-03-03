@@ -120,6 +120,45 @@ void Map::EraseMapPoint(MapPoint *pMP)
     // Delete the MapPoint
 }
 
+void Map::EraseKeyFrame(KeyFrame *pKF, bool isTracking)
+{
+    // Atlas: changed mnId to sMnId, added check for origin
+    // if(pKF->IsOriginOrRoot())
+    //     return;
+    if(!pKF->safeToErase())
+    {
+        cout << "Staging erase for future" << endl;
+        pKF->StageEraseForFuture();
+        return;
+    }
+
+    // pKF->EraseKeyFrameReferences();
+
+    {
+        std::unique_lock lock(mMutexMap);
+
+        // This only erase the pointer
+        mspKeyFrames.erase(pKF);
+
+        // This only erase the pointer
+        mspKeyFrames.erase(pKF);
+
+        // // Edge-SLAM
+        // umKeyFrames.erase(pKF->mnId);
+
+        // Atlas
+        // if(!isTracking)
+        // {
+        //     umIds.erase(pKF->sMnId);
+        // }
+
+        AddToDeletionQueue(pKF);
+    }
+}
+
+
+
+
 void Map::EraseKeyFrame(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutexMap);
