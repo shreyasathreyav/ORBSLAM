@@ -20,7 +20,7 @@ void MapGarbageCollector::Run() {
             DeleteKFs();
             // DeleteMPs();
         }
-        std::this_thread::sleep_for (std::chrono::seconds(3));
+        std::this_thread::sleep_for (std::chrono::seconds(5));
     }
 }
 

@@ -129,6 +129,7 @@ public:
     void SetIniertialBA2();
     bool GetIniertialBA1();
     bool GetIniertialBA2();
+    KeyFrame* RetrieveKeyFrame(long unsigned int id);
 
     void PrintEssentialGraph();
     bool CheckEssentialGraph();
@@ -166,7 +167,7 @@ public:
 protected:
 
     long unsigned int mnId;
-
+    std::unordered_map<long unsigned int, KeyFrame*> umKeyFrames;
     std::set<MapPoint*> mspMapPoints;
     std::set<KeyFrame*> mspKeyFrames;
 

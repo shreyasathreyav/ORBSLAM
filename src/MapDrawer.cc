@@ -28,6 +28,7 @@ namespace ORB_SLAM3
 
 MapDrawer::MapDrawer(Atlas* pAtlas, const string &strSettingPath, Settings* settings):mpAtlas(pAtlas)
 {
+
     if(settings){
         newParameterLoader(settings);
     }
@@ -180,6 +181,7 @@ void MapDrawer::DrawMapPoints()
 
 void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const bool bDrawInertialGraph, const bool bDrawOptLba)
 {
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
     const float &w = mKeyFrameSize;
     const float h = w*0.75;
     const float z = w*0.6;
