@@ -604,11 +604,27 @@ namespace ORB_SLAM3
             }
         }
 
-        if (mbToBeErased)
+        if (mbStagedEraseForFuture)
         {
-            SetBadFlag();
+            mpMap->EraseKeyFrame(this, false);
         }
     }
+
+    // void KeyFrame::SetErase()
+    // {
+    //     {
+    //         unique_lock<mutex> lock(mMutexConnections);
+    //         if (mspLoopEdges.empty())
+    //         {
+    //             mbNotErase = false;
+    //         }
+    //     }
+
+    //     if (mbToBeErased)
+    //     {
+    //         SetBadFlag();
+    //     }
+    // }
 
     void KeyFrame::StageEraseForFuture()
     {
