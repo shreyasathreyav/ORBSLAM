@@ -107,14 +107,16 @@ class MapPoint
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     MapPoint();
-
     MapPoint(const Eigen::Vector3f &Pos, KeyFrame* pRefKF, Map* pMap);
     MapPoint(const double invDepth, cv::Point2f uv_init, KeyFrame* pRefKF, KeyFrame* pHostKF, Map* pMap);
     MapPoint(const Eigen::Vector3f &Pos,  Map* pMap, Frame* pFrame, const int &idxF);
-
+    bool IsSafeToErase();
+    void EraseMapPointReferences();
     void SetWorldPos(const Eigen::Vector3f &Pos);
     Eigen::Vector3f GetWorldPos();
 
+    // Edge-SLAM
+    bool IsInKeyFrame(long int id);
     Eigen::Vector3f GetNormal();
     void SetNormalVector(const Eigen::Vector3f& normal);
 
@@ -141,9 +143,14 @@ public:
     inline int GetFound(){
         return mnFound;
     }
-
+    void SetReferenceKeyFrame(KeyFrame* ref)
+{
+    unique_lock<mutex> lock(mMutexFeatures);
+    mpRefKF = ref;
+}
     void ComputeDistinctiveDescriptors();
-
+    void SetEraseOK();
+    void SetNotErase();
     cv::Mat GetDescriptor();
 
     void UpdateNormalAndDepth();
@@ -162,6 +169,7 @@ public:
     void PostLoad(map<long unsigned int, KeyFrame*>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid);
 
 public:
+    bool safeToErase;
     long unsigned int mnId;
     static long unsigned int nNextId;
     long int mnFirstKFid;

@@ -68,15 +68,15 @@ namespace ORB_SLAM3
         return &garbageKeyframes;
     }
 
-    KeyFrame* Map::RetrieveKeyFrame(long unsigned int id)
-{
-    unique_lock<mutex> lock(mMutexMap);
-    std::unordered_map<long unsigned int, KeyFrame*>::const_iterator iKF = umKeyFrames.find(id);
-    if(iKF != umKeyFrames.end())
-        return iKF->second;
+    KeyFrame *Map::RetrieveKeyFrame(long unsigned int id)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        std::unordered_map<long unsigned int, KeyFrame *>::const_iterator iKF = umKeyFrames.find(id);
+        if (iKF != umKeyFrames.end())
+            return iKF->second;
 
-    return nullptr;
-}
+        return nullptr;
+    }
 
     void Map::AddKeyFrame(KeyFrame *pKF)
     {
@@ -88,6 +88,8 @@ namespace ORB_SLAM3
             mpKFinitial = pKF;
             mpKFlowerID = pKF;
         }
+        umKeyFrames.insert(std::make_pair(pKF->mnId, pKF));
+
         mspKeyFrames.insert(pKF);
         if (pKF->mnId > mnMaxKFid)
         {
@@ -103,6 +105,11 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexGarbageLists);
         garbageKeyframes.insert(pKF);
+    }
+    void Map::AddToDeletionQueue(MapPoint *pMP)
+    {
+        unique_lock<mutex> lock(mMutexGarbageLists);
+        garbageMapPoints.insert(pMP);
     }
 
     void Map::AddMapPoint(MapPoint *pMP)
@@ -123,13 +130,49 @@ namespace ORB_SLAM3
         return mbImuInitialized;
     }
 
+    // void Map::EraseMapPoint(MapPoint *pMP)
+    // {
+    //     unique_lock<mutex> lock(mMutexMap);
+    //     mspMapPoints.erase(pMP);
+
+    //     // TODO: This only erase the pointer.
+    //     // Delete the MapPoint
+    // }
+
     void Map::EraseMapPoint(MapPoint *pMP)
     {
-        unique_lock<mutex> lock(mMutexMap);
-        mspMapPoints.erase(pMP);
+        {
+            unique_lock<mutex> lock(mMutexMap);
+            if (garbageMapPoints.find(pMP) != garbageMapPoints.end())
+            {
+                return;
+            }
+        }
+        {
+            unique_lock<mutex> lock(mMutexMap);
 
-        // TODO: This only erase the pointer.
-        // Delete the MapPoint
+            /* Edge-SLAM: mspMapPoints_erased set keeps track of mappoints that got replaced with newer mappoints.
+            // It has been commented and not removed because there is no use of it at this time, but might be useful in the futur.
+            // Edge-SLAM: replaced mnId with GetId()
+            // Edge-SLAM: debug
+            //cout << "log,Map::EraseMapPoint,remove map point " << pMP->GetId() << " " << pMP->GetReplaced() << " " << pMP << " " << std::endl;
+            if (pMP->GetReplaced())
+            {
+                mspMapPoints_erased.insert(pMP);
+            }*/
+
+            // This only erase the pointer
+            mspMapPoints.erase(pMP);
+
+            // // Edge-SLAM
+            // if (pMP->trSet)
+            //     umtrMapPoints.erase(pMP->mnId);
+            // if (pMP->lmSet)
+            //     umlmMapPoints.erase(pMP->lmMnId);
+
+            AddToDeletionQueue(pMP);
+        }
+        pMP->EraseMapPointReferences();
     }
 
     void Map::EraseKeyFrame(KeyFrame *pKF, bool isTracking)

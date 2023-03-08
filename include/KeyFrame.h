@@ -120,7 +120,7 @@ namespace ORB_SLAM3
             // Number of Keypoints
             ar &const_cast<int &>(N);
             // KeyPoints
-
+            
             serializeVectorKeyPoints<Archive>(ar, mvKeys, version);
             serializeVectorKeyPoints<Archive>(ar, mvKeysUn, version);
             ar &const_cast<vector<float> &>(mvuRight);
@@ -194,6 +194,7 @@ namespace ORB_SLAM3
         }
 
     public:
+
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         KeyFrame();
         KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB);
@@ -202,7 +203,7 @@ namespace ORB_SLAM3
         void SetPose(const Sophus::SE3f &Tcw);
         void SetVelocity(const Eigen::Vector3f &Vw_);
         bool safeToErase();
-
+        void SetEraseOK();
         Sophus::SE3f GetPose();
 
         Sophus::SE3f GetPoseInverse();
@@ -512,7 +513,7 @@ namespace ORB_SLAM3
 
         // Indexes of stereo observations correspondences
         std::vector<int> mvLeftToRightMatch, mvRightToLeftMatch;
-        void ReconstructConnections();
+        // void ReconstructConnections();
         Sophus::SE3f GetRelativePoseTrl();
         Sophus::SE3f GetRelativePoseTlr();
 

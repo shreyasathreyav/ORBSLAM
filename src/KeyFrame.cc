@@ -578,6 +578,22 @@ namespace ORB_SLAM3
         mbNotErase = true;
     }
 
+    void KeyFrame::SetEraseOK()
+    {
+        {
+            unique_lock<mutex> lock(mMutexConnections);
+            if (mspLoopEdges.empty())
+            {
+                mbNotErase = false;
+            }
+        }
+
+        if (mbStagedEraseForFuture)
+        {
+            mpMap->EraseKeyFrame(this, false);
+        }
+    }
+
     void KeyFrame::SetErase()
     {
         {
@@ -724,11 +740,11 @@ namespace ORB_SLAM3
                 bUpdate = true;
             }
         }
-        auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
-        if (index != mvpOrderedConnectedKeyFrames.end())
-        {
-            mvpOrderedConnectedKeyFrames.erase(index);
-        }
+        // auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
+        // if (index != mvpOrderedConnectedKeyFrames.end())
+        // {
+        //     mvpOrderedConnectedKeyFrames.erase(index);
+        // }
 
         if (bUpdate)
             UpdateBestCovisibles();
@@ -878,62 +894,77 @@ namespace ORB_SLAM3
         mpMap = pMap;
     }
 
-    void KeyFrame::ReconstructConnections()
-    {
-        // Reconstruct connected keyframes
-        // The viewer needs the weights, so we send them, but we should adjust them based on available keyframes within the map
-        std::vector<int> mvOrderedWeights_copy(mvOrderedWeights);
-        mvOrderedWeights.clear();
-        std::vector<int>::iterator it_weight = mvOrderedWeights_copy.begin();
-        for (std::vector<long int>::iterator it = mvpOrderedConnectedKeyFrames_ids.begin(); it != mvpOrderedConnectedKeyFrames_ids.end(); ++it, ++it_weight)
-        {
-            if (mpMap->RetrieveKeyFrame(*it) != nullptr)
-            {
-                mvpOrderedConnectedKeyFrames.push_back(mpMap->RetrieveKeyFrame(*it));
+    // void KeyFrame::ReconstructConnections()
+    // {
+    //     // Reconstruct connected keyframes
+    //     // The viewer needs the weights, so we send them, but we should adjust them based on available keyframes within the map
+    //     std::vector<int> mvOrderedWeights_copy(mvOrderedWeights);
+    //     mvOrderedWeights.clear();
+    //     std::vector<int>::iterator it_weight = mvOrderedWeights_copy.begin();
+    //     for (std::vector<long int>::iterator it = mvpOrderedConnectedKeyFrames_ids.begin(); it != mvpOrderedConnectedKeyFrames_ids.end(); ++it, ++it_weight)
+    //     {
+    //         if (mpMap->RetrieveKeyFrame(*it) != nullptr)
+    //         {
+    //             mvpOrderedConnectedKeyFrames.push_back(mpMap->RetrieveKeyFrame(*it));
 
-                mvOrderedWeights.push_back(*it_weight);
-            }
-        }
+    //             mvOrderedWeights.push_back(*it_weight);
+    //         }
+    //     }
 
-        // Reconstruct parent keyframe
-        if (mpMap->RetrieveKeyFrame(mpParent_id) != nullptr)
-        {
-            // ChangeParent() not necessary to be used here
-            // If used, it will cause segmentation fault
-            // Replaced with the necessary statements
-            // ChangeParent(mpMap->RetrieveKeyFrame(mpParent_id));
-            mpParent = mpMap->RetrieveKeyFrame(mpParent_id);
-            mpParent_id = mpMap->RetrieveKeyFrame(mpParent_id)->mnId;
-        }
-        else
-        {
-            // Set the pointer to NULL
-            mpParent = static_cast<KeyFrame *>(NULL);
-        }
+    //     // Reconstruct parent keyframe
+    //     if (mpMap->RetrieveKeyFrame(mpParent_id) != nullptr)
+    //     {
+    //         // ChangeParent() not necessary to be used here
+    //         // If used, it will cause segmentation fault
+    //         // Replaced with the necessary statements
+    //         // ChangeParent(mpMap->RetrieveKeyFrame(mpParent_id));
+    //         mpParent = mpMap->RetrieveKeyFrame(mpParent_id);
+    //         mpParent_id = mpMap->RetrieveKeyFrame(mpParent_id)->mnId;
+    //     }
+    //     else
+    //     {
+    //         // Set the pointer to NULL
+    //         mpParent = static_cast<KeyFrame *>(NULL);
+    //     }
 
-        // Reconstruct children keyframes
-        for (std::set<long int>::iterator it = mspChildrens_ids.begin(); it != mspChildrens_ids.end(); ++it)
-        {
-            if (mpMap->RetrieveKeyFrame(*it) != nullptr)
-            {
-                AddChild(mpMap->RetrieveKeyFrame(*it));
-            }
-        }
-    }
+    //     // Reconstruct children keyframes
+    //     for (std::set<long int>::iterator it = mspChildrens_ids.begin(); it != mspChildrens_ids.end(); ++it)
+    //     {
+    //         if (mpMap->RetrieveKeyFrame(*it) != nullptr)
+    //         {
+    //             AddChild(mpMap->RetrieveKeyFrame(*it));
+    //         }
+    //     }
+    // }
 
     void KeyFrame::EraseKeyFrameReferences()
     {
+        {
+            unique_lock<mutex> lock(mMutexConnections);
+            if (mnId == mpMap->GetInitKFid())
+            {
+                return;
+            }
+            else if (mbNotErase)
+            {
+                mbToBeErased = true;
+                return;
+            }
+        }
+
         for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend = mConnectedKeyFrameWeights.end(); mit != mend; mit++)
+        {
             mit->first->EraseConnection(this);
+        }
 
         for (size_t i = 0; i < mvpMapPoints.size(); i++)
         {
             if (mvpMapPoints[i])
             {
-                cout << mvpMapPoints[i]->mnId;
                 mvpMapPoints[i]->EraseObservation(this);
             }
         }
+
         {
             unique_lock<mutex> lock(mMutexConnections);
             unique_lock<mutex> lock1(mMutexFeatures);
@@ -941,15 +972,10 @@ namespace ORB_SLAM3
             mConnectedKeyFrameWeights.clear();
             mvpOrderedConnectedKeyFrames.clear();
 
-            // Edge-SLAM
-            mvpOrderedConnectedKeyFrames_ids.clear();
-
             // Update Spanning Tree
             set<KeyFrame *> sParentCandidates;
-            if (GetParentId() != "-1")
-            {
+            if (mpParent)
                 sParentCandidates.insert(mpParent);
-            }
 
             // Assign at each iteration one children with a parent (the pair with highest covisibility weight)
             // Include that children as new parent candidate for the rest
@@ -993,9 +1019,6 @@ namespace ORB_SLAM3
                     pC->ChangeParent(pP);
                     sParentCandidates.insert(pC);
                     mspChildrens.erase(pC);
-
-                    // Edge-SLAM
-                    mspChildrens_ids.erase(pC->mnId);
                 }
                 else
                     break;
@@ -1003,31 +1026,132 @@ namespace ORB_SLAM3
 
             // If a children has no covisibility links with any parent candidate, assign to the original parent of this KF
             if (!mspChildrens.empty())
+            {
                 for (set<KeyFrame *>::iterator sit = mspChildrens.begin(); sit != mspChildrens.end(); sit++)
                 {
                     (*sit)->ChangeParent(mpParent);
-
-                    // Atlas: if keyframe becomes root, make it an origin
-                    if (GetParentId() == "-1")
-                    {
-                        if (!((*sit)->GetOrigin()))
-                        {
-                            (*sit)->SetOrigin(true);
-                            mpMap->mvpKeyFrameOrigins.push_back((*sit));
-                        }
-                    }
                 }
+            }
 
-            if (GetParentId() != "-1")
+            if (mpParent)
             {
                 mpParent->EraseChild(this);
-                mTcp = Tcw * mpParent->GetPoseInverse();
+                mTcp = mTcw * mpParent->GetPoseInverse();
             }
+            // mbBad = true;
         }
 
+        mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
-        mbToBeErased = true;
     }
+
+    // void KeyFrame::EraseKeyFrameReferences()
+    // {
+    //     for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend = mConnectedKeyFrameWeights.end(); mit != mend; mit++)
+    //         mit->first->EraseConnection(this);
+
+    //     for (size_t i = 0; i < mvpMapPoints.size(); i++)
+    //     {
+    //         if (mvpMapPoints[i])
+    //         {
+    //             cout << mvpMapPoints[i]->mnId;
+    //             mvpMapPoints[i]->EraseObservation(this);
+    //         }
+    //     }
+    //     {
+    //         unique_lock<mutex> lock(mMutexConnections);
+    //         unique_lock<mutex> lock1(mMutexFeatures);
+
+    //         mConnectedKeyFrameWeights.clear();
+    //         mvpOrderedConnectedKeyFrames.clear();
+
+    //         // Edge-SLAM
+    //         mvpOrderedConnectedKeyFrames_ids.clear();
+
+    //         // Update Spanning Tree
+    //         set<KeyFrame *> sParentCandidates;
+    //         if (GetParentId() != "-1")
+    //         {
+    //             sParentCandidates.insert(mpParent);
+    //         }
+
+    //         // Assign at each iteration one children with a parent (the pair with highest covisibility weight)
+    //         // Include that children as new parent candidate for the rest
+    //         while (!mspChildrens.empty())
+    //         {
+    //             bool bContinue = false;
+
+    //             int max = -1;
+    //             KeyFrame *pC;
+    //             KeyFrame *pP;
+
+    //             for (set<KeyFrame *>::iterator sit = mspChildrens.begin(), send = mspChildrens.end(); sit != send; sit++)
+    //             {
+    //                 KeyFrame *pKF = *sit;
+    //                 if (pKF->isBad())
+    //                     continue;
+
+    //                 // Check if a parent candidate is connected to the keyframe
+    //                 vector<KeyFrame *> vpConnected = pKF->GetVectorCovisibleKeyFrames();
+    //                 for (size_t i = 0, iend = vpConnected.size(); i < iend; i++)
+    //                 {
+    //                     for (set<KeyFrame *>::iterator spcit = sParentCandidates.begin(), spcend = sParentCandidates.end(); spcit != spcend; spcit++)
+    //                     {
+    //                         if (vpConnected[i]->mnId == (*spcit)->mnId)
+    //                         {
+    //                             int w = pKF->GetWeight(vpConnected[i]);
+    //                             if (w > max)
+    //                             {
+    //                                 pC = pKF;
+    //                                 pP = vpConnected[i];
+    //                                 max = w;
+    //                                 bContinue = true;
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             if (bContinue)
+    //             {
+    //                 pC->ChangeParent(pP);
+    //                 sParentCandidates.insert(pC);
+    //                 mspChildrens.erase(pC);
+
+    //                 // Edge-SLAM
+    //                 mspChildrens_ids.erase(pC->mnId);
+    //             }
+    //             else
+    //                 break;
+    //         }
+
+    //         // If a children has no covisibility links with any parent candidate, assign to the original parent of this KF
+    //         if (!mspChildrens.empty())
+    //             for (set<KeyFrame *>::iterator sit = mspChildrens.begin(); sit != mspChildrens.end(); sit++)
+    //             {
+    //                 (*sit)->ChangeParent(mpParent);
+
+    //                 // Atlas: if keyframe becomes root, make it an origin
+    //                 if (GetParentId() == "-1")
+    //                 {
+    //                     if (!((*sit)->GetOrigin()))
+    //                     {
+    //                         (*sit)->SetOrigin(true);
+    //                         mpMap->mvpKeyFrameOrigins.push_back((*sit));
+    //                     }
+    //                 }
+    //             }
+
+    //         if (GetParentId() != "-1")
+    //         {
+    //             mpParent->EraseChild(this);
+    //             mTcp = Tcw * mpParent->GetPoseInverse();
+    //         }
+    //     }
+
+    //     mpKeyFrameDB->erase(this);
+    //     mbToBeErased = true;
+    // }
 
     void KeyFrame::PreSave(set<KeyFrame *> &spKF, set<MapPoint *> &spMP, set<GeometricCamera *> &spCam)
     {

@@ -49,7 +49,7 @@ class Map
         ar & mnInitKFid;
         ar & mnMaxKFid;
         ar & mnBigChangeIdx;
-
+        ar & lmMnId; ar & trSet; ar & lmSet;
         // Save/load a set structure, the set structure is broken in libboost 1.58 for ubuntu 16.04, a vector is serializated
         //ar & mspKeyFrames;
         //ar & mspMapPoints;
@@ -72,6 +72,7 @@ public:
     Map();
     Map(int initKFid);
     ~Map();
+    
     void AddKeyFrame(KeyFrame* pKF);
     void AddMapPoint(MapPoint* pMP);
     void EraseMapPoint(MapPoint* pMP);
@@ -86,7 +87,7 @@ public:
     std::set<KeyFrame*> * GetGarbageKeyFrames();
     std::set<MapPoint*> * GetGarbageMapPoints();
     void AddToDeletionQueue(KeyFrame* pKF);
-
+    void AddToDeletionQueue(MapPoint *pMP);
     std::vector<KeyFrame*> GetAllKeyFrames();
     std::vector<MapPoint*> GetAllMapPoints();
     std::vector<MapPoint*> GetReferenceMapPoints();
@@ -163,6 +164,10 @@ public:
     // DEBUG: show KFs which are used in LBA
     std::set<long unsigned int> msOptKFs;
     std::set<long unsigned int> msFixedKFs;
+
+    bool trSet;     // Flag to indicate if tracking thread id is set or not
+    bool lmSet;     // Flag to indicate if local-mapping thread id is set or not
+    long unsigned int lmMnId;   // Local-mapping thread id
 
 protected:
 
