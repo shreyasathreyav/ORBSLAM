@@ -21,7 +21,7 @@ void MapGarbageCollector::Run() {
             unique_lock lock(map->mMutexKFMPDeletion);
 
             DeleteKFs();
-            // DeleteMPs();
+            DeleteMPs();
         }
         std::this_thread::sleep_for (std::chrono::seconds(5));
     }
@@ -47,25 +47,26 @@ void MapGarbageCollector::DeleteKFs() {
     cout << endl;
 }
 
-// void MapGarbageCollector::DeleteMPs() {
-//     std::set<MapPoint *> * MPsLive = map->GetGarbageMapPoints();
-//     std::set<MapPoint *> MPsSnapshot = *MPsLive;
-//     if (MPsSnapshot.size() == 0) {
-//         return;
-//     }
+void MapGarbageCollector::DeleteMPs() {
+    std::set<MapPoint *> * MPsLive = map->GetGarbageMapPoints();
+    std::set<MapPoint *> MPsSnapshot = *MPsLive;
+    if (MPsSnapshot.size() == 0) {
+        return;
+    }
 
-//     cout << "log,MapGarbageCollector::DeleteMPs,deleted MPs: ";
-//     for (auto it = MPsSnapshot.begin(); it != MPsSnapshot.end(); it++) {
-//         MapPoint * mp = *it;
-//         // local_mapping_thread->mlpRecentAddedMapPoints.erase(mp->GetId());
-//         if (mp->IsSafeToErase()) {
-//             cout << mp->mnId << " ";
-//             unique_lock<mutex> lock(map->mMutexGarbageLists);
-//             MPsLive->erase(mp);
-//             delete mp;
-//         }
-//     }
-//     cout << endl;
+    cout << "log,MapGarbageCollector::DeleteMPs,deleted MPs: ";
+    for (auto it = MPsSnapshot.begin(); it != MPsSnapshot.end(); it++) {
+        MapPoint * mp = *it;
+        // local_mapping_thread->mlpRecentAddedMapPoints.erase(mp->GetId());
+        // if (mp->IsSafeToErase()) // Phi Seems unnessarsry
+        {
+            // cout << mp->mnId << " ";
+            unique_lock<mutex> lock(map->mMutexGarbageLists);
+            MPsLive->erase(mp);
+            delete mp;
+        }
+    }
+    cout << endl;
 
-// }
+}
 }

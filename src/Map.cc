@@ -97,11 +97,22 @@ namespace ORB_SLAM3
 
     void Map::EraseMapPoint(MapPoint *pMP)
     {
-        unique_lock<mutex> lock(mMutexMap);
-        mspMapPoints.erase(pMP);
+        {
+            unique_lock<mutex> lock(mMutexMap);
+            if (garbageMapPoints.find(pMP) != garbageMapPoints.end())
+            {
+                return;
+            }
+        }
+        {
+            unique_lock<mutex> lock(mMutexMap);
 
-        // TODO: This only erase the pointer.
-        // Delete the MapPoint
+            // This only erase the pointer
+            mspMapPoints.erase(pMP);
+
+            AddToDeletionQueue(pMP);
+        }
+        pMP->EraseMapPointReferences();
     }
 
     // void Map::EraseKeyFrame(KeyFrame *pKF)
@@ -196,6 +207,12 @@ namespace ORB_SLAM3
         return mspMapPoints.size();
     }
 
+    std::set<MapPoint *> *Map::GetGarbageMapPoints()
+    {
+        unique_lock<mutex> lock(mMutexGarbageLists);
+        return &garbageMapPoints;
+    }
+
     // Phi
     std::set<KeyFrame *> *Map::GetGarbageKeyFrames()
     {
@@ -252,6 +269,14 @@ namespace ORB_SLAM3
         mIsInUse = false;
     }
 
+    // phi
+
+    void Map::AddToDeletionQueue(MapPoint *pMP)
+    {
+        unique_lock<mutex> lock(mMutexGarbageLists);
+        garbageMapPoints.insert(pMP);
+    }
+
     void Map::AddToDeletionQueue(KeyFrame *pKF)
     {
         unique_lock<mutex> lock(mMutexGarbageLists);
@@ -278,7 +303,8 @@ namespace ORB_SLAM3
         mvpKeyFrameOrigins.clear();
         mbIMU_BA1 = false;
         mbIMU_BA2 = false;
-        garbageKeyframes.clear();
+        garbageKeyframes.clear(); // phi
+        garbageMapPoints.clear(); // phi
     }
 
     bool Map::IsInUse()

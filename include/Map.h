@@ -144,6 +144,8 @@ namespace ORB_SLAM3
         std::mutex mMutexGarbageLists;//Phi
         std::set<KeyFrame*> garbageKeyframes;//Phi
         void AddToDeletionQueue(KeyFrame* pKF);// Phi
+        void AddToDeletionQueue(MapPoint *pMP);//Phi
+        std::set<MapPoint*> garbageMapPoints;//Phi
         // This avoid that two points are created simultaneously in separate threads (id conflict)
         std::mutex mMutexPointCreation;
 

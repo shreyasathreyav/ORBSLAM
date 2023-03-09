@@ -89,7 +89,7 @@ void LocalMapping::Run()
 #endif
 
             // Check recent MapPoints
-            // MapPointCulling();
+            MapPointCulling();
 #ifdef REGISTER_TIMES
             std::chrono::steady_clock::time_point time_EndMPCulling = std::chrono::steady_clock::now();
 
@@ -370,12 +370,14 @@ void LocalMapping::MapPointCulling()
             lit = mlpRecentAddedMapPoints.erase(lit);
         else if(pMP->GetFoundRatio()<0.25f)
         {
-            pMP->SetBadFlag();
+            // pMP->SetBadFlag();
+            mpAtlas->mpCurrentMap->EraseMapPoint(pMP);;//phi
             lit = mlpRecentAddedMapPoints.erase(lit);
         }
         else if(((int)nCurrentKFid-(int)pMP->mnFirstKFid)>=2 && pMP->Observations()<=cnThObs)
         {
-            pMP->SetBadFlag();
+            mpAtlas->mpCurrentMap->EraseMapPoint(pMP); //phi
+            // pMP->SetBadFlag();
             lit = mlpRecentAddedMapPoints.erase(lit);
         }
         else if(((int)nCurrentKFid-(int)pMP->mnFirstKFid)>=3)

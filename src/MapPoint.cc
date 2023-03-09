@@ -28,7 +28,7 @@ namespace ORB_SLAM3
     mutex MapPoint::mGlobalMutex;
 
     MapPoint::MapPoint() : mnFirstKFid(0), mnFirstFrame(0), nObs(0), mnTrackReferenceForFrame(0),
-                           mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
+                           mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0), safeToErase(true),
                            mnCorrectedReference(0), mnBAGlobalForKF(0), mnVisible(1), mnFound(1), mbBad(false),
                            mpReplaced(static_cast<MapPoint *>(NULL))
     {
@@ -37,7 +37,7 @@ namespace ORB_SLAM3
 
     MapPoint::MapPoint(const Eigen::Vector3f &Pos, KeyFrame *pRefKF, Map *pMap) : mnFirstKFid(pRefKF->mnId), mnFirstFrame(pRefKF->mnFrameId), nObs(0), mnTrackReferenceForFrame(0),
                                                                                   mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
-                                                                                  mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
+                                                                                  mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false), safeToErase(true),
                                                                                   mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
                                                                                   mnOriginMapId(pMap->GetId())
     {
@@ -55,7 +55,7 @@ namespace ORB_SLAM3
 
     MapPoint::MapPoint(const double invDepth, cv::Point2f uv_init, KeyFrame *pRefKF, KeyFrame *pHostKF, Map *pMap) : mnFirstKFid(pRefKF->mnId), mnFirstFrame(pRefKF->mnFrameId), nObs(0), mnTrackReferenceForFrame(0),
                                                                                                                      mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
-                                                                                                                     mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
+                                                                                                                     mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false), safeToErase(true),
                                                                                                                      mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
                                                                                                                      mnOriginMapId(pMap->GetId())
     {
@@ -73,7 +73,7 @@ namespace ORB_SLAM3
     }
 
     MapPoint::MapPoint(const Eigen::Vector3f &Pos, Map *pMap, Frame *pFrame, const int &idxF) : mnFirstKFid(-1), mnFirstFrame(pFrame->mnId), nObs(0), mnTrackReferenceForFrame(0), mnLastFrameSeen(0),
-                                                                                                mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
+                                                                                                mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0), safeToErase(true),
                                                                                                 mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(static_cast<KeyFrame *>(NULL)), mnVisible(1),
                                                                                                 mnFound(1), mbBad(false), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId())
     {
@@ -216,6 +216,31 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFeatures);
         return nObs;
+    }
+
+    void MapPoint::EraseMapPointReferences()
+    {
+        map<KeyFrame *, tuple<int, int>> obs;
+        {
+            unique_lock<mutex> lock1(mMutexFeatures);
+            unique_lock<mutex> lock2(mMutexPos);
+            mbBad = true;
+            obs = mObservations;
+            mObservations.clear();
+        }
+        for (map<KeyFrame *, tuple<int, int>>::iterator mit = obs.begin(), mend = obs.end(); mit != mend; mit++)
+        {
+            KeyFrame *pKF = mit->first;
+            int leftIndex = get<0>(mit->second), rightIndex = get<1>(mit->second);
+            if (leftIndex != -1)
+            {
+                pKF->EraseMapPointMatch(leftIndex);
+            }
+            if (rightIndex != -1)
+            {
+                pKF->EraseMapPointMatch(rightIndex);
+            }
+        }
     }
 
     void MapPoint::SetBadFlag()
@@ -519,10 +544,10 @@ namespace ORB_SLAM3
     }
 
     // Phi
-    // bool MapPoint::IsSafeToErase()
-    // {
-    //     return safeToErase;
-    // }
+    bool MapPoint::IsSafeToErase()
+    {
+        return safeToErase;
+    }
 
     float MapPoint::GetMinDistanceInvariance()
     {
