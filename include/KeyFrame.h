@@ -158,11 +158,12 @@ class KeyFrame
         ar & mvBackupChildrensId;
         ar & mvBackupLoopEdgesId;
         ar & mvBackupMergeEdgesId;
+
         // Bad flags
         ar & mbNotErase;
         ar & mbToBeErased;
         ar & mbBad;
-
+        ar & mbStagedEraseForFuture;
         ar & mHalfBaseline;
 
         ar & mnOriginMapId;
@@ -202,7 +203,7 @@ public:
     void SetVelocity(const Eigen::Vector3f &Vw_);
 
     Sophus::SE3f GetPose();
-
+    void EraseKeyFrameReferences(); //phi
     Sophus::SE3f GetPoseInverse();
     Eigen::Vector3f GetCameraCenter();
 
@@ -307,7 +308,8 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
-
+    void StageEraseForFuture();
+    bool safeToErase();
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;
@@ -479,6 +481,7 @@ protected:
     bool mbNotErase;
     bool mbToBeErased;
     bool mbBad;    
+    bool mbStagedEraseForFuture;
 
     float mHalfBaseline; // Only for visualization
 

@@ -144,7 +144,7 @@ public:
     void ComputeDistinctiveDescriptors();
 
     cv::Mat GetDescriptor();
-
+    bool IsSafeToErase();
     void UpdateNormalAndDepth();
 
     float GetMinDistanceInvariance();

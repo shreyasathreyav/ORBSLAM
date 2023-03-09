@@ -297,6 +297,8 @@ bool LocalMapping::CheckNewKeyFrames()
 
 void LocalMapping::ProcessNewKeyFrame()
 {
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
+
     {
         unique_lock<mutex> lock(mMutexNewKFs);
         mpCurrentKeyFrame = mlNewKeyFrames.front();
@@ -345,6 +347,8 @@ void LocalMapping::EmptyQueue()
 
 void LocalMapping::MapPointCulling()
 {
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
+
     // Check Recent Added MapPoints
     list<MapPoint*>::iterator lit = mlpRecentAddedMapPoints.begin();
     const unsigned long int nCurrentKFid = mpCurrentKeyFrame->mnId;
@@ -387,6 +391,8 @@ void LocalMapping::MapPointCulling()
 
 void LocalMapping::CreateNewMapPoints()
 {
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
+
     // Retrieve neighbor keyframes in covisibility graph
     int nn = 10;
     // For stereo inertial case
@@ -409,7 +415,7 @@ void LocalMapping::CreateNewMapPoints()
 
     float th = 0.6f;
 
-    ORBmatcher matcher(th,false);
+    ORBmatcher matcher(mpAtlas->mpCurrentMap,th,false);
 
     Sophus::SE3<float> sophTcw1 = mpCurrentKeyFrame->GetPose();
     Eigen::Matrix<float,3,4> eigTcw1 = sophTcw1.matrix3x4();
@@ -713,6 +719,8 @@ void LocalMapping::CreateNewMapPoints()
 
 void LocalMapping::SearchInNeighbors()
 {
+
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
     // Retrieve neighbor keyframes
     int nn = 10;
     if(mbMonocular)
@@ -905,6 +913,8 @@ void LocalMapping::KeyFrameCulling()
     // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
     // in at least other 3 keyframes (in the same or finer scale)
     // We only consider close stereo points
+    
+    shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
     const int Nd = 21;
     mpCurrentKeyFrame->UpdateBestCovisibles();
     vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
@@ -1028,7 +1038,8 @@ void LocalMapping::KeyFrameCulling()
                         pKF->mPrevKF->mNextKF = pKF->mNextKF;
                         pKF->mNextKF = NULL;
                         pKF->mPrevKF = NULL;
-                        pKF->SetBadFlag();
+                        // pKF->SetBadFlag();
+                        mpAtlas->mpCurrentMap->EraseKeyFrame(pKF);//phi
                     }
                     else if(!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition()-pKF->mPrevKF->GetImuPosition()).norm()<0.02) && (t<3))
                     {
@@ -1037,13 +1048,15 @@ void LocalMapping::KeyFrameCulling()
                         pKF->mPrevKF->mNextKF = pKF->mNextKF;
                         pKF->mNextKF = NULL;
                         pKF->mPrevKF = NULL;
-                        pKF->SetBadFlag();
+                        // pKF->SetBadFlag();
+                        mpAtlas->mpCurrentMap->EraseKeyFrame(pKF);//phi
                     }
                 }
             }
             else
             {
-                pKF->SetBadFlag();
+                mpAtlas->mpCurrentMap->EraseKeyFrame(pKF);//Phi
+                // pKF->SetBadFlag();
             }
         }
         if((count > 20 && mbAbortBA) || count>100)

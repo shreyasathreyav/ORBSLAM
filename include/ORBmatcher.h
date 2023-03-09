@@ -39,6 +39,8 @@ namespace ORB_SLAM3
 
         ORBmatcher(float nnratio=0.6, bool checkOri=true);
 
+        ORBmatcher(Map * map, float nnratio=0.6, bool checkOri=true);
+
         // Computes the Hamming distance between two ORB descriptors
         static int DescriptorDistance(const cv::Mat &a, const cv::Mat &b);
 
@@ -91,8 +93,8 @@ namespace ORB_SLAM3
         static const int TH_LOW;
         static const int TH_HIGH;
         static const int HISTO_LENGTH;
+        Map * map;
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     protected:
         float RadiusByViewingCos(const float &viewCos);
 

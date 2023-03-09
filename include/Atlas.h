@@ -138,6 +138,7 @@ public:
     long unsigned int GetNumLivedKF();
 
     long unsigned int GetNumLivedMP();
+    Map* mpCurrentMap;
 
 protected:
 
@@ -146,7 +147,6 @@ protected:
     // Its necessary change the container from set to vector because libboost 1.58 and Ubuntu 16.04 have an error with this cointainer
     std::vector<Map*> mvpBackupMaps;
 
-    Map* mpCurrentMap;
 
     std::vector<GeometricCamera*> mvpCameras;
 
