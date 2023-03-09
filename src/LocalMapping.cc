@@ -89,7 +89,7 @@ void LocalMapping::Run()
 #endif
 
             // Check recent MapPoints
-            MapPointCulling();
+            // MapPointCulling();
 #ifdef REGISTER_TIMES
             std::chrono::steady_clock::time_point time_EndMPCulling = std::chrono::steady_clock::now();
 
@@ -915,6 +915,7 @@ void LocalMapping::KeyFrameCulling()
     // We only consider close stereo points
     
     shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
+    // cout << "INside keyframecilling" << endl;
     const int Nd = 21;
     mpCurrentKeyFrame->UpdateBestCovisibles();
     vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
@@ -1040,6 +1041,7 @@ void LocalMapping::KeyFrameCulling()
                         pKF->mPrevKF = NULL;
                         // pKF->SetBadFlag();
                         mpAtlas->mpCurrentMap->EraseKeyFrame(pKF);//phi
+                        cout << pKF->mnId << endl;
                     }
                     else if(!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition()-pKF->mPrevKF->GetImuPosition()).norm()<0.02) && (t<3))
                     {
@@ -1050,12 +1052,14 @@ void LocalMapping::KeyFrameCulling()
                         pKF->mPrevKF = NULL;
                         // pKF->SetBadFlag();
                         mpAtlas->mpCurrentMap->EraseKeyFrame(pKF);//phi
+                        cout << pKF->mnId << endl;
                     }
                 }
             }
             else
             {
                 mpAtlas->mpCurrentMap->EraseKeyFrame(pKF);//Phi
+                cout << pKF->mnId << endl;
                 // pKF->SetBadFlag();
             }
         }

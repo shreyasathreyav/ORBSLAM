@@ -128,6 +128,7 @@ namespace ORB_SLAM3
 
     void Map::EraseKeyFrame(KeyFrame *pKF)
     {
+        cout << "We are in erase key keyframes" << endl;
         if (!pKF->safeToErase())
         {
             cout << "Staging erase for future" << endl;
@@ -144,7 +145,7 @@ namespace ORB_SLAM3
             mspKeyFrames.erase(pKF);
 
             // This only erase the pointer
-            mspKeyFrames.erase(pKF);
+            // mspKeyFrames.erase(pKF);
 
             // Edge-SLAM
             // umKeyFrames.erase(pKF->mnId);

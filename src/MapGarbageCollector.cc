@@ -12,7 +12,9 @@ MapGarbageCollector::MapGarbageCollector(Map * map, LocalMapping * local_mapping
 
 void MapGarbageCollector::Run() {
     cout << "log,MapGarbageCollector::Run,start" << "\n";
-    
+    std::set<KeyFrame*> * KFsLive = map->GetGarbageKeyFrames();
+    cout << (*KFsLive).size() << endl;
+
     while(1)
     {
         {

@@ -790,10 +790,9 @@ namespace ORB_SLAM3
                 mpParent->EraseChild(this);
                 mTcp = mTcw * mpParent->GetPoseInverse();
             }
-            mbToBeErased = true;
         }
 
-        mpMap->EraseKeyFrame(this);
+        mbToBeErased = true;
         mpKeyFrameDB->erase(this);
     }
 
