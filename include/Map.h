@@ -70,6 +70,9 @@ namespace ORB_SLAM3
         Map();
         Map(int initKFid);
         ~Map();
+
+        std::vector<MapPoint*> deletedObs;
+
         void AddKeyFrame(KeyFrame *pKF);
         void AddMapPoint(MapPoint *pMP);
         void EraseMapPoint(MapPoint *pMP);

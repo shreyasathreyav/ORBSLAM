@@ -170,9 +170,47 @@ namespace ORB_SLAM3
             nObs++;
     }
 
+    // void MapPoint::EraseObservation(KeyFrame *pKF)
+    // {
+    //     bool bBad = false;
+    //     {
+    //         unique_lock<mutex> lock(mMutexFeatures);
+    //         if (mObservations.count(pKF))
+    //         {
+    // tuple<int, int> indexes = mObservations[pKF];
+    // int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
+
+    // if (leftIndex != -1)
+    // {
+    //     if (!pKF->mpCamera2 && pKF->mvuRight[leftIndex] >= 0)
+    //         nObs -= 2;
+    //     else
+    //         nObs--;
+    // }
+    // if (rightIndex != -1)
+    // {
+    //     nObs--;
+    // }
+
+    //             mObservations.erase(pKF);
+    //             pKF->del_holder.erase(&mObservations);
+
+    //             if (mpRefKF == pKF)
+    //                 mpRefKF = mObservations.begin()->first;
+
+    //             // If only 2 observations or less, discard point
+    //             if (nObs <= 2)
+    //                 bBad = true;
+    //         }
+    //     }
+
+    //     if (bBad)
+    //         SetBadFlag();
+    //         pKF->del_holder.erase(&mObservations);
+    // }
+
     void MapPoint::EraseObservation(KeyFrame *pKF)
     {
-        bool bBad = false;
         {
             unique_lock<mutex> lock(mMutexFeatures);
             if (mObservations.count(pKF))
@@ -193,19 +231,29 @@ namespace ORB_SLAM3
                 }
 
                 mObservations.erase(pKF);
-                pKF->del_holder.erase(&mObservations);
+
+                // Edge-SLAM
+                // mObservations_id.erase(pKF->mnId);
 
                 if (mpRefKF == pKF)
-                    mpRefKF = mObservations.begin()->first;
-
-                // If only 2 observations or less, discard point
-                if (nObs <= 2)
-                    bBad = true;
+                {
+                    if (mObservations.size() >= 1)
+                    {
+                        mpRefKF = mObservations.begin()->first;
+                        mnFirstKFid = mpRefKF->mnId;
+                    }
+                    else
+                    {
+                        mpRefKF = static_cast<KeyFrame *>(NULL);
+                    }
+                }
             }
+            // If only 2 observations or less, discard point
         }
-
-        if (bBad)
-            SetBadFlag();
+        if (nObs <= 2)
+        {
+            mpMap->EraseMapPoint(this);
+        }
     }
 
     std::map<KeyFrame *, std::tuple<int, int>> MapPoint::GetObservations()

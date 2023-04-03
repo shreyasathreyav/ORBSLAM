@@ -312,8 +312,13 @@ public:
 public:
   void StageEraseForFuture();
   bool safeToErase();
+  // mobs
   std::multiset<void *> del_holder;
-
+  //mlnewKeyFrames 
+  std::multiset<void *> del_holder1;
+  //mvpOrderedConnectedKeyFrames 
+  std::multiset<void *> del_holder2;
+  
   static long unsigned int nNextId;
   long unsigned int mnId;
   const long unsigned int mnFrameId;
@@ -425,6 +430,7 @@ public:
 
   std::vector<KeyFrame *> mvpLoopCandKFs;
   std::vector<KeyFrame *> mvpMergeCandKFs;
+  std::vector<MapPoint *> mvpMapPoints;
 
   // bool mbHasHessian;
   // cv::Mat mHessianPose;
@@ -452,7 +458,6 @@ protected:
   IMU::Bias mImuBias;
 
   // MapPoints associated to keypoints
-  std::vector<MapPoint *> mvpMapPoints;
   // For save relation without pointer, this is necessary for save/load function
   std::vector<long long int> mvBackupMapPointsId;
 

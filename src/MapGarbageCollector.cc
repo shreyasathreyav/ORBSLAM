@@ -46,13 +46,44 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(map->mMutexGarbageLists);
                 // cout << kf->mnId << " ";
-                cout << "This is the size of delete holder" << endl;
+                // cout << "This is the size of delete holder" << endl;
+                //###############################
+
+                    // Mobseravations
+
+                //###############################
+                
                 if (!kf->del_holder.empty())
                 {
-                    cout << kf->del_holder.size() << endl;
+                    // cout << kf->del_holder.size() << endl;
                 }
+
+                //###############################
+
+                    // mlNewKeyFrames
+
+                //###############################
+                
+                // if (!kf->del_holder1.empty())
+                // {
+                //     cout << kf->del_holder1.size() << endl;
+                // }
+
+
+                //###############################
+
+                    // mvpOrderedconnectedKeyFrames
+
+                //###############################
+                
+                // if (!kf->del_holder1.empty())
+                // {
+                //     cout << kf->del_holder1.size() << endl;
+                // }
+
+
                 KFsLive->erase(kf);
-                // delete kf;
+                delete kf;
             }
         }
         cout << endl;

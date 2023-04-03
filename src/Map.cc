@@ -147,6 +147,11 @@ namespace ORB_SLAM3
             return;
         }
 
+        for (size_t i = 0; i < pKF->mvpMapPoints.size(); i++)
+        {
+            deletedObs.push_back(pKF->mvpMapPoints[i]);
+        }
+
         pKF->EraseKeyFrameReferences();
 
         {

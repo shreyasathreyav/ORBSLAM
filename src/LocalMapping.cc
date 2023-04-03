@@ -284,6 +284,7 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexNewKFs);
         mlNewKeyFrames.push_back(pKF);
+        pKF->del_holder1.insert(&mlNewKeyFrames);
         mbAbortBA = true;
     }
 
@@ -300,7 +301,10 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(mMutexNewKFs);
             mpCurrentKeyFrame = mlNewKeyFrames.front();
+            mpCurrentKeyFrame->del_holder1.erase(&mlNewKeyFrames);   
             mlNewKeyFrames.pop_front();
+
+
         }
 
         // Compute Bags of Words structures
@@ -969,6 +973,22 @@ namespace ORB_SLAM3
                 MapPoint *pMP = vpMapPoints[i];
                 if (pMP)
                 {
+                    //phi 
+                    bool flag{false};
+                    auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
+
+                    if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
+                    {
+                        flag = true;
+                        cout << " " << flag << endl;
+                    }
+
+                    if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
+                    {
+                        // flag = true;
+                        cout << " "
+                             << "False" << endl;
+                    }
                     if (!pMP->isBad())
                     {
                         if (!mbMonocular)
@@ -1441,7 +1461,7 @@ namespace ORB_SLAM3
 
         for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
         {
-           // (*lit)->SetBadFlag();
+            // (*lit)->SetBadFlag();
             mpAtlas->mpCurrentMap->EraseKeyFrame(*lit); // phi
 
             // delete *lit;
