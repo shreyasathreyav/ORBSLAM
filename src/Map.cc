@@ -139,7 +139,7 @@ namespace ORB_SLAM3
 
     void Map::EraseKeyFrame(KeyFrame *pKF)
     {
-        cout << "We are in erase key keyframes" << endl;
+       // cout << "We are in erase key keyframes" << endl;
         if (!pKF->safeToErase())
         {
             cout << "Staging erase for future" << endl;

@@ -162,6 +162,7 @@ namespace ORB_SLAM3
         }
 
         mObservations[pKF] = indexes;
+        pKF->del_holder.insert(&mObservations);
 
         if (!pKF->mpCamera2 && pKF->mvuRight[idx] >= 0)
             nObs += 2;
@@ -192,6 +193,7 @@ namespace ORB_SLAM3
                 }
 
                 mObservations.erase(pKF);
+                pKF->del_holder.erase(&mObservations);
 
                 if (mpRefKF == pKF)
                     mpRefKF = mObservations.begin()->first;

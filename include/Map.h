@@ -150,6 +150,7 @@ namespace ORB_SLAM3
         std::mutex mMutexPointCreation;
 
         bool mbFail;
+        //std::multiset<void *> del_holder;
 
         // Size of the thumbnail (always in power of 2)
         static const int THUMB_WIDTH = 512;
