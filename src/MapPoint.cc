@@ -231,6 +231,8 @@ namespace ORB_SLAM3
                 }
 
                 mObservations.erase(pKF);
+                pKF->del_holder.erase(&mObservations);
+
 
                 // Edge-SLAM
                 // mObservations_id.erase(pKF->mnId);
@@ -242,10 +244,10 @@ namespace ORB_SLAM3
                         mpRefKF = mObservations.begin()->first;
                         mnFirstKFid = mpRefKF->mnId;
                     }
-                    else
-                    {
-                        mpRefKF = static_cast<KeyFrame *>(NULL);
-                    }
+                    // else
+                    // {
+                    //     mpRefKF = static_cast<KeyFrame *>(NULL);
+                    // }
                 }
             }
             // If only 2 observations or less, discard point
@@ -253,6 +255,7 @@ namespace ORB_SLAM3
         if (nObs <= 2)
         {
             mpMap->EraseMapPoint(this);
+
         }
     }
 
@@ -281,6 +284,7 @@ namespace ORB_SLAM3
         for (map<KeyFrame *, tuple<int, int>>::iterator mit = obs.begin(), mend = obs.end(); mit != mend; mit++)
         {
             KeyFrame *pKF = mit->first;
+            pKF->del_holder.erase(&mObservations);
             int leftIndex = get<0>(mit->second), rightIndex = get<1>(mit->second);
             if (leftIndex != -1)
             {

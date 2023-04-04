@@ -164,12 +164,12 @@ namespace ORB_SLAM3
         // DEBUG: show KFs which are used in LBA
         std::set<long unsigned int> msOptKFs;
         std::set<long unsigned int> msFixedKFs;
+        std::set<KeyFrame *> mspKeyFrames;
 
     protected:
         long unsigned int mnId;
 
         std::set<MapPoint *> mspMapPoints;
-        std::set<KeyFrame *> mspKeyFrames;
 
         // Save/load, the set structure is broken in libboost 1.58 for ubuntu 16.04, a vector is serializated
         std::vector<MapPoint *> mvpBackupMapPoints;

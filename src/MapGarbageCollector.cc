@@ -55,7 +55,7 @@ namespace ORB_SLAM3
                 
                 if (!kf->del_holder.empty())
                 {
-                    // cout << kf->del_holder.size() << endl;
+                    cout << kf->del_holder.size() << endl;
                 }
 
                 //###############################
@@ -68,6 +68,19 @@ namespace ORB_SLAM3
                 // {
                 //     cout << kf->del_holder1.size() << endl;
                 // }
+
+
+                //###############################
+
+                    // mspMapPoints
+
+                //###############################
+                
+                // if (!kf->del_holder.empty())
+                // {
+                //     cout << kf->del_holdermspMapPoints.size() << endl;
+                // }
+
 
 
                 //###############################
@@ -108,7 +121,7 @@ namespace ORB_SLAM3
                 // cout << mp->mnId << " ";
                 unique_lock<mutex> lock(map->mMutexGarbageLists);
                 MPsLive->erase(mp);
-               // delete mp;
+            //    delete mp;
             }
         }
         cout << endl;

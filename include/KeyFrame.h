@@ -318,6 +318,9 @@ public:
   std::multiset<void *> del_holder1;
   //mvpOrderedConnectedKeyFrames 
   std::multiset<void *> del_holder2;
+
+  //mspKeyFrames
+  std::multiset<void *> del_holdermspKeyFrames;
   
   static long unsigned int nNextId;
   long unsigned int mnId;

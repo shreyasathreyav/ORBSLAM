@@ -301,10 +301,8 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(mMutexNewKFs);
             mpCurrentKeyFrame = mlNewKeyFrames.front();
-            mpCurrentKeyFrame->del_holder1.erase(&mlNewKeyFrames);   
+            mpCurrentKeyFrame->del_holder1.erase(&mlNewKeyFrames);
             mlNewKeyFrames.pop_front();
-
-
         }
 
         // Compute Bags of Words structures
@@ -973,20 +971,20 @@ namespace ORB_SLAM3
                 MapPoint *pMP = vpMapPoints[i];
                 if (pMP)
                 {
-                    //phi 
+                    // phi
                     bool flag{false};
                     auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
 
                     if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
                     {
                         flag = true;
-                        cout << " " << flag << endl;
+                        cout << "Checker One " << flag << endl;
                     }
 
                     if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
                     {
                         // flag = true;
-                        cout << " "
+                        cout << "Checker Two"
                              << "False" << endl;
                     }
                     if (!pMP->isBad())
@@ -1008,17 +1006,25 @@ namespace ORB_SLAM3
                             for (map<KeyFrame *, tuple<int, int>>::const_iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
                             {
                                 KeyFrame *pKFi = mit->first;
+                                 if (pKFi->mnId == 0)
+                                    continue;
+                                // cout << pKFi->mnId <<endl;
                                 if (pKFi == pKF)
                                     continue;
                                 tuple<int, int> indexes = mit->second;
                                 int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
                                 int scaleLeveli = -1;
                                 if (pKFi->NLeft == -1)
+                                {
+                                    cout << pKFi->mnId <<endl;
                                     scaleLeveli = pKFi->mvKeysUn[leftIndex].octave;
+                                }
                                 else
                                 {
+                                    // cout << pKFi->mnId <<endl;
                                     if (leftIndex != -1)
                                     {
+                                        // cout << pKFi->mnId <<endl;
                                         scaleLeveli = pKFi->mvKeys[leftIndex].octave;
                                     }
                                     if (rightIndex != -1)
