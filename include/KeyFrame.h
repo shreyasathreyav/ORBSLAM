@@ -434,6 +434,8 @@ public:
   std::vector<KeyFrame *> mvpLoopCandKFs;
   std::vector<KeyFrame *> mvpMergeCandKFs;
   std::vector<MapPoint *> mvpMapPoints;
+  bool delete_gc_finished = false;
+  int delete_count = 0;
 
   // bool mbHasHessian;
   // cv::Mat mHessianPose;

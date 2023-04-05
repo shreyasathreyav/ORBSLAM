@@ -925,6 +925,7 @@ namespace ORB_SLAM3
         shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
         // cout << "INside keyframecilling" << endl;
         const int Nd = 21;
+        int check_count = 0;
         mpCurrentKeyFrame->UpdateBestCovisibles();
         vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
 
@@ -953,6 +954,7 @@ namespace ORB_SLAM3
             last_ID = aux_KF->mnId;
         }
 
+        set<KeyFrame *> delete_container;
         for (vector<KeyFrame *>::iterator vit = vpLocalKeyFrames.begin(), vend = vpLocalKeyFrames.end(); vit != vend; vit++)
         {
             count++;
@@ -966,27 +968,28 @@ namespace ORB_SLAM3
             const int thObs = nObs;
             int nRedundantObservations = 0;
             int nMPs = 0;
+            // set<KeyFrame *> check_container;
             for (size_t i = 0, iend = vpMapPoints.size(); i < iend; i++)
             {
                 MapPoint *pMP = vpMapPoints[i];
                 if (pMP)
                 {
                     // phi
-                    bool flag{false};
-                    auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
+                    // bool flag{false};
+                    // auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
 
-                    if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
-                    {
-                        flag = true;
-                        cout << "Checker One " << flag << endl;
-                    }
+                    // if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
+                    // {
+                    //     flag = true;
+                    //     cout << "Checker One " << flag << endl;
+                    // }
 
-                    if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
-                    {
-                        // flag = true;
-                        cout << "Checker Two"
-                             << "False" << endl;
-                    }
+                    // if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
+                    // {
+                    //     flag = true;
+                    //     cout << "Checker Two"
+                    //          << "False" << endl;
+                    // }
                     if (!pMP->isBad())
                     {
                         if (!mbMonocular)
@@ -1001,14 +1004,56 @@ namespace ORB_SLAM3
                             const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
                                                     : (i < pKF->NLeft) ? pKF->mvKeys[i].octave
                                                                        : pKF->mvKeysRight[i].octave;
-                            const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
+                            map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
                             int nObs = 0;
-                            for (map<KeyFrame *, tuple<int, int>>::const_iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
+                            for (map<KeyFrame *, tuple<int, int>>::iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
                             {
-                                KeyFrame *pKFi = mit->first;
-                                 if (pKFi->mnId == 0)
+                                check_count++;
+                                if (mit->first->delete_gc_finished)
+                                {
+
+                                    cout << "Beginning of the call we need" << endl;
+                                    // cout << pKFi->mnId << endl;
+                                    KeyFrame *pKF_del = mit->first;
+                                    mit = observations.erase(mit);
+                                    // mit++;
+                                    pMP->mObservations.erase(pKF_del);
+                                    if (pKF_del->delete_count > 1)
+                                    {
+
+                                        cout << "This is the delete count : " << pKF_del->delete_count << endl;
+                                    }
+
+                                    // delete pKF_del;
+                                    //  cout << "Inside here; this means that the keyframe was supposed to be here" << endl;
+                                    //  continue;
+                                    //  delete pKF_del;
+                                    delete_container.insert(pKF_del);
+                                    // check_container.insert(pKF_del);
+                                    //  KeyFrame *pKFi = mit->first;
+                                    if (mit == observations.end())
+                                    {
+
+                                        break;
+                                    }
+                                }
+                                if (check_container.find(mit->first) != check_container.end())
+                                {
+                                    mit = observations.erase(mit);
+                                    // mit++;
+                                    if (mit == observations.end())
+                                    {
+
+                                        break;
+                                    }
+                                    KeyFrame *pKF_del = mit->first;
+
+                                    pMP->mObservations.erase(pKF_del);
+                                }
+                                if (mit->first->mnId == 0)
                                     continue;
                                 // cout << pKFi->mnId <<endl;
+                                KeyFrame *pKFi = mit->first;
                                 if (pKFi == pKF)
                                     continue;
                                 tuple<int, int> indexes = mit->second;
@@ -1016,7 +1061,7 @@ namespace ORB_SLAM3
                                 int scaleLeveli = -1;
                                 if (pKFi->NLeft == -1)
                                 {
-                                    cout << pKFi->mnId <<endl;
+                                    // cout << pKFi->mnId <<endl;
                                     scaleLeveli = pKFi->mvKeysUn[leftIndex].octave;
                                 }
                                 else
@@ -1101,6 +1146,18 @@ namespace ORB_SLAM3
                 break;
             }
         }
+        for (auto it : delete_container)
+        {
+            if (check_container.find(it) == check_container.end())
+            {
+                cout << "Inside the for loop" << endl;
+                cout << it->mnId << endl;
+
+                check_container.insert(it);
+                delete it;
+            }
+        }
+        delete_container.clear();
     }
 
     void LocalMapping::RequestReset()

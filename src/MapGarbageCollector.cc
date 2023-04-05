@@ -15,7 +15,7 @@ namespace ORB_SLAM3
         cout << "log,MapGarbageCollector::Run,start"
              << "\n";
         std::set<KeyFrame *> *KFsLive = map->GetGarbageKeyFrames();
-        //cout << (*KFsLive).size() << endl;
+        // cout << (*KFsLive).size() << endl;
 
         while (1)
         {
@@ -47,56 +47,54 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(map->mMutexGarbageLists);
                 // cout << kf->mnId << " ";
                 // cout << "This is the size of delete holder" << endl;
-                //###############################
+                // ###############################
 
-                    // Mobseravations
+                // Mobseravations
 
-                //###############################
-                
-                if (!kf->del_holder.empty())
-                {
-                    cout << kf->del_holder.size() << endl;
-                }
+                // ###############################
 
-                //###############################
+                // if (!kf->del_holder.empty())
+                // {
+                //     cout << kf->del_holder.size() << endl;
+                // }
 
-                    // mlNewKeyFrames
+                // ###############################
 
-                //###############################
-                
+                // mlNewKeyFrames
+
+                // ###############################
+
                 // if (!kf->del_holder1.empty())
                 // {
                 //     cout << kf->del_holder1.size() << endl;
                 // }
 
+                // ###############################
 
-                //###############################
+                // mspMapPoints
 
-                    // mspMapPoints
+                // ###############################
 
-                //###############################
-                
                 // if (!kf->del_holder.empty())
                 // {
                 //     cout << kf->del_holdermspMapPoints.size() << endl;
                 // }
 
+                // ###############################
 
+                // mvpOrderedconnectedKeyFrames
 
-                //###############################
+                // ###############################
 
-                    // mvpOrderedconnectedKeyFrames
-
-                //###############################
-                
                 // if (!kf->del_holder1.empty())
                 // {
                 //     cout << kf->del_holder1.size() << endl;
                 // }
 
-
                 KFsLive->erase(kf);
-                delete kf;
+                kf->delete_gc_finished = true;
+                kf->delete_count = kf->delete_count + 1;
+                // delete kf;
             }
         }
         cout << endl;
@@ -121,7 +119,7 @@ namespace ORB_SLAM3
                 // cout << mp->mnId << " ";
                 unique_lock<mutex> lock(map->mMutexGarbageLists);
                 MPsLive->erase(mp);
-            //    delete mp;
+                //    delete mp;
             }
         }
         cout << endl;

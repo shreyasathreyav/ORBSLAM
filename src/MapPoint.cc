@@ -244,10 +244,10 @@ namespace ORB_SLAM3
                         mpRefKF = mObservations.begin()->first;
                         mnFirstKFid = mpRefKF->mnId;
                     }
-                    // else
-                    // {
-                    //     mpRefKF = static_cast<KeyFrame *>(NULL);
-                    // }
+                    else
+                    {
+                        mpRefKF = static_cast<KeyFrame *>(NULL);
+                    }
                 }
             }
             // If only 2 observations or less, discard point
