@@ -143,8 +143,8 @@ namespace ORB_SLAM3
 
         cv::Mat GetDescriptor();
         bool IsSafeToErase();
+        void UpdateNormalAndDepth(set<KeyFrame *> &check_container);
         void UpdateNormalAndDepth();
-
         float GetMinDistanceInvariance();
         float GetMaxDistanceInvariance();
         int PredictScale(const float &currentDist, KeyFrame *pKF);

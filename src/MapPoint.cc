@@ -233,7 +233,6 @@ namespace ORB_SLAM3
                 mObservations.erase(pKF);
                 pKF->del_holder.erase(&mObservations);
 
-
                 // Edge-SLAM
                 // mObservations_id.erase(pKF->mnId);
 
@@ -255,7 +254,6 @@ namespace ORB_SLAM3
         if (nObs <= 2)
         {
             mpMap->EraseMapPoint(this);
-
         }
     }
 
@@ -516,6 +514,89 @@ namespace ORB_SLAM3
         return (mObservations.count(pKF));
     }
 
+    void MapPoint::UpdateNormalAndDepth(set<KeyFrame *> &check_container)
+    {
+        map<KeyFrame *, tuple<int, int>> observations;
+        KeyFrame *pRefKF;
+        Eigen::Vector3f Pos;
+        {
+            unique_lock<mutex> lock1(mMutexFeatures);
+            unique_lock<mutex> lock2(mMutexPos);
+            if (mbBad)
+                return;
+            observations = mObservations;
+            if(check_container.find(mpRefKF) != check_container.end()){
+
+                return;
+            }
+            pRefKF = mpRefKF;
+            Pos = mWorldPos;
+        }
+
+        if (observations.empty())
+            return;
+
+        Eigen::Vector3f normal;
+        normal.setZero();
+        int n = 0;
+        for (map<KeyFrame *, tuple<int, int>>::iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
+        {
+            KeyFrame *pKF = mit->first;
+
+            tuple<int, int> indexes = mit->second;
+            int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
+
+            if (leftIndex != -1)
+            {
+                Eigen::Vector3f Owi = pKF->GetCameraCenter();
+                Eigen::Vector3f normali = Pos - Owi;
+                normal = normal + normali / normali.norm();
+                n++;
+            }
+            if (rightIndex != -1)
+            {
+                Eigen::Vector3f Owi = pKF->GetRightCameraCenter();
+                Eigen::Vector3f normali = Pos - Owi;
+                normal = normal + normali / normali.norm();
+                n++;
+            }
+        }
+        if (check_container.find(pRefKF) != check_container.end())
+        {
+
+            cout << "It has been already deleted : it should not be here" << endl;
+        }
+        //cout << pRefKF->mnId << endl;
+        Eigen::Vector3f PC = Pos - pRefKF->GetCameraCenter();
+        const float dist = PC.norm();
+
+        tuple<int, int> indexes = observations[pRefKF];
+        int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
+        int level;
+        if (pRefKF->NLeft == -1)
+        {
+            level = pRefKF->mvKeysUn[leftIndex].octave;
+        }
+        else if (leftIndex != -1)
+        {
+            level = pRefKF->mvKeys[leftIndex].octave;
+        }
+        else
+        {
+            level = pRefKF->mvKeysRight[rightIndex - pRefKF->NLeft].octave;
+        }
+
+        // const int level = pRefKF->mvKeysUn[observations[pRefKF]].octave;
+        const float levelScaleFactor = pRefKF->mvScaleFactors[level];
+        const int nLevels = pRefKF->mnScaleLevels;
+
+        {
+            unique_lock<mutex> lock3(mMutexPos);
+            mfMaxDistance = dist * levelScaleFactor;
+            mfMinDistance = mfMaxDistance / pRefKF->mvScaleFactors[nLevels - 1];
+            mNormalVector = normal / n;
+        }
+    }
     void MapPoint::UpdateNormalAndDepth()
     {
         map<KeyFrame *, tuple<int, int>> observations;
@@ -559,7 +640,12 @@ namespace ORB_SLAM3
                 n++;
             }
         }
+        // if (check_container.find(pRefKF) != end)
+        // {
 
+        //     cout << "It has been already deleted : it should not be here" << endl;
+        // }
+        // cout << pRefKF->mnId << endl;
         Eigen::Vector3f PC = Pos - pRefKF->GetCameraCenter();
         const float dist = PC.norm();
 

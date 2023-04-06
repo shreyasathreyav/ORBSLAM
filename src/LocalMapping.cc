@@ -148,7 +148,7 @@ namespace ORB_SLAM3
                         }
                         else
                         {
-                            Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame, &mbAbortBA, mpCurrentKeyFrame->GetMap(), num_FixedKF_BA, num_OptKF_BA, num_MPs_BA, num_edges_BA);
+                            Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame, &mbAbortBA, mpCurrentKeyFrame->GetMap(), num_FixedKF_BA, num_OptKF_BA, num_MPs_BA, num_edges_BA, check_container);
                             b_doneLBA = true;
                         }
                     }
@@ -321,7 +321,7 @@ namespace ORB_SLAM3
                     if (!pMP->IsInKeyFrame(mpCurrentKeyFrame))
                     {
                         pMP->AddObservation(mpCurrentKeyFrame, i);
-                        pMP->UpdateNormalAndDepth();
+                        pMP->UpdateNormalAndDepth(check_container);
                         pMP->ComputeDistinctiveDescriptors();
                     }
                     else // this can only happen for new stereo points inserted by the Tracking
@@ -715,7 +715,7 @@ namespace ORB_SLAM3
 
                 pMP->ComputeDistinctiveDescriptors();
 
-                pMP->UpdateNormalAndDepth();
+                pMP->UpdateNormalAndDepth(check_container);
 
                 mpAtlas->AddMapPoint(pMP);
                 mlpRecentAddedMapPoints.push_back(pMP);
@@ -827,7 +827,7 @@ namespace ORB_SLAM3
                 if (!pMP->isBad())
                 {
                     pMP->ComputeDistinctiveDescriptors();
-                    pMP->UpdateNormalAndDepth();
+                    pMP->UpdateNormalAndDepth(check_container);
                 }
             }
         }
@@ -1151,7 +1151,7 @@ namespace ORB_SLAM3
             if (check_container.find(it) == check_container.end())
             {
                 cout << "Inside the for loop" << endl;
-                cout << it->mnId << endl;
+                // cout << it->mnId << endl;
 
                 check_container.insert(it);
                 delete it;
