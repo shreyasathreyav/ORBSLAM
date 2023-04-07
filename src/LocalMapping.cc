@@ -921,7 +921,7 @@ namespace ORB_SLAM3
         // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
         // in at least other 3 keyframes (in the same or finer scale)
         // We only consider close stereo points
-
+        // kid Buu => Majin Buu
         shared_lock lock(mpAtlas->mpCurrentMap->mMutexKFMPDeletion);
         // cout << "INside keyframecilling" << endl;
         const int Nd = 21;
