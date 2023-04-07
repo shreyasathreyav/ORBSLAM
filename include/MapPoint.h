@@ -140,6 +140,7 @@ namespace ORB_SLAM3
         }
 
         void ComputeDistinctiveDescriptors();
+        void ComputeDistinctiveDescriptors(set<KeyFrame *> &check_container);
 
         cv::Mat GetDescriptor();
         bool IsSafeToErase();

@@ -148,7 +148,7 @@ namespace ORB_SLAM3
                         }
                         else
                         {
-                            Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame, &mbAbortBA, mpCurrentKeyFrame->GetMap(), num_FixedKF_BA, num_OptKF_BA, num_MPs_BA, num_edges_BA);
+                            Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame, &mbAbortBA, mpCurrentKeyFrame->GetMap(), num_FixedKF_BA, num_OptKF_BA, num_MPs_BA, num_edges_BA, check_container);
                             b_doneLBA = true;
                         }
                     }
@@ -321,7 +321,7 @@ namespace ORB_SLAM3
                     if (!pMP->IsInKeyFrame(mpCurrentKeyFrame))
                     {
                         pMP->AddObservation(mpCurrentKeyFrame, i);
-                        pMP->UpdateNormalAndDepth();
+                        pMP->UpdateNormalAndDepth(check_container);
                         pMP->ComputeDistinctiveDescriptors();
                     }
                     else // this can only happen for new stereo points inserted by the Tracking
@@ -975,21 +975,21 @@ namespace ORB_SLAM3
                 if (pMP)
                 {
                     // phi
-                    // bool flag{false};
-                    // auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
+                    bool flag{false};
+                    auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
 
-                    // if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
-                    // {
-                    //     flag = true;
-                    //     cout << "Checker One " << flag << endl;
-                    // }
+                    if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
+                    {
+                        flag = true;
+                        cout << "Checker One " << flag << endl;
+                    }
 
-                    // if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
-                    // {
-                    //     flag = true;
-                    //     cout << "Checker Two"
-                    //          << "False" << endl;
-                    // }
+                    if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
+                    {
+                        flag = true;
+                        cout << "Checker Two"
+                             << "False" << endl;
+                    }
                     if (!pMP->isBad())
                     {
                         if (!mbMonocular)
