@@ -67,6 +67,8 @@ namespace ORB_SLAM3
             mpKFlowerID = pKF;
         }
         mspKeyFrames.insert(pKF);
+        pKF->del_holdermspKeyFrames.insert(&mspKeyFrames);
+
         if (pKF->mnId > mnMaxKFid)
         {
             mnMaxKFid = pKF->mnId;
@@ -81,6 +83,7 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexMap);
         mspMapPoints.insert(pMP);
+        pMP->del_holdermspMapPoints.insert(&mspMapPoints);
     }
 
     void Map::SetImuInitialized()
@@ -109,6 +112,7 @@ namespace ORB_SLAM3
 
             // This only erase the pointer
             mspMapPoints.erase(pMP);
+            pMP->del_holdermspMapPoints.insert(&mspMapPoints);
 
             AddToDeletionQueue(pMP);
         }
@@ -159,6 +163,7 @@ namespace ORB_SLAM3
 
             // This only erase the pointer
             mspKeyFrames.erase(pKF);
+            pKF->del_holdermspKeyFrames.erase(&mspKeyFrames);
 
             // This only erase the pointer
             // mspKeyFrames.erase(pKF);

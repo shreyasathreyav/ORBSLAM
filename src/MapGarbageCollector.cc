@@ -53,10 +53,10 @@ namespace ORB_SLAM3
 
                 //###############################
                 
-                if (!kf->del_holder.empty())
-                {
-                    cout << kf->del_holder.size() << endl;
-                }
+                // if (!kf->del_holder.empty())
+                // {
+                //     cout << kf->del_holder.size() << endl;
+                // }
 
                 //###############################
 
@@ -64,35 +64,48 @@ namespace ORB_SLAM3
 
                 //###############################
                 
-                // if (!kf->del_holder1.empty())
+                // if (!kf->del_holdermlnewKeyFrames.empty())
                 // {
-                //     cout << kf->del_holder1.size() << endl;
+                //     cout << kf->del_holdermlnewKeyFrames.size() << endl;
                 // }
 
 
                 //###############################
 
-                    // mspMapPoints
+                    // mspKeyFrames
 
                 //###############################
                 
-                // if (!kf->del_holder.empty())
+                // if (!kf->del_holdermspKeyFrames.empty())
                 // {
-                //     cout << kf->del_holdermspMapPoints.size() << endl;
+                    // cout << kf->del_holdermspKeyFrames.size() << endl;
                 // }
-
 
 
                 //###############################
 
-                    // mvpOrderedconnectedKeyFrames
+                    // mlpLoopKeyFrameQueue
 
                 //###############################
                 
-                // if (!kf->del_holder1.empty())
+                // if (!kf->del_holdermlpLoopKeyFrameQueue.empty())
                 // {
-                //     cout << kf->del_holder1.size() << endl;
+                //     cout << kf->del_holdermlpLoopKeyFrameQueue.size() << endl;
                 // }
+
+                //###############################
+
+                    // mvpOrderedConnectedKeyFrames
+
+                //###############################
+                
+                // if (!kf->del_holdermvpOrderedConnectedKeyFrames.empty())
+                // {
+                //     cout << kf->del_holdermvpOrderedConnectedKeyFrames.size() << endl;
+                // }
+
+
+
 
 
                 KFsLive->erase(kf);
@@ -111,10 +124,26 @@ namespace ORB_SLAM3
             return;
         }
 
-        cout << "log,MapGarbageCollector::DeleteMPs,deleted MPs: ";
+        // cout << "log,MapGarbageCollector::DeleteMPs,deleted MPs: ";
         for (auto it = MPsSnapshot.begin(); it != MPsSnapshot.end(); it++)
         {
             MapPoint *mp = *it;
+
+
+            
+            //###############################
+
+                //mvpMapPoints
+
+
+            //###############################
+                
+              
+                if (!mp->del_holdermvpMapPoints.empty())
+                {
+                    cout << mp->del_holdermvpMapPoints.size() << endl;
+                }
+
             // local_mapping_thread->mlpRecentAddedMapPoints.erase(mp->GetId());
             // if (mp->IsSafeToErase()) // Phi Seems unnessarsry
             {

@@ -306,6 +306,7 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexLoopQueue);
         if (pKF->mnId != 0)
             mlpLoopKeyFrameQueue.push_back(pKF);
+            pKF->del_holdermlpLoopKeyFrameQueue.insert(&mlpLoopKeyFrameQueue);
     }
 
     bool LoopClosing::CheckNewKeyFrames()
@@ -324,6 +325,7 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock(mMutexLoopQueue);
             mpCurrentKF = mlpLoopKeyFrameQueue.front();
             mlpLoopKeyFrameQueue.pop_front();
+            mpCurrentKF->del_holdermlpLoopKeyFrameQueue.erase(&mlpLoopKeyFrameQueue);
             // Avoid that a keyframe can be erased while it is being process by this thread
             mpCurrentKF->SetNotErase();
             mpCurrentKF->mbCurrentPlaceRecognition = true;

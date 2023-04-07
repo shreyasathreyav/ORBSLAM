@@ -284,7 +284,7 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexNewKFs);
         mlNewKeyFrames.push_back(pKF);
-        pKF->del_holder1.insert(&mlNewKeyFrames);
+        pKF->del_holdermlnewKeyFrames.insert(&mlNewKeyFrames);
         mbAbortBA = true;
     }
 
@@ -301,7 +301,7 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(mMutexNewKFs);
             mpCurrentKeyFrame = mlNewKeyFrames.front();
-            mpCurrentKeyFrame->del_holder1.erase(&mlNewKeyFrames);
+            mpCurrentKeyFrame->del_holdermlnewKeyFrames.erase(&mlNewKeyFrames);
             mlNewKeyFrames.pop_front();
         }
 
@@ -975,18 +975,18 @@ namespace ORB_SLAM3
                     bool flag{false};
                     auto itr = find(mpAtlas->mpCurrentMap->deletedObs.begin(), mpAtlas->mpCurrentMap->deletedObs.end(), pMP);
 
-                    if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
-                    {
-                        flag = true;
-                        cout << "Checker One " << flag << endl;
-                    }
+                    // if (itr != mpAtlas->mpCurrentMap->deletedObs.end())
+                    // {
+                    //     flag = true;
+                    //     cout << "Checker One " << flag << endl;
+                    // }
 
-                    if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
-                    {
-                        // flag = true;
-                        cout << "Checker Two"
-                             << "False" << endl;
-                    }
+                    // if (itr == mpAtlas->mpCurrentMap->deletedObs.end())
+                    // {
+                    //     // flag = true;
+                    //     cout << "Checker Two"
+                    //          << "False" << endl;
+                    // }
                     if (!pMP->isBad())
                     {
                         if (!mbMonocular)
@@ -1016,7 +1016,7 @@ namespace ORB_SLAM3
                                 int scaleLeveli = -1;
                                 if (pKFi->NLeft == -1)
                                 {
-                                    cout << pKFi->mnId <<endl;
+                                    // cout << pKFi->mnId <<endl;
                                     scaleLeveli = pKFi->mvKeysUn[leftIndex].octave;
                                 }
                                 else

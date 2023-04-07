@@ -312,15 +312,22 @@ public:
 public:
   void StageEraseForFuture();
   bool safeToErase();
-  // mobs
-  std::multiset<void *> del_holder;
-  //mlnewKeyFrames 
-  std::multiset<void *> del_holder1;
-  //mvpOrderedConnectedKeyFrames 
-  std::multiset<void *> del_holder2;
-
   //mspKeyFrames
   std::multiset<void *> del_holdermspKeyFrames;
+  //mlnewKeyFrames 
+  std::multiset<void *> del_holdermlnewKeyFrames;
+  //mvpKeyFrameOrigins
+  std::multiset<void *> del_holdermvpKeyFrameOrigins;
+  //mlpLoopKeyFrameQueue
+  std::multiset<void *> del_holdermlpLoopKeyFrameQueue;
+  //mvpOrderedConnectedKeyFrames
+  std::multiset<void *> del_holdermvpOrderedConnectedKeyFrames;
+  // mobs
+  std::multiset<void *> del_holder;
+
+
+
+
   
   static long unsigned int nNextId;
   long unsigned int mnId;

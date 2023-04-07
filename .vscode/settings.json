@@ -81,6 +81,9 @@
         "streambuf": "cpp",
         "string_view": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "regex": "cpp",
+        "queue": "cpp",
+        "*.ipp": "cpp"
     }
 }

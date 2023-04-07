@@ -192,6 +192,7 @@ namespace ORB_SLAM3
     {
         {
             unique_lock<mutex> lock(mMutexConnections);
+            pKF->del_holdermvpOrderedConnectedKeyFrames.insert(&mConnectedKeyFrameWeights);
             if (!mConnectedKeyFrameWeights.count(pKF))
                 mConnectedKeyFrameWeights[pKF] = weight;
             else if (mConnectedKeyFrameWeights[pKF] != weight)
@@ -299,22 +300,38 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFeatures);
         mvpMapPoints[idx] = pMP;
+        // pMP->del_holdermvpMapPoints.insert(&mvpMapPoints);
     }
 
     void KeyFrame::EraseMapPointMatch(const int &idx)
     {
         unique_lock<mutex> lock(mMutexFeatures);
+        if (mvpMapPoints[idx])
+        {
+            if (mvpMapPoints[idx]->del_holdermvpMapPoints.find(&mvpMapPoints) != mvpMapPoints[idx]->del_holdermvpMapPoints.end())
+            {
+                mvpMapPoints[idx]->del_holdermvpMapPoints.erase(&mvpMapPoints);
+            }
+        }
         mvpMapPoints[idx] = static_cast<MapPoint *>(NULL);
     }
 
     void KeyFrame::EraseMapPointMatch(MapPoint *pMP)
     {
+        if (pMP)
+        {
+            if (pMP->del_holdermvpMapPoints.find(&mvpMapPoints) != pMP->del_holdermvpMapPoints.end())
+            {
+                pMP->del_holdermvpMapPoints.erase(&mvpMapPoints);
+            }
+        }
         tuple<size_t, size_t> indexes = pMP->GetIndexInKeyFrame(this);
         size_t leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
         if (leftIndex != -1)
             mvpMapPoints[leftIndex] = static_cast<MapPoint *>(NULL);
         if (rightIndex != -1)
             mvpMapPoints[rightIndex] = static_cast<MapPoint *>(NULL);
+        // pMP->del_holdermvpMapPoints.erase(&mvpMapPoints);
     }
 
     void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
@@ -807,6 +824,7 @@ namespace ORB_SLAM3
         bool bUpdate = false;
         {
             unique_lock<mutex> lock(mMutexConnections);
+            pKF->del_holdermvpOrderedConnectedKeyFrames.erase(&mConnectedKeyFrameWeights);
             if (mConnectedKeyFrameWeights.count(pKF))
             {
                 mConnectedKeyFrameWeights.erase(pKF);

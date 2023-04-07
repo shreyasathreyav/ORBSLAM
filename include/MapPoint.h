@@ -108,6 +108,9 @@ namespace ORB_SLAM3
         MapPoint(const double invDepth, cv::Point2f uv_init, KeyFrame *pRefKF, KeyFrame *pHostKF, Map *pMap);
         MapPoint(const Eigen::Vector3f &Pos, Map *pMap, Frame *pFrame, const int &idxF);
 
+          //mvpMapPoints
+        std::multiset<void *> del_holdermvpMapPoints;
+
         void SetWorldPos(const Eigen::Vector3f &Pos);
         Eigen::Vector3f GetWorldPos();
 
@@ -159,6 +162,10 @@ namespace ORB_SLAM3
         void PostLoad(map<long unsigned int, KeyFrame *> &mpKFid, map<long unsigned int, MapPoint *> &mpMPid);
 
     public:
+
+        std::multiset<void *> del_holdermspMapPoints;
+
+
         long unsigned int mnId;
         static long unsigned int nNextId;
         long int mnFirstKFid;
