@@ -542,7 +542,10 @@ namespace ORB_SLAM3
         for (map<KeyFrame *, tuple<int, int>>::iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
         {
             KeyFrame *pKF = mit->first;
+            if(check_container.find(pKF) != check_container.end()){
 
+                continue;
+            }
             tuple<int, int> indexes = mit->second;
             int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
 

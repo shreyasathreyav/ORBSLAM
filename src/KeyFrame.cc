@@ -799,6 +799,7 @@ namespace ORB_SLAM3
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);
+        // cout << "This is inside the isBad function: "<< pKF->mnId << endl;
         return mbToBeErased || mbStagedEraseForFuture;
     }
 

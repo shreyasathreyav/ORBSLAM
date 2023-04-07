@@ -1516,6 +1516,10 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     for(int i=0, iend=vNeighKFs.size(); i<iend; i++)
     {
         KeyFrame* pKFi = vNeighKFs[i];
+        if(check_container.find(pKFi) != check_container.end()){
+
+            continue;
+        }
         pKFi->mnBALocalForKF = pKF->mnId;
         if(!pKFi->isBad() && pKFi->GetMap() == pCurrentMap)
             lLocalKeyFrames.push_back(pKFi);
@@ -1881,7 +1885,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
         MapPoint* pMP = *lit;
         g2o::VertexSBAPointXYZ* vPoint = static_cast<g2o::VertexSBAPointXYZ*>(optimizer.vertex(pMP->mnId+maxKFid+1));
         pMP->SetWorldPos(vPoint->estimate().cast<float>());
-        pMP->UpdateNormalAndDepth();
+        pMP->UpdateNormalAndDepth(check_container);
     }
 
     pMap->IncreaseChangeIndex();
