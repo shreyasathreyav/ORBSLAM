@@ -827,7 +827,7 @@ namespace ORB_SLAM3
                 if (!pMP->isBad())
                 {
                     pMP->ComputeDistinctiveDescriptors();
-                    pMP->UpdateNormalAndDepth();
+                    pMP->UpdateNormalAndDepth(check_container);
                 }
             }
         }
@@ -1053,6 +1053,8 @@ namespace ORB_SLAM3
                                 if (mit->first->mnId == 0)
                                     continue;
                                 // cout << pKFi->mnId <<endl;
+
+
                                 KeyFrame *pKFi = mit->first;
                                 if (pKFi == pKF)
                                     continue;
