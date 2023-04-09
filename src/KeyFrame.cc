@@ -671,6 +671,7 @@ void KeyFrame::SetBadFlag()
             mTcp = mTcw * mpParent->GetPoseInverse();
         }
         mbBad = true;
+        // delete this;
     }
 
 

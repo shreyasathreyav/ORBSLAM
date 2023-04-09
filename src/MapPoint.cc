@@ -360,6 +360,8 @@ void MapPoint::ComputeDistinctiveDescriptors()
                 vDescriptors.push_back(pKF->mDescriptors.row(rightIndex));
             }
         }
+        // else
+        // cout << "mObservation is corrupting" << endl;
     }
 
     if(vDescriptors.empty())

@@ -942,7 +942,11 @@ void LocalMapping::KeyFrameCulling()
         KeyFrame* pKF = *vit;
 
         if((pKF->mnId==pKF->GetMap()->GetInitKFid()) || pKF->isBad())
+        {
+            if(pKF->isBad())
+            // cout << "mvpOrderedConnectedKeyFrames is corrupting" << endl; 
             continue;
+        }
         const vector<MapPoint*> vpMapPoints = pKF->GetMapPointMatches();
 
         int nObs = 3;

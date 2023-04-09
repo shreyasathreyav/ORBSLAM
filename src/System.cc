@@ -608,6 +608,7 @@ void System::SaveTrajectoryTUM(const string &filename)
         // If the reference keyframe was culled, traverse the spanning tree to get a suitable keyframe.
         while(pKF->isBad())
         {
+            cout << "Reference keyframe is corruptiong" << endl;
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
         }
@@ -646,7 +647,10 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
        // pKF->SetPose(pKF->GetPose()*Two);
 
         if(pKF->isBad())
+        {
+            // cout << "mspKeyframes is corrupting" <<endl;
             continue;
+        }
 
         Sophus::SE3f Twc = pKF->GetPoseInverse();
         Eigen::Quaternionf q = Twc.unit_quaternion();
@@ -736,7 +740,7 @@ void System::SaveTrajectoryEuRoC(const string &filename)
 
         while(pKF->isBad())
         {
-            //cout << " 2.bad" << endl;
+            cout << " mlpReferences id corrupting" << endl;
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
             //cout << "--Parent KF: " << pKF->mnId << endl;
@@ -841,7 +845,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 
         while(pKF->isBad())
         {
-            //cout << " 2.bad" << endl;
+            cout << " mlpReferences is corrupting" << endl;
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
             //cout << "--Parent KF: " << pKF->mnId << endl;
@@ -1092,7 +1096,11 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
        // pKF->SetPose(pKF->GetPose()*Two);
 
         if(!pKF || pKF->isBad())
+        {
+            if(pKF->isBad())
+            // cout << "mspkeyframes is corrupting" << endl;
             continue;
+        }
         if (mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor==IMU_RGBD)
         {
             Sophus::SE3f Twb = pKF->GetImuPose();
@@ -1130,7 +1138,11 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
         KeyFrame* pKF = vpKFs[i];
 
         if(!pKF || pKF->isBad())
+        {
+            if(pKF->isBad())
+            // cout << "mspkeyframes is corruptiing" << endl;
             continue;
+        }
         if (mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor==IMU_RGBD)
         {
             Sophus::SE3f Twb = pKF->GetImuPose();
@@ -1243,6 +1255,7 @@ void System::SaveTrajectoryKITTI(const string &filename)
 
         while(pKF->isBad())
         {
+            cout << "reference is corruupting" << endl;
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
         }

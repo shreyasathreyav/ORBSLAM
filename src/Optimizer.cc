@@ -117,7 +117,10 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     {
         KeyFrame* pKF = vpKFs[i];
         if(pKF->isBad())
+        {
+            // cout << "mspKeyFrames is corrupting" << endl;
             continue;
+        }
         g2o::VertexSE3Expmap * vSE3 = new g2o::VertexSE3Expmap();
         Sophus::SE3<float> Tcw = pKF->GetPose();
         vSE3->setEstimate(g2o::SE3Quat(Tcw.unit_quaternion().cast<double>(),Tcw.translation().cast<double>()));
@@ -152,7 +155,10 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
         {
             KeyFrame* pKF = mit->first;
             if(pKF->isBad() || pKF->mnId>maxKFid)
+            {
+                // cout << "mObservation is corrupting" << endl;
                 continue;
+            }
             if(optimizer.vertex(id) == NULL || optimizer.vertex(pKF->mnId) == NULL)
                 continue;
             nEdges++;
@@ -286,7 +292,10 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     {
         KeyFrame* pKF = vpKFs[i];
         if(pKF->isBad())
+        {
+            // cout << "mspKeyFrames id corrupting" << endl;
             continue;
+        }
         g2o::VertexSE3Expmap* vSE3 = static_cast<g2o::VertexSE3Expmap*>(optimizer.vertex(pKF->mnId));
 
         g2o::SE3Quat SE3quat = vSE3->estimate();
@@ -1534,7 +1543,10 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     {
         KeyFrame* pKF = vpKFs[i];
         if(pKF->isBad())
+        {
+            // cout << "mspKeyFrames id corrupting" << endl;
             continue;
+        }
         g2o::VertexSim3Expmap* VSim3 = new g2o::VertexSim3Expmap();
 
         const int nIDi = pKF->mnId;
@@ -3645,7 +3657,11 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         {
             KeyFrame* pKF = mit->first;
             if(pKF->isBad() || pKF->mnId>maxKFid || pKF->mnBALocalForMerge != pMainKF->mnId || !pKF->GetMapPoint(get<0>(mit->second)))
+            {
+                if(pKF->isBad())
+                // cout << "Observations is corrupting" << endl;
                 continue;
+            }
 
             nEdges++;
 
@@ -3845,7 +3861,11 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         {
             KeyFrame* pKF = mit->first;
             if(pKF->isBad() || pKF->mnId>maxKFid || pKF->mnBALocalForKF != pMainKF->mnId || !pKF->GetMapPoint(get<0>(mit->second)))
+            {
+                if(pKF->isBad())
+                // cout << "Observations is corrupting" <<endl;
                 continue;
+            }
 
             if(pKF->mvuRight[get<0>(mit->second)]<0) //Monocular
             {
@@ -5323,7 +5343,10 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
     {
         KeyFrame* pKF = vpKFs[i];
         if(pKF->isBad())
+        {
+            // cout << "msp keyframes is corrupting" <<endl;
             continue;
+        }
 
         VertexPose4DoF* V4DoF;
 

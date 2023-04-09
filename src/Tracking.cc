@@ -3516,7 +3516,10 @@ void Tracking::UpdateLocalKeyFrames()
         KeyFrame* pKF = it->first;
 
         if(pKF->isBad())
+        {
+            // cout << "keyframes counter is corrupting" <<endl;
             continue;
+        }
 
         if(it->second>max)
         {
@@ -3642,7 +3645,10 @@ bool Tracking::Relocalization()
     {
         KeyFrame* pKF = vpCandidateKFs[i];
         if(pKF->isBad())
+        {
+            cout << "candidate KF database is corrupting" <<endl;
             vbDiscarded[i] = true;
+        }
         else
         {
             int nmatches = matcher.SearchByBoW(pKF,mCurrentFrame,vvpMapPointMatches[i]);
@@ -3992,6 +3998,7 @@ void Tracking::UpdateFrameIMU(const float s, const IMU::Bias &b, KeyFrame* pCurr
 
         while(pKF->isBad())
         {
+            cout << "references is corrupting " <<endl;
             pKF = pKF->GetParent();
         }
 
