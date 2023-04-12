@@ -197,6 +197,8 @@ public:
     KeyFrame();
     KeyFrame(Frame &F, Map* pMap, KeyFrameDatabase* pKFDB);
 
+    std::mutex mMutexreferencecount;
+
     // Pose functions
     void SetPose(const Sophus::SE3f &Tcw);
     void SetVelocity(const Eigen::Vector3f &Vw_);
@@ -307,7 +309,7 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
-
+    int mreferececount;
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;

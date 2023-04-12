@@ -189,7 +189,7 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
     if(!pActiveMap)
         return;
 
-    const vector<KeyFrame*> vpKFs = pActiveMap->GetAllKeyFrames();
+    vector<KeyFrame*> vpKFs = pActiveMap->GetAllKeyFrames();
 
     if(bDrawKF)
     {
@@ -391,7 +391,18 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
 
                 glPopMatrix();
             }
+            for(auto i:vpKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mreferececount--;
+            }
         }
+    }
+    
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mreferececount--;
     }
 }
 

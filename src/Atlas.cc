@@ -322,7 +322,7 @@ void Atlas::PreSave()
         if(!pMi || pMi->IsBad())
             continue;
 
-        if(pMi->GetAllKeyFrames().size() == 0) {
+        if(pMi->GetAllKeyFrames(true).size() == 0) {
             // Empty map, erase before of save it.
             SetMapBad(pMi);
             continue;
@@ -346,7 +346,7 @@ void Atlas::PostLoad()
     {
         mspMaps.insert(pMi);
         pMi->PostLoad(mpKeyFrameDB, mpORBVocabulary, mpCams);
-        numKF += pMi->GetAllKeyFrames().size();
+        numKF += pMi->GetAllKeyFrames(true).size();
         numMP += pMi->GetAllMapPoints().size();
     }
     mvpBackupMaps.clear();
@@ -378,7 +378,7 @@ long unsigned int Atlas::GetNumLivedKF()
     long unsigned int num = 0;
     for(Map* pMap_i : mspMaps)
     {
-        num += pMap_i->GetAllKeyFrames().size();
+        num += pMap_i->GetAllKeyFrames(true).size();
     }
 
     return num;
@@ -405,8 +405,12 @@ map<long unsigned int, KeyFrame*> Atlas::GetAtlasKeyframes()
         {
             mpIdKFs[pKF_j_Mi->mnId] = pKF_j_Mi;
         }
+        for(auto i: vpKFs_Mi)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mreferececount--;
+        }
     }
-
     return mpIdKFs;
 }
 
