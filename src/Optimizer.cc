@@ -57,7 +57,7 @@ void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopF
     for(auto i:vpKFs)
     {
         unique_lock<mutex> lock(i->mMutexreferencecount);
-        i->mreferececount--;
+        i->mReferencecount--;
     }
 }
 
@@ -483,7 +483,14 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
     if(bFixLocal)
     {
         if(nNonFixed<3)
+        {
+            for(auto i:vpKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount--;
+            }
             return;
+        }
     }
 
     // IMU links
@@ -735,7 +742,14 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
 
     if(pbStopFlag)
         if(*pbStopFlag)
+        {
+            for(auto i:vpKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount--;
+            }
             return;
+        }
 
 
     optimizer.initializeOptimization();
@@ -826,7 +840,7 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
     for(auto i:vpKFs)
     {
         unique_lock<mutex> lock(i->mMutexreferencecount);
-        i->mreferececount--;
+        i->mReferencecount--;
     }
 }
 
@@ -1800,6 +1814,11 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
 
         pMP->UpdateNormalAndDepth();
     }
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 
     // TODO Check this changeindex
     pMap->IncreaseChangeIndex();
@@ -1808,6 +1827,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
 void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFixedKFs, vector<KeyFrame*> &vpFixedCorrectedKFs,
                                        vector<KeyFrame*> &vpNonFixedKFs, vector<MapPoint*> &vpNonCorrectedMPs)
 {
+
     Verbose::PrintMess("Opt_Essential: There are " + to_string(vpFixedKFs.size()) + " KFs fixed in the merged map", Verbose::VERBOSITY_DEBUG);
     Verbose::PrintMess("Opt_Essential: There are " + to_string(vpFixedCorrectedKFs.size()) + " KFs fixed in the old map", Verbose::VERBOSITY_DEBUG);
     Verbose::PrintMess("Opt_Essential: There are " + to_string(vpNonFixedKFs.size()) + " KFs non-fixed in the merged map", Verbose::VERBOSITY_DEBUG);
@@ -1938,6 +1958,12 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
     vpKFs.insert(vpKFs.end(),vpFixedCorrectedKFs.begin(),vpFixedCorrectedKFs.end());
     vpKFs.insert(vpKFs.end(),vpNonFixedKFs.begin(),vpNonFixedKFs.end());
     set<KeyFrame*> spKFs(vpKFs.begin(), vpKFs.end());
+
+    for(auto itr: vpNonFixedKFs)
+    {
+        unique_lock<mutex> lock(itr->mMutexreferencecount);
+        itr->mReferencecount++;
+    }
 
     const Eigen::Matrix<double,7,7> matLambda = Eigen::Matrix<double,7,7>::Identity();
 
@@ -2132,6 +2158,12 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
             cout << "ERROR: MapPoint has a reference KF from another map" << endl;
         }
 
+    }
+
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
     }
 }
 
@@ -3244,6 +3276,12 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
 
 
     }
+
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 
@@ -3407,6 +3445,12 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Vector3d &bg, Eigen::Vect
         else
             pKFi->SetNewBias(b);
     }
+
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &scale)
@@ -3516,6 +3560,11 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     // Recover optimized data
     scale = VS->estimate();
     Rwg = VGDir->estimate().Rwg;
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdjustKF, vector<KeyFrame*> vpFixedKF, bool *pbStopFlag)
@@ -5619,6 +5668,11 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
         pMP->UpdateNormalAndDepth();
     }
     pMap->IncreaseChangeIndex();
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 } //namespace ORB_SLAM

@@ -394,7 +394,7 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
             for(auto i:vpKFs)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mreferececount--;
+                i->mReferencecount--;
             }
         }
     }
@@ -402,7 +402,7 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
     for(auto i:vpKFs)
     {
         unique_lock<mutex> lock(i->mMutexreferencecount);
-        i->mreferececount--;
+        i->mReferencecount--;
     }
 }
 

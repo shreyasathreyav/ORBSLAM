@@ -67,7 +67,10 @@ void Map::AddKeyFrame(KeyFrame *pKF)
         mpKFlowerID = pKF;
     }
     //adding reference counting 
-    pKF->mreferececount++;
+    {
+        unique_lock<mutex> lock(pKF->mMutexreferencecount);
+        pKF->mReferencecount++;
+    }
     mspKeyFrames.insert(pKF);
     if(pKF->mnId>mnMaxKFid)
     {
@@ -109,7 +112,10 @@ void Map::EraseMapPoint(MapPoint *pMP)
 void Map::EraseKeyFrame(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutexMap);
-    pKF->mreferececount--;
+    {
+        unique_lock<mutex> lock(pKF->mMutexreferencecount);
+        pKF->mReferencecount--;
+    }
     mspKeyFrames.erase(pKF);
     if(mspKeyFrames.size()>0)
     {
@@ -154,7 +160,7 @@ vector<KeyFrame*> Map::GetAllKeyFrames()
     for(auto itr: mspKeyFrames)
     {
         unique_lock<mutex> lock(itr->mMutexreferencecount);
-        itr->mreferececount++;
+        itr->mReferencecount++;
     }
     return vector<KeyFrame*>(mspKeyFrames.begin(),mspKeyFrames.end());
 }
@@ -165,7 +171,7 @@ vector<KeyFrame*> Map::GetAllKeyFrames(bool flag)
     //phi
     // for(auto itr: mspKeyFrames)
     // {
-    //     itr->mreferececount++;
+    //     itr->mReferencecount++;
     // }
     return vector<KeyFrame*>(mspKeyFrames.begin(),mspKeyFrames.end());
 }

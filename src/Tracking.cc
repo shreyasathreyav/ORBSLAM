@@ -215,7 +215,7 @@ void Tracking::TrackStats2File()
     ofstream f;
     f.open("SessionInfo.txt");
     f << fixed;
-    f << "Number of KFs: " << mpAtlas->GetAllKeyFrames().size() << endl;
+    f << "Number of KFs: " << mpAtlas->GetAllKeyFrames(true).size() << endl;
     f << "Number of MPs: " << mpAtlas->GetAllMapPoints().size() << endl;
 
     f << "OpenCV version: " << CV_VERSION << endl;
@@ -406,7 +406,7 @@ void Tracking::PrintTimeStats()
     // Map complexity
     std::cout << "---------------------------" << std::endl;
     std::cout << std::endl << "Map complexity" << std::endl;
-    std::cout << "KFs in map: " << mpAtlas->GetAllKeyFrames().size() << std::endl;
+    std::cout << "KFs in map: " << mpAtlas->GetAllKeyFrames(true).size() << std::endl;
     std::cout << "MPs in map: " << mpAtlas->GetAllMapPoints().size() << std::endl;
     f << "---------------------------" << std::endl;
     f << std::endl << "Map complexity" << std::endl;
@@ -414,13 +414,13 @@ void Tracking::PrintTimeStats()
     Map* pBestMap = vpMaps[0];
     for(int i=1; i<vpMaps.size(); ++i)
     {
-        if(pBestMap->GetAllKeyFrames().size() < vpMaps[i]->GetAllKeyFrames().size())
+        if(pBestMap->GetAllKeyFrames(true).size() < vpMaps[i]->GetAllKeyFrames(true).size())
         {
             pBestMap = vpMaps[i];
         }
     }
 
-    f << "KFs in map: " << pBestMap->GetAllKeyFrames().size() << std::endl;
+    f << "KFs in map: " << pBestMap->GetAllKeyFrames(true).size() << std::endl;
     f << "MPs in map: " << pBestMap->GetAllMapPoints().size() << std::endl;
 
     f << "---------------------------" << std::endl;
@@ -2656,6 +2656,11 @@ void Tracking::CreateInitialMapMonocular()
     mState=OK;
 
     initID = pKFcur->mnId;
+    for(auto i:vKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 
@@ -3517,6 +3522,7 @@ void Tracking::UpdateLocalKeyFrames()
 
         if(pKF->isBad())
         {
+            cout << pKF->mReferencecount << " RF" << endl; 
             // cout << "keyframes counter is corrupting" <<endl;
             continue;
         }
@@ -3890,7 +3896,7 @@ void Tracking::ResetActiveMap(bool bLocMap)
     cout << "mnFirstFrameId = " << mnFirstFrameId << endl;
     for(Map* pMap : mpAtlas->GetAllMaps())
     {
-        if(pMap->GetAllKeyFrames().size() > 0)
+        if(pMap->GetAllKeyFrames(true).size() > 0)
         {
             if(index > pMap->GetLowerKFID())
                 index = pMap->GetLowerKFID();

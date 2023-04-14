@@ -193,6 +193,11 @@ std::vector<KeyFrame*> Atlas::GetAllKeyFrames()
     unique_lock<mutex> lock(mMutexAtlas);
     return mpCurrentMap->GetAllKeyFrames();
 }
+std::vector<KeyFrame*> Atlas::GetAllKeyFrames(bool flag)
+{
+    unique_lock<mutex> lock(mMutexAtlas);
+    return mpCurrentMap->GetAllKeyFrames(flag);
+}
 
 std::vector<MapPoint*> Atlas::GetAllMapPoints()
 {
@@ -408,7 +413,7 @@ map<long unsigned int, KeyFrame*> Atlas::GetAtlasKeyframes()
         for(auto i: vpKFs_Mi)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mreferececount--;
+            i->mReferencecount--;
         }
     }
     return mpIdKFs;

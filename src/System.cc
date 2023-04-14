@@ -625,6 +625,11 @@ void System::SaveTrajectoryTUM(const string &filename)
     }
     f.close();
     // cout << endl << "trajectory saved!" << endl;
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 void System::SaveKeyFrameTrajectoryTUM(const string &filename)
@@ -661,6 +666,11 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
     }
 
     f.close();
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 void System::SaveTrajectoryEuRoC(const string &filename)
@@ -680,9 +690,9 @@ void System::SaveTrajectoryEuRoC(const string &filename)
     for(Map* pMap :vpMaps)
     {
         std::cout << "  Map " << std::to_string(pMap->GetId()) << " has " << std::to_string(pMap->GetAllKeyFrames().size()) << " KFs" << std::endl;
-        if(pMap->GetAllKeyFrames().size() > numMaxKFs)
+        if(pMap->GetAllKeyFrames(true).size() > numMaxKFs)
         {
-            numMaxKFs = pMap->GetAllKeyFrames().size();
+            numMaxKFs = pMap->GetAllKeyFrames(true).size();
             pBiggerMap = pMap;
         }
     }
@@ -778,6 +788,12 @@ void System::SaveTrajectoryEuRoC(const string &filename)
     //cout << "end saving trajectory" << endl;
     f.close();
     cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
+
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
@@ -883,6 +899,11 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
     //cout << "end saving trajectory" << endl;
     f.close();
     cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 /*void System::SaveTrajectoryEuRoC(const string &filename)
@@ -1067,9 +1088,9 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
     int numMaxKFs = 0;
     for(Map* pMap :vpMaps)
     {
-        if(pMap && pMap->GetAllKeyFrames().size() > numMaxKFs)
+        if(pMap && pMap->GetAllKeyFrames(true).size() > numMaxKFs)
         {
-            numMaxKFs = pMap->GetAllKeyFrames().size();
+            numMaxKFs = pMap->GetAllKeyFrames(true).size();
             pBiggerMap = pMap;
         }
     }
@@ -1118,6 +1139,11 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
         }
     }
     f.close();
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
@@ -1160,6 +1186,11 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
         }
     }
     f.close();
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 /*void System::SaveTrajectoryKITTI(const string &filename)
@@ -1272,6 +1303,11 @@ void System::SaveTrajectoryKITTI(const string &filename)
              Rwc(2,0) << " " << Rwc(2,1)  << " " << Rwc(2,2) << " "  << twc(2) << endl;
     }
     f.close();
+    for(auto i:vpKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount--;
+    }
 }
 
 

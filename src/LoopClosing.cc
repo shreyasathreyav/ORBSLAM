@@ -1760,7 +1760,7 @@ namespace ORB_SLAM3
         for (auto i : vpCurrentMapKFs)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mreferececount--;
+            i->mReferencecount--;
         }
     }
 
@@ -1901,13 +1901,13 @@ namespace ORB_SLAM3
             for (auto i : vpKFs)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mreferececount--;
+                i->mReferencecount--;
             }
 
             for (auto i : vpMergeMapKFs)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mreferececount--;
+                i->mReferencecount--;
             }
         }
 
