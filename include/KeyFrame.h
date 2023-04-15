@@ -314,6 +314,7 @@ public:
     // mvpOrderedConnectedKeyFrames
     long unsigned int mReferencecount_ockf;
     //
+    long unsigned int mReferencecount_mob;
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;
