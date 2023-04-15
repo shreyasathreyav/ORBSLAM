@@ -3525,9 +3525,9 @@ namespace ORB_SLAM3
         {
             KeyFrame *pKF = it->first;
 
-            if (pKF->isBad())
+            if(pKF->isBad())
             {
-                // cout << pKF->mReferencecount << " RF" << endl;
+                cout << pKF->mnId << " : Reference " << pKF->mReferencecount_ockf << " RF" << endl; 
                 // cout << "keyframes counter is corrupting" <<endl;
                 continue;
             }
@@ -3537,7 +3537,6 @@ namespace ORB_SLAM3
                 max = it->second;
                 pKFmax = pKF;
             }
-
             mvpLocalKeyFrames.push_back(pKF);
             pKF->mnTrackReferenceForFrame = mCurrentFrame.mnId;
         }

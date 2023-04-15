@@ -512,12 +512,22 @@ namespace ORB_SLAM3
 
         if (mbMergeDetected || mbLoopDetected)
         {
+            for(auto i:vpConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount_ockf--;
+            }
             return true;
         }
 
         mpCurrentKF->SetErase();
         mpCurrentKF->mbCurrentPlaceRecognition = false;
 
+        for(auto i:vpConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount_ockf--;
+        }
         return false;
     }
 
@@ -864,6 +874,11 @@ namespace ORB_SLAM3
             vpMPs = vpBestMapPoints;
             vpMatchedMPs = vpBestMatchedMapPoints;
 
+            for(auto i:spConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount_ockf--;
+            }
             return nNumCoincidences >= 3;
         }
         else
@@ -879,9 +894,16 @@ namespace ORB_SLAM3
                 }
             }
         }
+
+        for(auto i:spConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount_ockf--;
+        }
         return false;
     }
 
+    //
     bool LoopClosing::DetectCommonRegionsFromLastKF(KeyFrame *pCurrentKF, KeyFrame *pMatchedKF, g2o::Sim3 &gScw, int &nNumProjMatches,
                                                     std::vector<MapPoint *> &vpMPs, std::vector<MapPoint *> &vpMatchedMPs)
     {
@@ -993,6 +1015,7 @@ namespace ORB_SLAM3
         // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation
         mvpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
         mvpCurrentConnectedKFs.push_back(mpCurrentKF);
+        mpCurrentKF->mReferencecount_ockf++;
 
         // std::cout << "Loop: number of connected KFs -> " + to_string(mvpCurrentConnectedKFs.size()) << std::endl;
 
@@ -1143,6 +1166,13 @@ namespace ORB_SLAM3
             {
                 LoopConnections[pKFi].erase(*vit2);
             }
+
+            for(auto i:vpPreviousNeighbors)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
+
         }
 
         // Optimize graph
@@ -1195,6 +1225,12 @@ namespace ORB_SLAM3
         mpLocalMapper->Release();
 
         mLastLoopKFid = mpCurrentKF->mnId; // TODO old varible, it is not use in the new algorithm
+
+        for(auto i:mvpCurrentConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     void LoopClosing::MergeLocal()

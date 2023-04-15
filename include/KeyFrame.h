@@ -227,6 +227,7 @@ public:
     void UpdateBestCovisibles();
     std::set<KeyFrame *> GetConnectedKeyFrames();
     std::vector<KeyFrame* > GetVectorCovisibleKeyFrames();
+    std::vector<KeyFrame* > GetVectorCovisibleKeyFrames(bool flag);
     std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N);
     std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w);
     int GetWeight(KeyFrame* pKF);
@@ -311,7 +312,7 @@ public:
 public:
     // MSPKEYFRAMES
     long unsigned int mReferencecount;
-    // mvpOrderedConnectedKeyFrames
+    // mvpOrderedConnectedKeyFrames`
     long unsigned int mReferencecount_ockf;
     //mConnectedKeyFrameWeights
     long unsigned int mReferencecount_ckfw;

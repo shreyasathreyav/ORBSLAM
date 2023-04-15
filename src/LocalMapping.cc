@@ -1054,6 +1054,11 @@ void LocalMapping::KeyFrameCulling()
             break;
         }
     }
+    for(auto i:vpLocalKeyFrames)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i->mReferencecount_ockf--;
+    }
 }
 
 void LocalMapping::RequestReset()
