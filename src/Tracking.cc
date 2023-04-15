@@ -2656,12 +2656,12 @@ void Tracking::CreateInitialMapMonocular()
     mState=OK;
 
     initID = pKFcur->mnId;
-    for(auto i:vKFs)
-    {
-        unique_lock<mutex> lock(i->mMutexreferencecount);
-        i->mReferencecount--;
-    }
-}
+//     for(auto i:vKFs)
+//     {
+//         unique_lock<mutex> lock(i->mMutexreferencecount);
+//         i->mReferencecount--;
+//     }
+// }
 
 
 void Tracking::CreateMapInAtlas()
