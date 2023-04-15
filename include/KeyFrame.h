@@ -313,11 +313,9 @@ public:
     long unsigned int mReferencecount;
     // mvpOrderedConnectedKeyFrames
     long unsigned int mReferencecount_ockf;
-    //
-    long unsigned int mReferencecount_tester_zhartov; // To be removed after experiment
     //mConnectedKeyFrameWeights
     long unsigned int mReferencecount_ckfw;
-    //mObservation 
+    //mObservations
     long unsigned int mReferencecount_mob;
     static long unsigned int nNextId;
     long unsigned int mnId;
