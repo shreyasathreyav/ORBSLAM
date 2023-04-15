@@ -140,7 +140,8 @@ Sophus::SE3f KeyFrame::GetPoseInverse()
     return mTwc;
 }
 
-Eigen::Vector3f KeyFrame::GetCameraCenter(){
+Eigen::Vector3f KeyFrame::GetCameraCenter()
+{
     unique_lock<mutex> lock(mMutexPose);
     return mTwc.translation();
 }
