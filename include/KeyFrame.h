@@ -310,8 +310,10 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
+    // Global reference count
+    long unsigned int mReferencecount; 
     // MSPKEYFRAMES
-    long unsigned int mReferencecount;
+    long unsigned int mReferencecount_msp;
     // mvpOrderedConnectedKeyFrames`
     long unsigned int mReferencecount_ockf;
     //mConnectedKeyFrameWeights

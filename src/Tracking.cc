@@ -2665,8 +2665,11 @@ namespace ORB_SLAM3
         initID = pKFcur->mnId;
         for (auto i : vKFs)
         {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount--;
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount--;
+                i->mReferencecount_msp--;
+            }
         }
     }
 
@@ -3525,9 +3528,9 @@ namespace ORB_SLAM3
         {
             KeyFrame *pKF = it->first;
 
-            if(pKF->isBad())
+            if (pKF->isBad())
             {
-                cout << pKF->mnId << " : Reference " << pKF->mReferencecount_ockf << " RF" << endl; 
+                cout << pKF->mnId << " : Reference " << pKF->mReferencecount_ockf << " RF" << endl;
                 // cout << "keyframes counter is corrupting" <<endl;
                 continue;
             }

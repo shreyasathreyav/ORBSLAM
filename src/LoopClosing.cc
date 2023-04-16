@@ -512,7 +512,7 @@ namespace ORB_SLAM3
 
         if (mbMergeDetected || mbLoopDetected)
         {
-            for(auto i:vpConnectedKeyFrames)
+            for (auto i : vpConnectedKeyFrames)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount_ockf--;
@@ -523,7 +523,7 @@ namespace ORB_SLAM3
         mpCurrentKF->SetErase();
         mpCurrentKF->mbCurrentPlaceRecognition = false;
 
-        for(auto i:vpConnectedKeyFrames)
+        for (auto i : vpConnectedKeyFrames)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf--;
@@ -874,7 +874,7 @@ namespace ORB_SLAM3
             vpMPs = vpBestMapPoints;
             vpMatchedMPs = vpBestMatchedMapPoints;
 
-            for(auto i:spConnectedKeyFrames)
+            for (auto i : spConnectedKeyFrames)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount_ockf--;
@@ -895,7 +895,7 @@ namespace ORB_SLAM3
             }
         }
 
-        for(auto i:spConnectedKeyFrames)
+        for (auto i : spConnectedKeyFrames)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf--;
@@ -1167,12 +1167,11 @@ namespace ORB_SLAM3
                 LoopConnections[pKFi].erase(*vit2);
             }
 
-            for(auto i:vpPreviousNeighbors)
+            for (auto i : vpPreviousNeighbors)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
-                i -> mReferencecount_ockf--;
+                i->mReferencecount_ockf--;
             }
-
         }
 
         // Optimize graph
@@ -1226,10 +1225,10 @@ namespace ORB_SLAM3
 
         mLastLoopKFid = mpCurrentKF->mnId; // TODO old varible, it is not use in the new algorithm
 
-        for(auto i:mvpCurrentConnectedKFs)
+        for (auto i : mvpCurrentConnectedKFs)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
-            i -> mReferencecount_ockf--;
+            i->mReferencecount_ockf--;
         }
     }
 
@@ -1795,8 +1794,12 @@ namespace ORB_SLAM3
 
         for (auto i : vpCurrentMapKFs)
         {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount--;
+
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount--;
+                i->mReferencecount_msp--;
+            }
         }
     }
 
@@ -1936,14 +1939,20 @@ namespace ORB_SLAM3
 
             for (auto i : vpKFs)
             {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount--;
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i->mReferencecount--;
+                    i->mReferencecount_msp--;
+                }
             }
 
             for (auto i : vpMergeMapKFs)
             {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount--;
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i->mReferencecount--;
+                    i->mReferencecount_msp--;
+                }
             }
         }
 

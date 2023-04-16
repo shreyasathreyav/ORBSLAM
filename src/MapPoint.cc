@@ -151,6 +151,7 @@ namespace ORB_SLAM3
         {
             {
                 unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                pKF->mReferencecount++;
                 pKF->mReferencecount_mob++;
             }
             indexes = tuple<int, int>(-1, -1);
@@ -198,6 +199,7 @@ namespace ORB_SLAM3
                 mObservations.erase(pKF);
                 {
                     unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                    pKF->mReferencecount--;
                     pKF->mReferencecount_mob--;
                 }
 
@@ -234,6 +236,25 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock2(mMutexPos);
             mbBad = true;
             obs = mObservations;
+
+            // This is addition for obs
+            for (auto it : obs)
+            {
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount++;
+                it.first->mReferencecount_mob++;
+            }
+
+            // This is subtraction for mObservations
+            for (auto it : mObservations)
+            {
+                {
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
+                }
+            }
+
             mObservations.clear();
         }
         for (map<KeyFrame *, tuple<int, int>>::iterator mit = obs.begin(), mend = obs.end(); mit != mend; mit++)
