@@ -4455,6 +4455,7 @@ namespace ORB_SLAM3
                     }
                 }
             }
+            
             for (auto it : observations)
             {
 
