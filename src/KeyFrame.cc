@@ -221,8 +221,18 @@ void KeyFrame::UpdateBestCovisibles()
             lWs.push_front(vPairs[i].first);
         }
     }
+    
+    if(!mvpOrderedConnectedKeyFrames.empty())
+    {
+        for(auto itr: mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+        }
+    }
 
     mvpOrderedConnectedKeyFrames = vector<KeyFrame*>(lKFs.begin(),lKFs.end());
+    
     for(auto itr: mvpOrderedConnectedKeyFrames)
     {
         unique_lock<mutex> lock(itr->mMutexreferencecount);
@@ -494,7 +504,19 @@ void KeyFrame::UpdateConnections(bool upParent)
         unique_lock<mutex> lockCon(mMutexConnections);
 
         mConnectedKeyFrameWeights = KFcounter;
+
+        if(!mvpOrderedConnectedKeyFrames.empty())
+        {
+            for(auto itr: mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_ockf--;
+            }
+        }
+
         mvpOrderedConnectedKeyFrames = vector<KeyFrame*>(lKFs.begin(),lKFs.end());
+        
+        
         for(auto itr: mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
@@ -646,7 +668,7 @@ void KeyFrame::SetBadFlag()
         for(auto i:mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount_ockf =0;
+            i->mReferencecount_ockf--;
         }
         mvpOrderedConnectedKeyFrames.clear();
 

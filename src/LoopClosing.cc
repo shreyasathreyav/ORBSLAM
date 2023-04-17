@@ -262,9 +262,14 @@ namespace ORB_SLAM3
                             std::chrono::steady_clock::time_point time_StartLoop = std::chrono::steady_clock::now();
 
                             nLoop += 1;
-
+                            
 #endif
+                            
+                            // cout <<" Size Before" << mvpCurrentConnectedKFs.size() << endl;
                             CorrectLoop();
+                            // cout <<" Size After" << mvpCurrentConnectedKFs.size() << endl;
+
+
 #ifdef REGISTER_TIMES
                             std::chrono::steady_clock::time_point time_EndLoop = std::chrono::steady_clock::now();
 
@@ -467,7 +472,7 @@ namespace ORB_SLAM3
         }
 
         // TODO: This is only necessary if we use a minimun score for pick the best candidates
-        const vector<KeyFrame *> vpConnectedKeyFrames = mpCurrentKF->GetVectorCovisibleKeyFrames();
+        vector<KeyFrame *> vpConnectedKeyFrames = mpCurrentKF->GetVectorCovisibleKeyFrames();
 
         // Extract candidates from the bag of words
         vector<KeyFrame *> vpMergeBowCand, vpLoopBowCand;
@@ -616,10 +621,18 @@ namespace ORB_SLAM3
             {
                 std::cout << "Covisible list empty" << std::endl;
                 vpCovKFi.push_back(pKFi);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi-> mReferencecount_ockf++;
+                }
             }
             else
             {
                 vpCovKFi.push_back(vpCovKFi[0]);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    vpCovKFi[0]-> mReferencecount_ockf++;
+                }
                 vpCovKFi[0] = pKFi;
             }
 
@@ -635,6 +648,11 @@ namespace ORB_SLAM3
             if (bAbortByNearKF)
             {
                 // std::cout << "Check BoW aborted because is close to the matched one " << std::endl;
+                for(auto i:vpCovKFi)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
                 continue;
             }
             // std::cout << "Check BoW continue because is far to the matched one " << std::endl;
@@ -712,10 +730,24 @@ namespace ORB_SLAM3
 
                     // Verbose::PrintMess("BoW guess: Convergende with " + to_string(nInliers) + " geometrical inliers among " + to_string(nBoWInliers) + " BoW matches", Verbose::VERBOSITY_DEBUG);
                     //  Match by reprojection
+                    for(auto i:vpCovKFi)
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        i -> mReferencecount_ockf--;
+                    }
                     vpCovKFi.clear();
                     vpCovKFi = pMostBoWMatchesKF->GetBestCovisibilityKeyFrames(nNumCovisibles);
                     vpCovKFi.push_back(pMostBoWMatchesKF);
+                    {
+                        unique_lock<mutex> lock(pMostBoWMatchesKF->mMutexreferencecount);
+                        pMostBoWMatchesKF -> mReferencecount_ockf--;
+                    }
                     set<KeyFrame *> spCheckKFs(vpCovKFi.begin(), vpCovKFi.end());
+                    for(auto i:spCheckKFs)
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        i -> mReferencecount_ockf++;
+                    }
 
                     // std::cout << "There are " << vpCovKFi.size() <<" near KFs" << std::endl;
 
@@ -734,6 +766,10 @@ namespace ORB_SLAM3
                                 spMapPoints.insert(pCovMPij);
                                 vpMapPoints.push_back(pCovMPij);
                                 vpKeyFrames.push_back(pCovKFi);
+                                {
+                                    unique_lock<mutex> lock(pCovKFi->mMutexreferencecount);
+                                    pCovKFi -> mReferencecount_ockf++;
+                                }
                             }
                         }
                     }
@@ -852,8 +888,23 @@ namespace ORB_SLAM3
                                     vpBestMapPoints = vpMapPoints;
                                     vpBestMatchedMapPoints = vpMatchedMP;
                                 }
+                                for(auto i:vpCurrentCovKFs)
+                                {
+                                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                                    i -> mReferencecount_ockf--;
+                                }
                             }
                         }
+                    }
+                    for(auto i:spCheckKFs)
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        i -> mReferencecount_ockf--;
+                    }
+                    for(auto i:vpKeyFrames)
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        i -> mReferencecount_ockf--;
                     }
                 }
                 /*else
@@ -862,8 +913,15 @@ namespace ORB_SLAM3
                 }*/
             }
             index++;
+
+            for(auto i:vpCovKFi)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
         }
 
+        //vulh
         if (nBestMatchesReproj > 0)
         {
             pLastCurrentKF = mpCurrentKF;
@@ -927,7 +985,16 @@ namespace ORB_SLAM3
         vector<KeyFrame *> vpCovKFm = pMatchedKFw->GetBestCovisibilityKeyFrames(nNumCovisibles);
         int nInitialCov = vpCovKFm.size();
         vpCovKFm.push_back(pMatchedKFw);
+        {
+            unique_lock<mutex> lock(pMatchedKFw->mMutexreferencecount);
+            pMatchedKFw->mReferencecount_ockf++;
+        }
         set<KeyFrame *> spCheckKFs(vpCovKFm.begin(), vpCovKFm.end());
+        for(auto i:spCheckKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf++;
+        }
         set<KeyFrame *> spCurrentCovisbles = pCurrentKF->GetConnectedKeyFrames();
         if (nInitialCov < nNumCovisibles)
         {
@@ -941,11 +1008,25 @@ namespace ORB_SLAM3
                     if (spCheckKFs.find(vpKFs[j]) == spCheckKFs.end() && spCurrentCovisbles.find(vpKFs[j]) == spCurrentCovisbles.end())
                     {
                         spCheckKFs.insert(vpKFs[j]);
+                        {
+                            unique_lock<mutex> lock(vpKFs[j]->mMutexreferencecount);
+                            vpKFs[j] -> mReferencecount_ockf++;
+                        }
                         ++nInserted;
                     }
                     ++j;
                 }
+                for(auto i:vpKFs)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf++;
+                }
                 vpCovKFm.insert(vpCovKFm.end(), vpKFs.begin(), vpKFs.end());
+                for(auto i:vpKFs)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
             }
         }
         set<MapPoint *> spMapPoints;
@@ -971,7 +1052,16 @@ namespace ORB_SLAM3
 
         vpMatchedMapPoints.resize(pCurrentKF->GetMapPointMatches().size(), static_cast<MapPoint *>(NULL));
         int num_matches = matcher.SearchByProjection(pCurrentKF, mScw, vpMapPoints, vpMatchedMapPoints, 3, 1.5);
-
+        for(auto i:spCheckKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
+        for(auto i:vpCovKFm)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
         return num_matches;
     }
 
@@ -1013,9 +1103,20 @@ namespace ORB_SLAM3
         // assert(mpCurrentKF->GetMap()->CheckEssentialGraph());
 
         // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation
+        if(!mvpCurrentConnectedKFs.empty())
+        {
+            for(auto i:mvpCurrentConnectedKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
+        }
         mvpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
         mvpCurrentConnectedKFs.push_back(mpCurrentKF);
-        mpCurrentKF->mReferencecount_ockf++;
+        {
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount_ockf++;
+        }
 
         // std::cout << "Loop: number of connected KFs -> " + to_string(mvpCurrentConnectedKFs.size()) << std::endl;
 
@@ -1302,17 +1403,26 @@ namespace ORB_SLAM3
             while (pKFi && nInserted < numTemporalKFs)
             {
                 spLocalWindowKFs.insert(pKFi);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount_ockf++;   
+                }
                 pKFi = mpCurrentKF->mPrevKF;
                 nInserted++;
 
                 set<MapPoint *> spMPi = pKFi->GetMapPoints();
                 spLocalWindowMPs.insert(spMPi.begin(), spMPi.end());
+
             }
 
             pKFi = mpCurrentKF->mNextKF;
             while (pKFi)
             {
                 spLocalWindowKFs.insert(pKFi);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount_ockf++;   
+                }
 
                 set<MapPoint *> spMPi = pKFi->GetMapPoints();
                 spLocalWindowMPs.insert(spMPi.begin(), spMPi.end());
@@ -1323,11 +1433,25 @@ namespace ORB_SLAM3
         else
         {
             spLocalWindowKFs.insert(mpCurrentKF);
+            {
+                unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+                mpCurrentKF->mReferencecount_ockf++;   
+            }
         }
 
         vector<KeyFrame *> vpCovisibleKFs = mpCurrentKF->GetBestCovisibilityKeyFrames(numTemporalKFs);
+
+        for(auto i: vpCovisibleKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount_ockf++;   
+        }
         spLocalWindowKFs.insert(vpCovisibleKFs.begin(), vpCovisibleKFs.end());
         spLocalWindowKFs.insert(mpCurrentKF);
+        {
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount_ockf++;   
+        }
         const int nMaxTries = 5;
         int nNumTries = 0;
         while (spLocalWindowKFs.size() < numTemporalKFs && nNumTries < nMaxTries)
@@ -1342,12 +1466,31 @@ namespace ORB_SLAM3
                     if (pKFcov && !pKFcov->isBad() && spLocalWindowKFs.find(pKFcov) == spLocalWindowKFs.end())
                     {
                         vpNewCovKFs.push_back(pKFcov);
+                        {
+                            unique_lock<mutex> lock(pKFcov->mMutexreferencecount);
+                            pKFcov -> mReferencecount_ockf++;
+                        }
                     }
                 }
+                for(auto i:vpKFiCov)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
             }
-
+            
+            for(auto i:vpNewCovKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf++;
+            }
             spLocalWindowKFs.insert(vpNewCovKFs.begin(), vpNewCovKFs.end());
             nNumTries++;
+            for(auto i:vpNewCovKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
         }
 
         for (KeyFrame *pKFi : spLocalWindowKFs)
@@ -1369,6 +1512,10 @@ namespace ORB_SLAM3
             while (pKFi && nInserted < numTemporalKFs / 2)
             {
                 spMergeConnectedKFs.insert(pKFi);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi -> mReferencecount_ockf++;
+                }
                 pKFi = mpCurrentKF->mPrevKF;
                 nInserted++;
             }
@@ -1377,16 +1524,47 @@ namespace ORB_SLAM3
             while (pKFi && nInserted < numTemporalKFs)
             {
                 spMergeConnectedKFs.insert(pKFi);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi -> mReferencecount_ockf++;
+                }
                 pKFi = mpCurrentKF->mNextKF;
             }
         }
         else
         {
             spMergeConnectedKFs.insert(mpMergeMatchedKF);
+            {
+                unique_lock<mutex> lock(mpMergeMatchedKF->mMutexreferencecount);
+                mpMergeMatchedKF -> mReferencecount_ockf++;
+            }
         }
+
+        
+        for(auto i: vpCovisibleKFs)
+        {
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }            
+        }
+
         vpCovisibleKFs = mpMergeMatchedKF->GetBestCovisibilityKeyFrames(numTemporalKFs);
+        
+        for(auto i: vpCovisibleKFs)
+        {
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf++;
+            }            
+        }
         spMergeConnectedKFs.insert(vpCovisibleKFs.begin(), vpCovisibleKFs.end());
+        
         spMergeConnectedKFs.insert(mpMergeMatchedKF);
+        {
+            unique_lock<mutex> lock(mpMergeMatchedKF->mMutexreferencecount);
+            mpMergeMatchedKF -> mReferencecount_ockf++;
+        }            
         nNumTries = 0;
         while (spMergeConnectedKFs.size() < numTemporalKFs && nNumTries < nMaxTries)
         {
@@ -1399,12 +1577,34 @@ namespace ORB_SLAM3
                     if (pKFcov && !pKFcov->isBad() && spMergeConnectedKFs.find(pKFcov) == spMergeConnectedKFs.end())
                     {
                         vpNewCovKFs.push_back(pKFcov);
+                        {
+                            unique_lock<mutex> lock(pKFcov->mMutexreferencecount);
+                            pKFcov-> mReferencecount_ockf++;
+                        }
                     }
                 }
+                for(auto i:vpKFiCov)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
             }
-
+        
+            for(auto i:vpNewCovKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
             spMergeConnectedKFs.insert(vpNewCovKFs.begin(), vpNewCovKFs.end());
+
             nNumTries++;
+            for(auto i: vpNewCovKFs)
+            {
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
+            }
         }
 
         set<MapPoint *> spMapPointMerge;
@@ -1592,8 +1792,21 @@ namespace ORB_SLAM3
         // Update the connections between the local window
         mpMergeMatchedKF->UpdateConnections();
 
+        if(!vpMergeConnectedKFs.empty())
+        {
+            for(auto i:vpMergeConnectedKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
+        }
+
         vpMergeConnectedKFs = mpMergeMatchedKF->GetVectorCovisibleKeyFrames();
         vpMergeConnectedKFs.push_back(mpMergeMatchedKF);
+        {
+            unique_lock<mutex> lock(mpMergeMatchedKF->mMutexreferencecount);
+            mpMergeMatchedKF->mReferencecount_ockf++;
+        }
         // vpCheckFuseMapPoint.reserve(spMapPointMerge.size());
         // std::copy(spMapPointMerge.begin(), spMapPointMerge.end(), std::back_inserter(vpCheckFuseMapPoint));
 
@@ -1630,10 +1843,39 @@ namespace ORB_SLAM3
 #endif
 
         bool bStop = false;
+        if(!vpLocalCurrentWindowKFs.empty())
+        {
+            for(auto i: vpLocalCurrentWindowKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }  
+        }
         vpLocalCurrentWindowKFs.clear();
+        
+        for(auto i:vpMergeConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
+
         vpMergeConnectedKFs.clear();
+        
         std::copy(spLocalWindowKFs.begin(), spLocalWindowKFs.end(), std::back_inserter(vpLocalCurrentWindowKFs));
+        
+        for(auto i:spLocalWindowKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf++;
+        }
+        
         std::copy(spMergeConnectedKFs.begin(), spMergeConnectedKFs.end(), std::back_inserter(vpMergeConnectedKFs));
+        
+        for(auto i:spMergeConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf++;
+        }
         if (mpTracker->mSensor == System::IMU_MONOCULAR || mpTracker->mSensor == System::IMU_STEREO || mpTracker->mSensor == System::IMU_RGBD)
         {
             Optimizer::MergeInertialBA(mpCurrentKF, mpMergeMatchedKF, &bStop, pCurrentMap, vCorrectedSim3);
@@ -1793,10 +2035,30 @@ namespace ORB_SLAM3
 
         mpAtlas->RemoveBadMaps();
 
+        for (auto i : spMergeConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount--;
+        }
+        for (auto i : vpCovisibleKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount--;
+        }
         for (auto i : vpCurrentMapKFs)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount--;
+        }
+        for (auto i : spLocalWindowKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount--;
+        }
+        for(auto i:vpLocalCurrentWindowKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
         }
     }
 
@@ -1984,21 +2246,59 @@ namespace ORB_SLAM3
         vector<KeyFrame *> vpCurrentConnectedKFs;
 
         mvpMergeConnectedKFs.push_back(mpMergeMatchedKF);
+        {
+            unique_lock<mutex> lock(mpMergeMatchedKF->mMutexreferencecount);
+            mpMergeMatchedKF-> mReferencecount_ockf++;
+        }
         vector<KeyFrame *> aux = mpMergeMatchedKF->GetVectorCovisibleKeyFrames();
+        
+        for(auto i:aux)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf++;
+        }
+
         mvpMergeConnectedKFs.insert(mvpMergeConnectedKFs.end(), aux.begin(), aux.end());
+
         if (mvpMergeConnectedKFs.size() > 6)
+        {
+            for(int i = 0 + 6; i< mvpMergeConnectedKFs.size() - 1 ; i++)
+            {
+                mvpMergeConnectedKFs[i]->mReferencecount_ockf--;
+            } 
             mvpMergeConnectedKFs.erase(mvpMergeConnectedKFs.begin() + 6, mvpMergeConnectedKFs.end());
+        }
         /*mvpMergeConnectedKFs = mpMergeMatchedKF->GetVectorCovisibleKeyFrames();
         mvpMergeConnectedKFs.push_back(mpMergeMatchedKF);*/
 
         mpCurrentKF->UpdateConnections();
         vpCurrentConnectedKFs.push_back(mpCurrentKF);
+        {
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF -> mReferencecount_ockf++;
+        }
         /*vpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
         vpCurrentConnectedKFs.push_back(mpCurrentKF);*/
+        for(auto i:aux)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
         aux = mpCurrentKF->GetVectorCovisibleKeyFrames();
         vpCurrentConnectedKFs.insert(vpCurrentConnectedKFs.end(), aux.begin(), aux.end());
+        for(auto i:aux)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf++;
+        }
         if (vpCurrentConnectedKFs.size() > 6)
+        {
+            for(int i = 0+6; i< vpCurrentConnectedKFs.size() - 1; i++)
+            {
+                vpCurrentConnectedKFs[i]->mReferencecount_ockf--;
+            }
             vpCurrentConnectedKFs.erase(vpCurrentConnectedKFs.begin() + 6, vpCurrentConnectedKFs.end());
+        }
 
         set<MapPoint *> spMapPointMerge;
         for (KeyFrame *pKFi : mvpMergeConnectedKFs)
@@ -2061,6 +2361,11 @@ namespace ORB_SLAM3
         if (numKFnew < 10)
         {
             mpLocalMapper->Release();
+            for(auto i:aux)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
             return;
         }
 
@@ -2082,6 +2387,11 @@ namespace ORB_SLAM3
         // Release Local Mapping.
         mpLocalMapper->Release();
 
+        for(auto i:aux)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
         return;
     }
 

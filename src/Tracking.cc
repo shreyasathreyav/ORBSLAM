@@ -3527,6 +3527,7 @@ namespace ORB_SLAM3
 
             if(pKF->isBad())
             {
+                // if(pKF->mnId  0)
                 cout << pKF->mnId << " : Reference " << pKF->mReferencecount_ockf << " RF" << endl; 
                 // cout << "keyframes counter is corrupting" <<endl;
                 continue;
@@ -3550,7 +3551,7 @@ namespace ORB_SLAM3
 
             KeyFrame *pKF = *itKF;
 
-            const vector<KeyFrame *> vNeighs = pKF->GetBestCovisibilityKeyFrames(10);
+            vector<KeyFrame *> vNeighs = pKF->GetBestCovisibilityKeyFrames(10);
 
             for (vector<KeyFrame *>::const_iterator itNeighKF = vNeighs.begin(), itEndNeighKF = vNeighs.end(); itNeighKF != itEndNeighKF; itNeighKF++)
             {
@@ -3588,8 +3589,18 @@ namespace ORB_SLAM3
                 {
                     mvpLocalKeyFrames.push_back(pParent);
                     pParent->mnTrackReferenceForFrame = mCurrentFrame.mnId;
+                    for(auto i:vNeighs)
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        i -> mReferencecount_ockf--;
+                    }
                     break;
                 }
+            }
+            for(auto i:vNeighs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
             }
         }
 

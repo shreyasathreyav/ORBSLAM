@@ -199,6 +199,13 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+
+
+        for(auto i:vpNeighs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     // Return all those keyframes with a score higher than 0.75*bestScore
@@ -339,6 +346,12 @@ void KeyFrameDatabase::DetectCandidates(KeyFrame* pKF, float minScore,vector<Key
                 lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
                 if(accScore>bestAccScore)
                     bestAccScore=accScore;
+            
+                for(auto i:vpNeighs)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
             }
 
             // Return all those keyframes with a score higher than 0.75*bestScore
@@ -427,6 +440,12 @@ void KeyFrameDatabase::DetectCandidates(KeyFrame* pKF, float minScore,vector<Key
                 lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
                 if(accScore>bestAccScore)
                     bestAccScore=accScore;
+
+                for(auto i:vpNeighs)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i -> mReferencecount_ockf--;
+                }
             }
 
             // Return all those keyframes with a score higher than 0.75*bestScore
@@ -566,6 +585,12 @@ void KeyFrameDatabase::DetectBestCandidates(KeyFrame *pKF, vector<KeyFrame*> &vp
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+
+        for(auto i:vpNeighs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     // Return all those keyframes with a score higher than 0.75*bestScore
@@ -697,6 +722,12 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame*> &v
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+    
+        for(auto i:vpNeighs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     lAccScoreAndMatch.sort(compFirst);
@@ -818,6 +849,12 @@ vector<KeyFrame*> KeyFrameDatabase::DetectRelocalizationCandidates(Frame *F, Map
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+   
+        for(auto i:vpNeighs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     // Return all those keyframes with a score higher than 0.75*bestScore

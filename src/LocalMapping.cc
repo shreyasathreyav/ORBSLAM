@@ -708,7 +708,12 @@ void LocalMapping::CreateNewMapPoints()
             mpAtlas->AddMapPoint(pMP);
             mlpRecentAddedMapPoints.push_back(pMP);
         }
-    }    
+    }
+    for(auto i:vpNeighKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf--;
+    }
 }
 
 void LocalMapping::SearchInNeighbors()
@@ -717,7 +722,7 @@ void LocalMapping::SearchInNeighbors()
     int nn = 10;
     if(mbMonocular)
         nn=30;
-    const vector<KeyFrame*> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn);
+    vector<KeyFrame*> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn);
     vector<KeyFrame*> vpTargetKFs;
     for(vector<KeyFrame*>::const_iterator vit=vpNeighKFs.begin(), vend=vpNeighKFs.end(); vit!=vend; vit++)
     {
@@ -732,7 +737,7 @@ void LocalMapping::SearchInNeighbors()
     // Extend to some second neighbors if abort is not requested
     for(int i=0, imax=vpTargetKFs.size(); i<imax; i++)
     {
-        const vector<KeyFrame*> vpSecondNeighKFs = vpTargetKFs[i]->GetBestCovisibilityKeyFrames(20);
+        vector<KeyFrame*> vpSecondNeighKFs = vpTargetKFs[i]->GetBestCovisibilityKeyFrames(20);
         for(vector<KeyFrame*>::const_iterator vit2=vpSecondNeighKFs.begin(), vend2=vpSecondNeighKFs.end(); vit2!=vend2; vit2++)
         {
             KeyFrame* pKFi2 = *vit2;
@@ -742,7 +747,20 @@ void LocalMapping::SearchInNeighbors()
             pKFi2->mnFuseTargetForKF=mpCurrentKeyFrame->mnId;
         }
         if (mbAbortBA)
+        {
+            for(auto i:vpSecondNeighKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
             break;
+        }
+        
+        for(auto i:vpSecondNeighKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     // Extend to temporal neighbors
@@ -820,6 +838,12 @@ void LocalMapping::SearchInNeighbors()
 
     // Update connections in covisibility graph
     mpCurrentKeyFrame->UpdateConnections();
+
+    for(auto i:vpNeighKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf--;
+    }
 }
 
 void LocalMapping::RequestStop()
@@ -864,7 +888,7 @@ void LocalMapping::Release()
     mbStopped = false;
     mbStopRequested = false;
     for(list<KeyFrame*>::iterator lit = mlNewKeyFrames.begin(), lend=mlNewKeyFrames.end(); lit!=lend; lit++)
-        delete *lit;
+        // delete *lit;
     mlNewKeyFrames.clear();
 
     cout << "Local Mapping RELEASE" << endl;
@@ -1422,7 +1446,7 @@ void LocalMapping::InitializeIMU(float priorG, float priorA, bool bFIBA)
     for(list<KeyFrame*>::iterator lit = mlNewKeyFrames.begin(), lend=mlNewKeyFrames.end(); lit!=lend; lit++)
     {
         (*lit)->SetBadFlag();
-        delete *lit;
+        // delete *lit;
     }
     mlNewKeyFrames.clear();
 
@@ -1491,7 +1515,7 @@ void LocalMapping::ScaleRefinement()
     for(list<KeyFrame*>::iterator lit = mlNewKeyFrames.begin(), lend=mlNewKeyFrames.end(); lit!=lend; lit++)
     {
         (*lit)->SetBadFlag();
-        delete *lit;
+        // delete *lit;
     }
     mlNewKeyFrames.clear();
 

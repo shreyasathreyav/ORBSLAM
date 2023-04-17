@@ -1156,7 +1156,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     pKF->mnBALocalForKF = pKF->mnId;
     Map* pCurrentMap = pKF->GetMap();
 
-    const vector<KeyFrame*> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
+    vector<KeyFrame*> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
     for(int i=0, iend=vNeighKFs.size(); i<iend; i++)
     {
         KeyFrame* pKFi = vNeighKFs[i];
@@ -1216,6 +1216,11 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     if(num_fixedKF == 0)
     {
         Verbose::PrintMess("LM-LBA: There are 0 fixed KF in the optimizations, LBA aborted", Verbose::VERBOSITY_NORMAL);
+        for(auto i:vNeighKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
         return;
     }
 
@@ -1438,8 +1443,17 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     num_edges = nEdges;
 
     if(pbStopFlag)
+    {
         if(*pbStopFlag)
+        {   
+            for(auto i:vNeighKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
             return;
+        }
+    }
 
     optimizer.initializeOptimization();
     optimizer.optimize(10);
@@ -1529,6 +1543,11 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     }
 
     pMap->IncreaseChangeIndex();
+    for(auto i:vNeighKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf--;
+    }
 }
 
 
@@ -2097,6 +2116,12 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         {
             Verbose::PrintMess("Opt_Essential: KF " + to_string(pKFi->mnId) + " has 0 connections", Verbose::VERBOSITY_DEBUG);
         }
+
+        for(auto i:vpConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
     }
 
     // Optimize!
@@ -2158,12 +2183,6 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
             cout << "ERROR: MapPoint has a reference KF from another map" << endl;
         }
 
-    }
-
-    for(auto i:vpKFs)
-    {
-        unique_lock<mutex> lock(i->mMutexreferencecount);
-        i->mReferencecount--;
     }
 }
 
@@ -2450,7 +2469,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     const unsigned long maxKFid = pKF->mnId;
 
     vector<KeyFrame*> vpOptimizableKFs;
-    const vector<KeyFrame*> vpNeighsKFs = pKF->GetVectorCovisibleKeyFrames();
+    vector<KeyFrame*> vpNeighsKFs = pKF->GetVectorCovisibleKeyFrames();
     list<KeyFrame*> lpOptVisKFs;
 
     vpOptimizableKFs.reserve(Nd);
@@ -2946,6 +2965,11 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     if((2*err < err_end || isnan(err) || isnan(err_end)) && !bLarge) //bGN)
     {
         cout << "FAIL LOCAL-INERTIAL BA!!!!" << endl;
+        for(auto i:vpNeighsKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i -> mReferencecount_ockf--;
+        }
         return;
     }
 
@@ -3010,6 +3034,11 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     }
 
     pMap->IncreaseChangeIndex();
+    for(auto i:vpNeighsKFs)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf--;
+    }
 }
 
 Eigen::MatrixXd Optimizer::Marginalize(const Eigen::MatrixXd &H, const int &start, const int &end)
@@ -3569,6 +3598,18 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
 
 void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdjustKF, vector<KeyFrame*> vpFixedKF, bool *pbStopFlag)
 {
+
+    for(auto i:vpAdjustKF)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf++;
+    }
+    for(auto i:vpFixedKF)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf++;
+    }
+
     bool bShowImages = false;
 
     vector<MapPoint*> vpMPs;
@@ -3793,9 +3834,18 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     }
 
     if(pbStopFlag)
+    {
         if(*pbStopFlag)
-            return;
+        {
 
+            for(auto i:vpFixedKF)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i -> mReferencecount_ockf--;
+            }
+            return;
+        }
+    }
     optimizer.initializeOptimization();
     optimizer.optimize(5);
 
@@ -4021,6 +4071,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         pMPi->SetWorldPos(vPoint->estimate().cast<float>());
         pMPi->UpdateNormalAndDepth();
 
+    }
+    for(auto i:vpFixedKF)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf--;
+    }
+    for(auto i:vpAdjustKF)
+    {
+        unique_lock<mutex> lock(i->mMutexreferencecount);
+        i -> mReferencecount_ockf--;
     }
 }
 
