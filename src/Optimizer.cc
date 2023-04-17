@@ -150,6 +150,7 @@ namespace ORB_SLAM3
             vPoint->setMarginalized(true);
             optimizer.addVertex(vPoint);
 
+            // We got the observations here
             const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
 
             int nEdges = 0;
@@ -175,6 +176,7 @@ namespace ORB_SLAM3
                     Eigen::Matrix<double, 2, 1> obs;
                     obs << kpUn.pt.x, kpUn.pt.y;
 
+                    // We allocate EdgeSE3ProjectXYZ to the heap
                     ORB_SLAM3::EdgeSE3ProjectXYZ *e = new ORB_SLAM3::EdgeSE3ProjectXYZ();
 
                     e->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex *>(optimizer.vertex(id)));
@@ -195,7 +197,12 @@ namespace ORB_SLAM3
                     optimizer.addEdge(e);
 
                     vpEdgesMono.push_back(e);
+                    // This is the first point where we reference count
                     vpEdgeKFMono.push_back(pKF);
+                    {
+                        unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                        pKF->mReferencecount++;
+                    }
                     vpMapPointEdgeMono.push_back(pMP);
                 }
                 else if (leftIndex != -1 && pKF->mvuRight[leftIndex] >= 0) // Stereo observation
@@ -232,7 +239,13 @@ namespace ORB_SLAM3
 
                     vpEdgesStereo.push_back(e);
                     vpEdgeKFStereo.push_back(pKF);
+                    // Point 1 - This is the second point for reference count
+                    {
+                        unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                        pKF->mReferencecount++;
+                    }
                     vpMapPointEdgeStereo.push_back(pMP);
+                    // delete e;
                 }
 
                 if (pKF->mpCamera2)
@@ -267,6 +280,11 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesBody.push_back(e);
                         vpEdgeKFBody.push_back(pKF);
+                        // Point 2 - This where we add the third reference count
+                        {
+                            unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                            pKF->mReferencecount++;
+                        }
                         vpMapPointEdgeBody.push_back(pMP);
                     }
                 }
@@ -280,6 +298,24 @@ namespace ORB_SLAM3
             else
             {
                 vbNotIncludedMP[i] = false;
+            }
+
+            // This reference count is slightly simplified
+            /*
+            Reading the code showed that there are several heap allocated objects that do
+            not have a very visible delete, there could be possible memory leaks. But there seems
+            to be no passing of keyframes from mObservations into other data structures
+            */
+
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
+                }
             }
         }
 
@@ -304,10 +340,12 @@ namespace ORB_SLAM3
             g2o::SE3Quat SE3quat = vSE3->estimate();
             if (nLoopKF == pMap->GetOriginKF()->mnId)
             {
+                // This is where the results are used to update the keyframe
                 pKF->SetPose(Sophus::SE3f(SE3quat.rotation().cast<float>(), SE3quat.translation().cast<float>()));
             }
             else
             {
+                // This is where the results are used to update the keyframe
                 pKF->mTcwGBA = Sophus::SE3d(SE3quat.rotation(), SE3quat.translation()).cast<float>();
                 pKF->mnBAGlobalForKF = nLoopKF;
 
@@ -323,6 +361,7 @@ namespace ORB_SLAM3
 
                     for (size_t i2 = 0, iend = vpEdgesMono.size(); i2 < iend; i2++)
                     {
+                        // We get the e, here which was malloced much earlier in the function
                         ORB_SLAM3::EdgeSE3ProjectXYZ *e = vpEdgesMono[i2];
                         MapPoint *pMP = vpMapPointEdgeMono[i2];
                         KeyFrame *pKFedge = vpEdgeKFMono[i2];
@@ -395,6 +434,27 @@ namespace ORB_SLAM3
             {
                 pMP->mPosGBA = vPoint->estimate().cast<float>();
                 pMP->mnBAGlobalForKF = nLoopKF;
+            }
+        }
+        for (auto it : vpEdgeKFMono)
+        {
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
+        for (auto it : vpEdgeKFBody)
+        {
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
+        for (auto it : vpEdgeKFStereo)
+        {
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
             }
         }
     }
@@ -731,11 +791,22 @@ namespace ORB_SLAM3
                     }
                 }
             }
+            // Could not find any instance of mObservations being copied into other stuff
 
             if (bAllFixed)
             {
                 optimizer.removeVertex(vPoint);
                 vbNotIncludedMP[i] = true;
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
+                }
             }
         }
 
@@ -1198,6 +1269,7 @@ namespace ORB_SLAM3
         }
 
         // Fixed Keyframes. Keyframes that see Local MapPoints but that are not Local Keyframes
+        // Declaration of lFixedCameras
         list<KeyFrame *> lFixedCameras;
         for (list<MapPoint *>::iterator lit = lLocalMapPoints.begin(), lend = lLocalMapPoints.end(); lit != lend; lit++)
         {
@@ -1210,7 +1282,24 @@ namespace ORB_SLAM3
                 {
                     pKFi->mnBAFixedForKF = pKF->mnId;
                     if (!pKFi->isBad() && pKFi->GetMap() == pCurrentMap)
+                    {
+                        // This indicates that the keyframe is getting passed; so increasing count per keyframe
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         lFixedCameras.push_back(pKFi);
+                    }
+                }
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }
@@ -1273,9 +1362,14 @@ namespace ORB_SLAM3
             vSE3->setId(pKFi->mnId);
             vSE3->setFixed(true);
             optimizer.addVertex(vSE3);
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
             if (pKFi->mnId > maxKFid)
                 maxKFid = pKFi->mnId;
             // DEBUG LBA
+            // Not adding a reference count because we are only adding the mnid of a kf and not the kf itself
             pCurrentMap->msFixedKFs.insert(pKFi->mnId);
         }
 
@@ -1362,6 +1456,10 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesMono.push_back(e);
                         vpEdgeKFMono.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock2(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         vpMapPointEdgeMono.push_back(pMP);
 
                         nEdges++;
@@ -1395,6 +1493,10 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesStereo.push_back(e);
                         vpEdgeKFStereo.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock2(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         vpMapPointEdgeStereo.push_back(pMP);
 
                         nEdges++;
@@ -1432,11 +1534,25 @@ namespace ORB_SLAM3
                             optimizer.addEdge(e);
                             vpEdgesBody.push_back(e);
                             vpEdgeKFBody.push_back(pKFi);
+                            {
+                                unique_lock<mutex> lock2(pKFi->mMutexreferencecount);
+                                pKFi->mReferencecount++;
+                            }
                             vpMapPointEdgeBody.push_back(pMP);
 
                             nEdges++;
                         }
                     }
+                }
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }
@@ -1533,6 +1649,30 @@ namespace ORB_SLAM3
         }
 
         pMap->IncreaseChangeIndex();
+        for (auto it : vpEdgeKFBody)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
+        for (auto it : vpEdgeKFMono)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
+        for (auto it : vpEdgeKFStereo)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
     }
 
     void Optimizer::OptimizeEssentialGraph(Map *pMap, KeyFrame *pLoopKF, KeyFrame *pCurKF,
@@ -2545,6 +2685,7 @@ namespace ORB_SLAM3
 
         for (list<MapPoint *>::iterator lit = lLocalMapPoints.begin(), lend = lLocalMapPoints.end(); lit != lend; lit++)
         {
+            // This is to make sure that we only decrement for keyframes that were passed in here
             map<KeyFrame *, tuple<int, int>> observations = (*lit)->GetObservations();
             for (map<KeyFrame *, tuple<int, int>>::iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
             {
@@ -2555,9 +2696,36 @@ namespace ORB_SLAM3
                     pKFi->mnBAFixedForKF = pKF->mnId;
                     if (!pKFi->isBad())
                     {
+
                         lFixedKeyFrames.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->local_pass_one = true;
+                            pKFi->mReferencecount++;
+                            // Have to add a keyframe member to see if it passed this function
+                        }
                         break;
                     }
+                }
+            }
+            // This should take care of the above situation even if copies of exist within the vector - But ideally copies should not exist because we are getting from a hashmap
+            for (auto it : observations)
+            {
+
+                if (it.first->local_pass_one)
+                {
+
+                    it.first->mReferencecount--;
+                }
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
             if (lFixedKeyFrames.size() >= maxFixKF)
@@ -2624,6 +2792,18 @@ namespace ORB_SLAM3
             optimizer.addVertex(VP);
         }
 
+        // This is to make sure that we only increase the reference count for the keyframes brought in from mObservations
+        for (auto it : lFixedKeyFrames)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                if (it->local_pass_one)
+                {
+                    it->mReferencecount++;
+                }
+            }
+        }
         // Set Fixed KeyFrame vertices
         for (list<KeyFrame *>::iterator lit = lFixedKeyFrames.begin(), lend = lFixedKeyFrames.end(); lit != lend; lit++)
         {
@@ -2647,6 +2827,18 @@ namespace ORB_SLAM3
                 VA->setId(maxKFid + 3 * (pKFi->mnId) + 3);
                 VA->setFixed(true);
                 optimizer.addVertex(VA);
+            }
+        }
+
+        for (auto it : lFixedKeyFrames)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                if (it->local_pass_one)
+                {
+                    it->mReferencecount--;
+                }
             }
         }
 
@@ -2760,11 +2952,33 @@ namespace ORB_SLAM3
             KeyFrame *pKFi = vpOptimizableKFs[i];
             mVisEdges[pKFi->mnId] = 0;
         }
+        // This is to make sure that we only increase the reference count for the keyframes brought in from mObservations
+        for (auto it : lFixedKeyFrames)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                if (it->local_pass_one)
+                {
+                    it->mReferencecount++;
+                }
+            }
+        }
         for (list<KeyFrame *>::iterator lit = lFixedKeyFrames.begin(), lend = lFixedKeyFrames.end(); lit != lend; lit++)
         {
             mVisEdges[(*lit)->mnId] = 0;
         }
+        for (auto it : lFixedKeyFrames)
+        {
 
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                if (it->local_pass_one)
+                {
+                    it->mReferencecount--;
+                }
+            }
+        }
         for (list<MapPoint *>::iterator lit = lLocalMapPoints.begin(), lend = lLocalMapPoints.end(); lit != lend; lit++)
         {
             MapPoint *pMP = *lit;
@@ -2819,6 +3033,10 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesMono.push_back(e);
                         vpEdgeKFMono.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         vpMapPointEdgeMono.push_back(pMP);
                     }
                     // Stereo-observation
@@ -2850,6 +3068,10 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesStereo.push_back(e);
                         vpEdgeKFStereo.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         vpMapPointEdgeStereo.push_back(pMP);
                     }
 
@@ -2886,9 +3108,23 @@ namespace ORB_SLAM3
                             optimizer.addEdge(e);
                             vpEdgesMono.push_back(e);
                             vpEdgeKFMono.push_back(pKFi);
+                            {
+                                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                                pKFi->mReferencecount++;
+                            }
                             vpMapPointEdgeMono.push_back(pMP);
                         }
                     }
+                }
+            }
+
+            for (auto it : observations)
+            {
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }
@@ -3012,6 +3248,31 @@ namespace ORB_SLAM3
         }
 
         pMap->IncreaseChangeIndex();
+        // This is the decrement for lFixedKFs
+        for (auto it : lFixedKeyFrames)
+        {
+
+            unique_lock<mutex> lock(it->mMutexreferencecount);
+            {
+                it->mReferencecount--;
+            }
+        }
+        for (auto it : vpEdgeKFMono)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
+        for (auto it : vpEdgeKFStereo)
+        {
+
+            {
+                unique_lock<mutex> lock(it->mMutexreferencecount);
+                it->mReferencecount--;
+            }
+        }
     }
 
     Eigen::MatrixXd Optimizer::Marginalize(const Eigen::MatrixXd &H, const int &start, const int &end)
@@ -3755,6 +4016,10 @@ namespace ORB_SLAM3
 
                     vpEdgesMono.push_back(e);
                     vpEdgeKFMono.push_back(pKF);
+                    {
+                        unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                        pKF->mReferencecount++;
+                    }
                     vpMapPointEdgeMono.push_back(pMPi);
 
                     mpObsKFs[pKF]++;
@@ -3789,9 +4054,23 @@ namespace ORB_SLAM3
 
                     vpEdgesStereo.push_back(e);
                     vpEdgeKFStereo.push_back(pKF);
+                    {
+                        unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                        pKF->mReferencecount++;
+                    }
                     vpMapPointEdgeStereo.push_back(pMPi);
 
                     mpObsKFs[pKF]++;
+                }
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }
@@ -3938,6 +4217,16 @@ namespace ORB_SLAM3
                 else // RGBD or Stereo
                 {
                     mpObsFinalKFs[pKF]++;
+                }
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }
@@ -4166,6 +4455,16 @@ namespace ORB_SLAM3
                     }
                 }
             }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
+                }
+            }
         }
 
         g2o::SparseOptimizer optimizer;
@@ -4245,6 +4544,10 @@ namespace ORB_SLAM3
             VP->setId(pKFi->mnId);
             VP->setFixed(true);
             optimizer.addVertex(VP);
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
 
             if (pKFi->bImu)
             {
@@ -4442,6 +4745,16 @@ namespace ORB_SLAM3
                         vpEdgeKFStereo.push_back(pKFi);
                         vpMapPointEdgeStereo.push_back(pMP);
                     }
+                }
+            }
+            for (auto it : observations)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }

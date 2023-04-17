@@ -216,10 +216,29 @@ namespace ORB_SLAM3
             SetBadFlag();
     }
 
-    std::map<KeyFrame *, std::tuple<int, int>> MapPoint::GetObservations()
+    // This one is for size - If this call is made, there will be no reference counting
+    std::map<KeyFrame *, std::tuple<int, int>> MapPoint::GetObservations(bool flag)
     {
         unique_lock<mutex> lock(mMutexFeatures);
         return mObservations;
+    }
+    std::map<KeyFrame *, std::tuple<int, int>> MapPoint::GetObservations()
+    {
+
+        unique_lock<mutex> lock(mMutexFeatures);
+        {
+            // This is the reference count increment for the local containers created from mObservations
+            for (auto it : mObservations)
+            {
+
+                {
+                    unique_lock<mutex> lock1(it.first->mMutexreferencecount);
+                    it.first->mReferencecount++;
+                    it.first->mReferencecount_mob++;
+                }
+            }
+        return mObservations;
+        }
     }
 
     int MapPoint::Observations()
@@ -245,6 +264,7 @@ namespace ORB_SLAM3
                 it.first->mReferencecount_mob++;
             }
 
+            mObservations.clear();
             // This is subtraction for mObservations
             for (auto it : mObservations)
             {
@@ -254,8 +274,6 @@ namespace ORB_SLAM3
                     it.first->mReferencecount_mob--;
                 }
             }
-
-            mObservations.clear();
         }
         for (map<KeyFrame *, tuple<int, int>>::iterator mit = obs.begin(), mend = obs.end(); mit != mend; mit++)
         {
@@ -272,6 +290,14 @@ namespace ORB_SLAM3
         }
 
         mpMap->EraseMapPoint(this);
+
+        // This is removal for obs
+        for (auto it : obs)
+        {
+            unique_lock<mutex> lock(it.first->mMutexreferencecount);
+            it.first->mReferencecount--;
+            it.first->mReferencecount_mob--;
+        }
     }
 
     MapPoint *MapPoint::GetReplaced()

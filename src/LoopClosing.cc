@@ -2124,6 +2124,16 @@ namespace ORB_SLAM3
                         }
                     }
                 }
+                for (auto it : mMPijObs)
+                {
+
+                    {
+
+                        unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                        it.first->mReferencecount--;
+                        it.first->mReferencecount_mob--;
+                    }
+                }
             }
 
             if (mMatchedMP.size() == 0)

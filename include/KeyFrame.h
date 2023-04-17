@@ -215,6 +215,7 @@ public:
     Eigen::Vector3f GetTranslation();
     Eigen::Vector3f GetVelocity();
     bool isVelocitySet();
+    bool local_pass_one = false;
 
     // Bag of Words Representation
     void ComputeBoW();

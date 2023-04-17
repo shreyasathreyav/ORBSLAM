@@ -3483,7 +3483,20 @@ namespace ORB_SLAM3
                     {
                         const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
                         for (map<KeyFrame *, tuple<int, int>>::const_iterator it = observations.begin(), itend = observations.end(); it != itend; it++)
+                        {
+
                             keyframeCounter[it->first]++;
+                        }
+                        for (auto it : observations)
+                        {
+
+                            {
+
+                                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                                it.first->mReferencecount--;
+                                it.first->mReferencecount_mob--;
+                            }
+                        }
                     }
                     else
                     {
@@ -3506,7 +3519,20 @@ namespace ORB_SLAM3
                     {
                         const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
                         for (map<KeyFrame *, tuple<int, int>>::const_iterator it = observations.begin(), itend = observations.end(); it != itend; it++)
+                        {
+
                             keyframeCounter[it->first]++;
+                        }
+                        for (auto it : observations)
+                        {
+
+                            {
+
+                                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                                it.first->mReferencecount--;
+                                it.first->mReferencecount_mob--;
+                            }
+                        }
                     }
                     else
                     {

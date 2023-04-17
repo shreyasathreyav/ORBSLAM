@@ -119,7 +119,9 @@ public:
 
     KeyFrame* GetReferenceKeyFrame();
 
+    std::map<KeyFrame *, std::tuple<int, int>>GetObservations(bool flag);
     std::map<KeyFrame*,std::tuple<int,int>> GetObservations();
+
     int Observations();
 
     void AddObservation(KeyFrame* pKF,int idx);

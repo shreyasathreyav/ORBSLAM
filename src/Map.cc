@@ -394,7 +394,8 @@ namespace ORB_SLAM3
             if (!pMPi || pMPi->isBad())
                 continue;
 
-            if (pMPi->GetObservations().size() == 0)
+            // Goes through the overloaded function that does not reference count
+            if (pMPi->GetObservations(true).size() == 0)
             {
                 nMPWithoutObs++;
             }
@@ -404,6 +405,16 @@ namespace ORB_SLAM3
                 if (it->first->GetMap() != this || it->first->isBad())
                 {
                     pMPi->EraseObservation(it->first);
+                }
+            }
+            for (auto it : mpObs)
+            {
+
+                {
+
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount--;
+                    it.first->mReferencecount_mob--;
                 }
             }
         }
