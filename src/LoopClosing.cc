@@ -516,6 +516,7 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount_ockf--;
+                i->mReferencecount--;
             }
             return true;
         }
@@ -527,6 +528,7 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf--;
+            i->mReferencecount--;
         }
         return false;
     }
@@ -1012,10 +1014,19 @@ namespace ORB_SLAM3
         mpCurrentKF->UpdateConnections();
         // assert(mpCurrentKF->GetMap()->CheckEssentialGraph());
 
+        for (auto i : mvpCurrentConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount_ockf--;
+            i->mReferencecount--;
+        }
         // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation
         mvpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
         mvpCurrentConnectedKFs.push_back(mpCurrentKF);
-        mpCurrentKF->mReferencecount_ockf++;
+        {
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
 
         // std::cout << "Loop: number of connected KFs -> " + to_string(mvpCurrentConnectedKFs.size()) << std::endl;
 
@@ -1230,6 +1241,7 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf--;
         }
+        mpCurrentKF->mReferencecount--;
     }
 
     void LoopClosing::MergeLocal()
@@ -1593,6 +1605,10 @@ namespace ORB_SLAM3
 
         vpMergeConnectedKFs = mpMergeMatchedKF->GetVectorCovisibleKeyFrames();
         vpMergeConnectedKFs.push_back(mpMergeMatchedKF);
+        {
+            unique_lock<mutex> lock(mpMergeMatchedKF->mMutexreferencecount);
+            mpMergeMatchedKF->mReferencecount++;
+        }
         // vpCheckFuseMapPoint.reserve(spMapPointMerge.size());
         // std::copy(spMapPointMerge.begin(), spMapPointMerge.end(), std::back_inserter(vpCheckFuseMapPoint));
 
@@ -1630,8 +1646,30 @@ namespace ORB_SLAM3
 
         bool bStop = false;
         vpLocalCurrentWindowKFs.clear();
+
+        for (auto i : vpMergeConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            if(i != mpCurrentKF)
+            {
+                i->mReferencecount_ockf--;
+                i->mReferencecount--;
+            }
+            else
+            {
+                i->mReferencecount--;
+            }
+        }
+
         vpMergeConnectedKFs.clear();
+        
         std::copy(spLocalWindowKFs.begin(), spLocalWindowKFs.end(), std::back_inserter(vpLocalCurrentWindowKFs));
+
+        for (auto i : spMergeConnectedKFs)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->mReferencecount++;
+        }
         std::copy(spMergeConnectedKFs.begin(), spMergeConnectedKFs.end(), std::back_inserter(vpMergeConnectedKFs));
         if (mpTracker->mSensor == System::IMU_MONOCULAR || mpTracker->mSensor == System::IMU_STEREO || mpTracker->mSensor == System::IMU_RGBD)
         {

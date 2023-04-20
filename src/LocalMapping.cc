@@ -1072,6 +1072,7 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf--;
+            i->mReferencecount--;
         }
     }
 

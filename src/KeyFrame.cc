@@ -222,12 +222,24 @@ namespace ORB_SLAM3
                 lWs.push_front(vPairs[i].first);
             }
         }
-
-        mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
         for (auto itr : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //local 
+            itr->mReferencecount_ockf--;
+            //global
+            itr->mReferencecount--; 
+        }
+
+        mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
+        
+        for (auto itr : mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //local 
             itr->mReferencecount_ockf++;
+            //global
+            itr->mReferencecount++; 
         }
         mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
     }
@@ -248,13 +260,8 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
             itr->mReferencecount_ockf++;
+            itr->mReferencecount++;
         }
-        return mvpOrderedConnectedKeyFrames;
-    }
-    // to return just size
-    vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)
-    {
-        unique_lock<mutex> lock(mMutexConnections);
         return mvpOrderedConnectedKeyFrames;
     }
     //
@@ -267,6 +274,7 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
                 itr->mReferencecount_ockf++;
+                itr->mReferencecount++;
             }
             return mvpOrderedConnectedKeyFrames;
         }
@@ -276,6 +284,7 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(mvpOrderedConnectedKeyFrames[i]->mMutexreferencecount);
                 mvpOrderedConnectedKeyFrames[i]->mReferencecount_ockf++;
+                mvpOrderedConnectedKeyFrames[i]->mReferencecount++;
             }
             return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
         }
@@ -303,6 +312,7 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(mvpOrderedConnectedKeyFrames[i]->mMutexreferencecount);
                 mvpOrderedConnectedKeyFrames[i]->mReferencecount_ockf++;
+                mvpOrderedConnectedKeyFrames[i]->mReferencecount++;
             }
             return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
         }
@@ -553,11 +563,22 @@ namespace ORB_SLAM3
             unique_lock<mutex> lockCon(mMutexConnections);
 
             mConnectedKeyFrameWeights = KFcounter;
+
+
+            for (auto itr : mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+            }
+
             mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
+            
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
                 itr->mReferencecount_ockf++;
+                itr->mReferencecount++;
             }
 
             mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
@@ -704,7 +725,8 @@ namespace ORB_SLAM3
             for (auto i : mvpOrderedConnectedKeyFrames)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount_ockf = 0;
+                i->mReferencecount_ockf--;
+                i->mReferencecount--;
             }
             mvpOrderedConnectedKeyFrames.clear();
 
@@ -752,6 +774,7 @@ namespace ORB_SLAM3
                     {
                         unique_lock<mutex> lock(i->mMutexreferencecount);
                         i->mReferencecount_ockf--;
+                        i->mReferencecount--;
                     }
                 }
 
