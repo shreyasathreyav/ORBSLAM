@@ -4450,12 +4450,18 @@ namespace ORB_SLAM3
                     pKFi->mnBALocalForKF = pCurrKF->mnId;
                     if (!pKFi->isBad())
                     {
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->local_pass_two = true;
+                            pKFi->mReferencecount++;
+                        }
+                        // Local container 1 - insert RF
                         vpOptimizableCovKFs.push_back(pKFi);
                         break;
                     }
                 }
             }
-            
+
             for (auto it : observations)
             {
 
@@ -4483,68 +4489,266 @@ namespace ORB_SLAM3
 
         // Set Local KeyFrame vertices
         N = vpOptimizableKFs.size();
+
+        // Reference counting for this block is over
         for (int i = 0; i < N; i++)
         {
             KeyFrame *pKFi = vpOptimizableKFs[i];
 
+            // Increment of RF within the for loop - Local pKFi increment
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
+
+            // Heap allocated reference count - 1
             VertexPose *VP = new VertexPose(pKFi);
+            // This might be a memory leak - but adding a reference count
+            // Considering this local for the time being - will have to subtract in the end
+
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             VP->setId(pKFi->mnId);
             VP->setFixed(false);
+
+            // Optimizer reference count - 1
             optimizer.addVertex(VP);
 
+            // This is local for the time being - will have to subtract in the end
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             if (pKFi->bImu)
             {
+                /*
+                Total count statistics
+
+                Heap allocated - 3 increments
+                Optimizer counts - 3 increments
+
+                */
+                // Heap allocated reference count - 2
                 VertexVelocity *VV = new VertexVelocity(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VV->setId(maxKFid + 3 * (pKFi->mnId) + 1);
                 VV->setFixed(false);
+
+                // Optimizer count - 2
                 optimizer.addVertex(VV);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Heap allocated reference count - 3
                 VertexGyroBias *VG = new VertexGyroBias(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VG->setId(maxKFid + 3 * (pKFi->mnId) + 2);
                 VG->setFixed(false);
+                // Optimizer reference count - 3
                 optimizer.addVertex(VG);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Heap allocated reference count - 4
                 VertexAccBias *VA = new VertexAccBias(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VA->setId(maxKFid + 3 * (pKFi->mnId) + 3);
                 VA->setFixed(false);
+                // Optimizer reference count - 4
                 optimizer.addVertex(VA);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // These decrements to account for the if clause
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+
+                    pKFi->mReferencecount -= 3;
+                    pKFi->mReferencecount -= 3;
+                }
+            }
+
+            // This decrement is for the local pKFi
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
+            // This decrement is for VP
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
+            // This decrement is for the optimizer
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
             }
         }
 
+        /*
+
+        We only have to decrement the reference count if the size of ncount is  not zero
+
+        Heap allocated counts - 4
+        Optimizer counts - 4
+
+        */
         // Set Local cov keyframes vertices
         int Ncov = vpOptimizableCovKFs.size();
         for (int i = 0; i < Ncov; i++)
         {
             KeyFrame *pKFi = vpOptimizableCovKFs[i];
-
+            // Heap allocated reference count - 5
             VertexPose *VP = new VertexPose(pKFi);
+            // This might be a memory leak - but adding a reference count
+            // Considering this local for the time being - will have to subtract in the end
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             VP->setId(pKFi->mnId);
             VP->setFixed(false);
+            // Optimizer reference count - 5
             optimizer.addVertex(VP);
+            // This is local for the time being - will have to subtract in the end
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
 
             if (pKFi->bImu)
             {
+                // Heap allocated reference count - 6
                 VertexVelocity *VV = new VertexVelocity(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VV->setId(maxKFid + 3 * (pKFi->mnId) + 1);
                 VV->setFixed(false);
+                // Optimizer reference count - 6
                 optimizer.addVertex(VV);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                // Heap allocated reference count - 7
                 VertexGyroBias *VG = new VertexGyroBias(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VG->setId(maxKFid + 3 * (pKFi->mnId) + 2);
                 VG->setFixed(false);
+                // Optimizer reference count - 7
                 optimizer.addVertex(VG);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                // Heap allocated reference count - 8
                 VertexAccBias *VA = new VertexAccBias(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VA->setId(maxKFid + 3 * (pKFi->mnId) + 3);
                 VA->setFixed(false);
+                // Optimizer reference count - 8
                 optimizer.addVertex(VA);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // These decrements to account for the if clause
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+
+                    pKFi->mReferencecount -= 3;
+                    pKFi->mReferencecount -= 3;
+                }
+            }
+            // This decrement is for the local pKFi
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
+            // This decrement is for VP
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
+            // This decrement is for optimizer
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
             }
         }
+        /*
 
+        Heap allocated counts - 4
+        Optimizer counts - 4
+
+        */
         // Set Fixed KeyFrame vertices
+        // This block's reference count is complete
         for (list<KeyFrame *>::iterator lit = lFixedKeyFrames.begin(), lend = lFixedKeyFrames.end(); lit != lend; lit++)
         {
             KeyFrame *pKFi = *lit;
+            // Heap allocated reference count - 9
             VertexPose *VP = new VertexPose(pKFi);
+            // This might be a memory leak - but adding a reference count
+            // Considering this local for the time being - will have to subtract in the end
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             VP->setId(pKFi->mnId);
             VP->setFixed(true);
+            // Optimizer reference count - 9
             optimizer.addVertex(VP);
+            // This is local for the time being - will have to subtract in the end
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
+            // This one is for lFixedKeyframes
             {
                 unique_lock<mutex> lock(pKFi->mMutexreferencecount);
                 pKFi->mReferencecount--;
@@ -4552,18 +4756,80 @@ namespace ORB_SLAM3
 
             if (pKFi->bImu)
             {
+                // Heap allocated reference count - 10
                 VertexVelocity *VV = new VertexVelocity(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VV->setId(maxKFid + 3 * (pKFi->mnId) + 1);
                 VV->setFixed(true);
+                // Optimizer reference count - 10
                 optimizer.addVertex(VV);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                // Heap allocated reference count - 11
                 VertexGyroBias *VG = new VertexGyroBias(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VG->setId(maxKFid + 3 * (pKFi->mnId) + 2);
                 VG->setFixed(true);
+                // Optimizer reference count - 11
                 optimizer.addVertex(VG);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                // Heap allocated reference count - 12
+
                 VertexAccBias *VA = new VertexAccBias(pKFi);
+                // This might be a memory leak - but adding a reference count
+                // Considering this local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 VA->setId(maxKFid + 3 * (pKFi->mnId) + 3);
                 VA->setFixed(true);
+                // Optimizer reference count - 12
                 optimizer.addVertex(VA);
+                // This is local for the time being - will have to subtract in the end
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                // These decrements to account for the if clause
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+
+                    pKFi->mReferencecount -= 3;
+                    pKFi->mReferencecount -= 3;
+                }
+            }
+            // This decrement is for the local pKFi
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
+            // This decrement is for VP
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
+            // This decrement is for optimizer
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
             }
         }
 
@@ -4571,11 +4837,28 @@ namespace ORB_SLAM3
         vector<EdgeInertial *> vei(N, (EdgeInertial *)NULL);
         vector<EdgeGyroRW *> vegr(N, (EdgeGyroRW *)NULL);
         vector<EdgeAccRW *> vear(N, (EdgeAccRW *)NULL);
+
+        // New block begins here for reference counting
+        /*
+        Optimizer count - 3
+        Heap allocations count -
+        ie
+           Vei reference count - 10
+           Infoa reference count - 1
+           Infog reference count - 1
+           Vear reference count  - 2
+           Vegr reference count  - 1
+
+        */
+       // Reference counting for this block is over but need to be verified once more
         for (int i = 0; i < N; i++)
         {
             // cout << "inserting inertial edge " << i << endl;
             KeyFrame *pKFi = vpOptimizableKFs[i];
-
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             if (!pKFi->mPrevKF)
             {
                 Verbose::PrintMess("NOT INERTIAL LINK TO PREVIOUS FRAME!!!!", Verbose::VERBOSITY_NORMAL);
@@ -4598,38 +4881,154 @@ namespace ORB_SLAM3
                     cerr << "Error " << VP1 << ", " << VV1 << ", " << VG1 << ", " << VA1 << ", " << VP2 << ", " << VV2 << ", " << VG2 << ", " << VA2 << endl;
                     continue;
                 }
+                // Heap allocated reference count - 13
 
+                // Vei count - 1
                 vei[i] = new EdgeInertial(pKFi->mpImuPreintegrated);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
 
+                // Vei count - 2
                 vei[i]->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VP1));
-                vei[i]->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VV1));
-                vei[i]->setVertex(2, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VG1));
-                vei[i]->setVertex(3, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VA1));
-                vei[i]->setVertex(4, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VP2));
-                vei[i]->setVertex(5, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VV2));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
 
+                // Vei count - 3
+                vei[i]->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VV1));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 4
+                vei[i]->setVertex(2, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VG1));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 5
+                vei[i]->setVertex(3, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VA1));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 6
+                vei[i]->setVertex(4, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VP2));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 7
+                vei[i]->setVertex(5, dynamic_cast<g2o::OptimizableGraph::Vertex *>(VV2));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 8
                 // TODO Uncomment
                 g2o::RobustKernelHuber *rki = new g2o::RobustKernelHuber;
                 vei[i]->setRobustKernel(rki);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 9
                 rki->setDelta(sqrt(16.92));
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // Vei count - 10
                 optimizer.addEdge(vei[i]);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                // Optimizer count - 13
 
                 vegr[i] = new EdgeGyroRW();
                 vegr[i]->setVertex(0, VG1);
                 vegr[i]->setVertex(1, VG2);
                 Eigen::Matrix3d InfoG = pKFi->mpImuPreintegrated->C.block<3, 3>(9, 9).cast<double>().inverse();
+                // Infog count - 1
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 vegr[i]->setInformation(InfoG);
+                // Vegr count - 1
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 optimizer.addEdge(vegr[i]);
+                // Vegr count - 2
+                // Optimizer count - 14
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
 
                 vear[i] = new EdgeAccRW();
                 vear[i]->setVertex(0, VA1);
                 vear[i]->setVertex(1, VA2);
                 Eigen::Matrix3d InfoA = pKFi->mpImuPreintegrated->C.block<3, 3>(12, 12).cast<double>().inverse();
+                // Infoa count - 1
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 vear[i]->setInformation(InfoA);
+                // Vear count - 1
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 optimizer.addEdge(vear[i]);
+                // Optimizer count -
+                // Vear count - 2
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+
+                // These are all the combined decrements for the increments in the block
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount -= 19;
+                }
             }
             else
+            {
                 Verbose::PrintMess("ERROR building inertial edge", Verbose::VERBOSITY_NORMAL);
+            }
+            // This is for the local pKFi within the for loop
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
         }
 
         Verbose::PrintMess("end inserting inertial edges", Verbose::VERBOSITY_NORMAL);
@@ -4721,6 +5120,10 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesMono.push_back(e);
                         vpEdgeKFMono.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         vpMapPointEdgeMono.push_back(pMP);
                     }
                     else // stereo observation
@@ -4744,6 +5147,10 @@ namespace ORB_SLAM3
                         optimizer.addEdge(e);
                         vpEdgesStereo.push_back(e);
                         vpEdgeKFStereo.push_back(pKFi);
+                        {
+                            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                            pKFi->mReferencecount++;
+                        }
                         vpMapPointEdgeStereo.push_back(pMP);
                     }
                 }
@@ -4786,6 +5193,10 @@ namespace ORB_SLAM3
             if (e->chi2() > chi2Mono2)
             {
                 KeyFrame *pKFi = vpEdgeKFMono[i];
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 vToErase.push_back(make_pair(pKFi, pMP));
             }
         }
@@ -4802,6 +5213,10 @@ namespace ORB_SLAM3
             if (e->chi2() > chi2Stereo2)
             {
                 KeyFrame *pKFi = vpEdgeKFStereo[i];
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 vToErase.push_back(make_pair(pKFi, pMP));
             }
         }
@@ -4813,9 +5228,17 @@ namespace ORB_SLAM3
             for (size_t i = 0; i < vToErase.size(); i++)
             {
                 KeyFrame *pKFi = vToErase[i].first;
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 MapPoint *pMPi = vToErase[i].second;
                 pKFi->EraseMapPointMatch(pMPi);
                 pMPi->EraseObservation(pKFi);
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount--;
+                }
             }
         }
 
@@ -4824,7 +5247,10 @@ namespace ORB_SLAM3
         for (int i = 0; i < N; i++)
         {
             KeyFrame *pKFi = vpOptimizableKFs[i];
-
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             VertexPose *VP = static_cast<VertexPose *>(optimizer.vertex(pKFi->mnId));
             Sophus::SE3f Tcw(VP->estimate().Rcw[0].cast<float>(), VP->estimate().tcw[0].cast<float>());
             pKFi->SetPose(Tcw);
@@ -4843,12 +5269,19 @@ namespace ORB_SLAM3
                 b << VG->estimate(), VA->estimate();
                 pKFi->SetNewBias(IMU::Bias(b[3], b[4], b[5], b[0], b[1], b[2]));
             }
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
+            }
         }
 
         for (int i = 0; i < Ncov; i++)
         {
             KeyFrame *pKFi = vpOptimizableCovKFs[i];
-
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount++;
+            }
             VertexPose *VP = static_cast<VertexPose *>(optimizer.vertex(pKFi->mnId));
             Sophus::SE3f Tcw(VP->estimate().Rcw[0].cast<float>(), VP->estimate().tcw[0].cast<float>());
             pKFi->SetPose(Tcw);
@@ -4866,6 +5299,10 @@ namespace ORB_SLAM3
                 Vector6d b;
                 b << VG->estimate(), VA->estimate();
                 pKFi->SetNewBias(IMU::Bias(b[3], b[4], b[5], b[0], b[1], b[2]));
+            }
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                pKFi->mReferencecount--;
             }
         }
 

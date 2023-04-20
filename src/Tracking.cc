@@ -3556,7 +3556,9 @@ namespace ORB_SLAM3
 
             if (pKF->isBad())
             {
-                cout << pKF->mnId << " : Reference " << pKF->mReferencecount_ockf << " RF" << endl;
+                cout << pKF->mnId << " : Reference " << pKF->mReferencecount_mob << " RF" << endl;
+                cout << pKF->mnId << " : Reference " << pKF->mReferencecount << " RF" << endl;
+
                 // cout << "keyframes counter is corrupting" <<endl;
                 continue;
             }

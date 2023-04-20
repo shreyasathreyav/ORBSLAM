@@ -216,6 +216,7 @@ public:
     Eigen::Vector3f GetVelocity();
     bool isVelocitySet();
     bool local_pass_one = false;
+    bool local_pass_two = false;
 
     // Bag of Words Representation
     void ComputeBoW();
@@ -312,15 +313,15 @@ public:
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
     // Global reference count
-    long unsigned int mReferencecount; 
+    long long int mReferencecount; 
     // MSPKEYFRAMES
-    long unsigned int mReferencecount_msp;
+    long long int mReferencecount_msp;
     // mvpOrderedConnectedKeyFrames`
-    long unsigned int mReferencecount_ockf;
+    long long int mReferencecount_ockf;
     //mConnectedKeyFrameWeights
-    long unsigned int mReferencecount_ckfw;
+    long long int mReferencecount_ckfw;
     //mObservations
-    long unsigned int mReferencecount_mob;
+    long long int mReferencecount_mob;
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;
