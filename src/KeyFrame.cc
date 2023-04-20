@@ -441,12 +441,16 @@ namespace ORB_SLAM3
                 if (mit->first->mnId == mnId || mit->first->isBad() || mit->first->GetMap() != mpMap)
                     continue;
                 KFcounter[mit->first]++;
+                // This increment is for KFcounter
+                {
+                    unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                    mit->first->mReferencecount++;
+                    mit->first->mReferencecount_mob++;
+                }
             }
             for (auto it : observations)
             {
-
                 {
-
                     unique_lock<mutex> lock(it.first->mMutexreferencecount);
                     it.first->mReferencecount--;
                     it.first->mReferencecount_mob--;
@@ -476,18 +480,58 @@ namespace ORB_SLAM3
             {
                 nmax = mit->second;
                 pKFmax = mit->first;
+                // Increased the count since we are making it pKFmax
+                {
+                    unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                    mit->first->mReferencecount++;
+                    mit->first->mReferencecount_mob++;
+                }
             }
             if (mit->second >= th)
             {
                 vPairs.push_back(make_pair(mit->second, mit->first));
+                // Increased the count since we are pushing in into vPairs
+                {
+                    unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                    mit->first->mReferencecount++;
+                    mit->first->mReferencecount_mob++;
+                }
+                // This is for locking the instance mit-first written below
+                {
+                    unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                    mit->first->mReferencecount++;
+                    mit->first->mReferencecount_mob++;
+                }
                 (mit->first)->AddConnection(this, mit->second);
+                // This is a decrement for the local instance of mit-first used above
+                {
+                    unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                    mit->first->mReferencecount--;
+                    mit->first->mReferencecount_mob--;
+                }
             }
         }
 
         if (vPairs.empty())
         {
             vPairs.push_back(make_pair(nmax, pKFmax));
+            {
+                unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+                pKFmax->mReferencecount++;
+                pKFmax->mReferencecount_mob++;
+            }
+            // This is for the usage of pKFmax, we are currently incrementing the reference counter
+            {
+                unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+                pKFmax->mReferencecount++;
+                pKFmax->mReferencecount_mob++;
+            }
             pKFmax->AddConnection(this, nmax);
+            {
+                unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+                pKFmax->mReferencecount--;
+                pKFmax->mReferencecount_mob--;
+            }
         }
 
         sort(vPairs.begin(), vPairs.end());
@@ -495,6 +539,12 @@ namespace ORB_SLAM3
         list<int> lWs;
         for (size_t i = 0; i < vPairs.size(); i++)
         {
+            // This is for the usage of vPairs, we are currently incrementing the reference counter
+            {
+                unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+                pKFmax->mReferencecount++;
+                pKFmax->mReferencecount_mob++;
+            }
             lKFs.push_front(vPairs[i].second);
             lWs.push_front(vPairs[i].first);
         }
