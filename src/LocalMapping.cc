@@ -389,6 +389,9 @@ namespace ORB_SLAM3
         // For stereo inertial case
         if (mbMonocular)
             nn = 30;
+        
+        set<KeyFrame *> notvpNeighKFs;
+        
         vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn);
 
         if (mbInertial)
@@ -399,7 +402,11 @@ namespace ORB_SLAM3
             {
                 vector<KeyFrame *>::iterator it = std::find(vpNeighKFs.begin(), vpNeighKFs.end(), pKF->mPrevKF);
                 if (it == vpNeighKFs.end())
+                {
                     vpNeighKFs.push_back(pKF->mPrevKF);
+                    pKF->mPrevKF-> mReferencecount++;
+                    notvpNeighKFs.insert(pKF->mPrevKF);
+                }
                 pKF = pKF->mPrevKF;
             }
         }
@@ -431,7 +438,25 @@ namespace ORB_SLAM3
         for (size_t i = 0; i < vpNeighKFs.size(); i++)
         {
             if (i > 0 && CheckNewKeyFrames())
+            {
+
+                for (auto itr : vpNeighKFs)
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    if(find(notvpNeighKFs.begin(), notvpNeighKFs.end(), itr) == notvpNeighKFs.end())
+                    {
+                        itr->mReferencecount_ockf--;
+                        itr->mReferencecount--;
+                    }
+                    else continue;
+                }
+                for(auto itr: notvpNeighKFs)
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr-> mReferencecount--;
+                }
                 return;
+            }
 
             KeyFrame *pKF2 = vpNeighKFs[i];
 
@@ -710,6 +735,22 @@ namespace ORB_SLAM3
                 mlpRecentAddedMapPoints.push_back(pMP);
             }
         }
+
+        for (auto itr : vpNeighKFs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            if(find(notvpNeighKFs.begin(), notvpNeighKFs.end(), itr) == notvpNeighKFs.end())
+            {
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+            }
+            else continue;
+        }
+        for(auto itr: notvpNeighKFs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr-> mReferencecount--;
+        }
     }
 
     void LocalMapping::SearchInNeighbors()
@@ -744,6 +785,13 @@ namespace ORB_SLAM3
             }
             if (mbAbortBA)
                 break;
+
+            for (auto itr : vpSecondNeighKFs)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+            }
         }
 
         // Extend to temporal neighbors
@@ -776,7 +824,15 @@ namespace ORB_SLAM3
         }
 
         if (mbAbortBA)
+        {
+            for (auto itr : vpNeighKFs)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+            }
             return;
+        }
 
         // Search matches by projection from target KFs in current KF
         vector<MapPoint *> vpFuseCandidates;
@@ -821,6 +877,12 @@ namespace ORB_SLAM3
 
         // Update connections in covisibility graph
         mpCurrentKeyFrame->UpdateConnections();
+        for (auto itr : vpNeighKFs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
     }
 
     void LocalMapping::RequestStop()

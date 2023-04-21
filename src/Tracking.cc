@@ -3622,6 +3622,13 @@ namespace ORB_SLAM3
                     break;
                 }
             }
+            for (auto itr : vNeighs)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+            }
+
         }
 
         // Add 10 last temporal KFs (mainly for IMU)

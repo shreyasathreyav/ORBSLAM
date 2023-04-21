@@ -137,7 +137,7 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
         return vector<KeyFrame*>();
 
     list<pair<float,KeyFrame*> > lScoreAndMatch;
-
+    vector<KeyFrame*> del_lScoreAndMatch;
     // Only compare against those keyframes that share enough words
     int maxCommonWords=0;
     for(list<KeyFrame*>::iterator lit=lKFsSharingWords.begin(), lend= lKFsSharingWords.end(); lit!=lend; lit++)
@@ -197,8 +197,20 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
         }
 
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
+        {
+            del_lScoreAndMatch.push_back(pBestKF);
+            unique_lock<mutex> lock(pBestKF->mMutexreferencecount);
+            pBestKF->mReferencecount_ockf++;
+            pBestKF->mReferencecount++;
+        }
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+        for (auto itr : vpNeighs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
     }
 
     // Return all those keyframes with a score higher than 0.75*bestScore
@@ -221,7 +233,14 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
         }
     }
 
-
+    for (auto itr : del_lScoreAndMatch)
+    {
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
+    }
     return vpLoopCandidates;
 }
 
@@ -339,6 +358,13 @@ void KeyFrameDatabase::DetectCandidates(KeyFrame* pKF, float minScore,vector<Key
                 lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
                 if(accScore>bestAccScore)
                     bestAccScore=accScore;
+            
+                for (auto itr : vpNeighs)
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
+                } 
             }
 
             // Return all those keyframes with a score higher than 0.75*bestScore
@@ -427,6 +453,13 @@ void KeyFrameDatabase::DetectCandidates(KeyFrame* pKF, float minScore,vector<Key
                 lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
                 if(accScore>bestAccScore)
                     bestAccScore=accScore;
+            
+                for (auto itr : vpNeighs)
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
+                }
             }
 
             // Return all those keyframes with a score higher than 0.75*bestScore
@@ -566,6 +599,13 @@ void KeyFrameDatabase::DetectBestCandidates(KeyFrame *pKF, vector<KeyFrame*> &vp
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+        
+        for (auto itr : vpNeighs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
     }
 
     // Return all those keyframes with a score higher than 0.75*bestScore
@@ -697,6 +737,13 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame*> &v
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+        for (auto itr : vpNeighs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
+    
     }
 
     lAccScoreAndMatch.sort(compFirst);
@@ -818,6 +865,13 @@ vector<KeyFrame*> KeyFrameDatabase::DetectRelocalizationCandidates(Frame *F, Map
         lAccScoreAndMatch.push_back(make_pair(accScore,pBestKF));
         if(accScore>bestAccScore)
             bestAccScore=accScore;
+    
+        for (auto itr : vpNeighs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
     }
 
     // Return all those keyframes with a score higher than 0.75*bestScore
