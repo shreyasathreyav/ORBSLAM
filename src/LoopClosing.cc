@@ -2131,7 +2131,8 @@ namespace ORB_SLAM3
 
         return;
     }
-
+    
+    // Reference counting for this function is complete - Have to check once more though
     void LoopClosing::CheckObservations(set<KeyFrame *> &spKFsMap1, set<KeyFrame *> &spKFsMap2)
     {
         cout << "----------------------" << endl;
@@ -2146,12 +2147,15 @@ namespace ORB_SLAM3
                 {
                     continue;
                 }
-
+                
+                // This where the increment happens via means of the get call 
                 map<KeyFrame *, tuple<int, int>> mMPijObs = pMPij->GetObservations();
                 for (KeyFrame *pKFi2 : spKFsMap2)
                 {
+                    // If it is found in the container
                     if (mMPijObs.find(pKFi2) != mMPijObs.end())
                     {
+                        // If it is found in the container - so no need to do add an increment to the reference count
                         if (mMatchedMP.find(pKFi2) != mMatchedMP.end())
                         {
                             mMatchedMP[pKFi2] = mMatchedMP[pKFi2] + 1;

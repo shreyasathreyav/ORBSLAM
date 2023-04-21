@@ -225,21 +225,21 @@ namespace ORB_SLAM3
         for (auto itr : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //local 
+            // local
             itr->mReferencecount_ockf--;
-            //global
-            itr->mReferencecount--; 
+            // global
+            itr->mReferencecount--;
         }
 
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
-        
+
         for (auto itr : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //local 
+            // local
             itr->mReferencecount_ockf++;
-            //global
-            itr->mReferencecount++; 
+            // global
+            itr->mReferencecount++;
         }
         mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
     }
@@ -421,6 +421,8 @@ namespace ORB_SLAM3
         return mvpMapPoints[idx];
     }
 
+
+    // The mObservations in the function is mostly accounted for - need to check once more
     void KeyFrame::UpdateConnections(bool upParent)
     {
         map<KeyFrame *, int> KFcounter;
@@ -444,20 +446,22 @@ namespace ORB_SLAM3
             if (pMP->isBad())
                 continue;
 
-            map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
 
+            // Here the count for observations increase
+            map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
             for (map<KeyFrame *, tuple<int, int>>::iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
             {
                 if (mit->first->mnId == mnId || mit->first->isBad() || mit->first->GetMap() != mpMap)
                     continue;
                 KFcounter[mit->first]++;
-                // This increment is for KFcounter
+                // This increment is for KFcounter since we populate this using observations
                 {
                     unique_lock<mutex> lock(mit->first->mMutexreferencecount);
                     mit->first->mReferencecount++;
                     mit->first->mReferencecount_mob++;
                 }
             }
+            // Decrementing below for the local reference count that was increased above
             for (auto it : observations)
             {
                 {
@@ -484,6 +488,12 @@ namespace ORB_SLAM3
             cout << "UPDATE_CONN: current KF " << mnId << endl;
         for (map<KeyFrame *, int>::iterator mit = KFcounter.begin(), mend = KFcounter.end(); mit != mend; mit++)
         {
+            // This is an increment since we are using KFcounter
+            {
+                unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                mit->first->mReferencecount++;
+                mit->first->mReferencecount_mob++;
+            }
             if (!upParent)
                 cout << "  UPDATE_CONN: KF " << mit->first->mnId << " ; num matches: " << mit->second << endl;
             if (mit->second > nmax)
@@ -506,6 +516,8 @@ namespace ORB_SLAM3
                     mit->first->mReferencecount++;
                     mit->first->mReferencecount_mob++;
                 }
+
+                // Not sure if this is required but shouldn't cause any problems
                 // This is for locking the instance mit-first written below
                 {
                     unique_lock<mutex> lock(mit->first->mMutexreferencecount);
@@ -520,6 +532,12 @@ namespace ORB_SLAM3
                     mit->first->mReferencecount_mob--;
                 }
             }
+            // This is a decrement since we stop using KFcounter locally
+            {
+                unique_lock<mutex> lock(mit->first->mMutexreferencecount);
+                mit->first->mReferencecount--;
+                mit->first->mReferencecount_mob--;
+            }
         }
 
         if (vPairs.empty())
@@ -530,6 +548,7 @@ namespace ORB_SLAM3
                 pKFmax->mReferencecount++;
                 pKFmax->mReferencecount_mob++;
             }
+            // Not sure if this is fully required but should not cause any bugs - Extra measure
             // This is for the usage of pKFmax, we are currently incrementing the reference counter
             {
                 unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
@@ -544,26 +563,50 @@ namespace ORB_SLAM3
             }
         }
 
+        // This has to be mutex locked because deletion cannot happen while sorting has to happen
         sort(vPairs.begin(), vPairs.end());
         list<KeyFrame *> lKFs;
         list<int> lWs;
         for (size_t i = 0; i < vPairs.size(); i++)
         {
             // This is for the usage of vPairs, we are currently incrementing the reference counter
+            // vPairs was derived from mObservations
             {
                 unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
                 pKFmax->mReferencecount++;
                 pKFmax->mReferencecount_mob++;
             }
             lKFs.push_front(vPairs[i].second);
+            // Increasing the count for the keyframe that is being inserted into lKFs
+            {
+                unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+                vPairs[i].second->mReferencecount++;
+                vPairs[i].second->mReferencecount_mob++;
+            }
             lWs.push_front(vPairs[i].first);
+        }
+        // This is the decrement for pKFmax because this is the last point that it is used - it is local
+        {
+            unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+            pKFmax->mReferencecount--;
+            pKFmax->mReferencecount_mob--;
+        }
+
+        // This is the decrement for vPairs because this is the last point where it is being used
+        for (auto it : vPairs)
+        {
+
+            {
+                unique_lock<mutex> lock(pKFmax->mMutexreferencecount);
+                it.second->mReferencecount--;
+                it.second->mReferencecount_mob--;
+            }
         }
 
         {
             unique_lock<mutex> lockCon(mMutexConnections);
 
             mConnectedKeyFrameWeights = KFcounter;
-
 
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
@@ -572,8 +615,16 @@ namespace ORB_SLAM3
                 itr->mReferencecount--;
             }
 
+            // mvpOrderedConnectedKeyFrames is actually populated by mObservations
+            // This would have the same KeyFrame pointers
             mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
-            
+            // Decrement for lKFs since we reached the end of scope
+            for (auto itr : lKFs)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_mob--;
+                itr->mReferencecount--;
+            }
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
@@ -581,6 +632,7 @@ namespace ORB_SLAM3
                 itr->mReferencecount++;
             }
 
+            // This is also populated by mObservations
             mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
 
             if (mbFirstConnection && mnId != mpMap->GetInitKFid())

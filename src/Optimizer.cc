@@ -150,7 +150,7 @@ namespace ORB_SLAM3
             vPoint->setMarginalized(true);
             optimizer.addVertex(vPoint);
 
-            // We got the observations here
+            // We got the observations here - so this should increment the reference count 
             const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
 
             int nEdges = 0;
@@ -307,6 +307,7 @@ namespace ORB_SLAM3
             to be no passing of keyframes from mObservations into other data structures
             */
 
+            // This decrement is for the above Get call 
             for (auto it : observations)
             {
 

@@ -972,6 +972,7 @@ namespace ORB_SLAM3
                             const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
                                                     : (i < pKF->NLeft) ? pKF->mvKeys[i].octave
                                                                        : pKF->mvKeysRight[i].octave;
+                            // The increment will happen in the Get observation call
                             const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
                             int nObs = 0;
                             for (map<KeyFrame *, tuple<int, int>>::const_iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
@@ -1005,6 +1006,7 @@ namespace ORB_SLAM3
                                         break;
                                 }
                             }
+                            // This is the decrement for the above get call
                             for (auto it : observations)
                             {
 
