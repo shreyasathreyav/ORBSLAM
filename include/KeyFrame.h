@@ -228,9 +228,12 @@ public:
     void UpdateConnections(bool upParent=true);
     void UpdateBestCovisibles();
     std::set<KeyFrame *> GetConnectedKeyFrames();
-    std::vector<KeyFrame* > GetVectorCovisibleKeyFrames();
     std::vector<KeyFrame* > GetVectorCovisibleKeyFrames(bool flag);
+    std::vector<KeyFrame* > GetVectorCovisibleKeyFrames();
     std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N);
+    
+    std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w, bool flag);
+
     std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w);
     int GetWeight(KeyFrame* pKF);
 
@@ -313,6 +316,10 @@ public:
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
     // Global reference count
+    long long mReferencecount_canonical; 
+    
+    long long  mReferencecount_container; 
+
     long long int mReferencecount; 
     // MSPKEYFRAMES
     long long int mReferencecount_msp;

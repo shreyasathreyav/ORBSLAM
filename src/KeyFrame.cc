@@ -36,7 +36,7 @@ namespace ORB_SLAM3
                            mfLogScaleFactor(0), mvScaleFactors(0), mvLevelSigma2(0), mvInvLevelSigma2(0), mnMinX(0), mnMinY(0), mnMaxX(0),
                            mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
                            mbToBeErased(false), mbBad(false), mHalfBaseline(0), mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0),
-                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount(0), mReferencecount_mob(0), mReferencecount_msp(0)
+                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount(0), mReferencecount_mob(0), mReferencecount_msp(0), mReferencecount_canonical(0),mReferencecount_container(0)
     {
     }
 
@@ -56,7 +56,7 @@ namespace ORB_SLAM3
                                                                        mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile), mnMergeCorrectedForKF(0),
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
-                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount(0), mReferencecount_mob(0), mReferencecount_msp(0)
+                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount(0), mReferencecount_mob(0), mReferencecount_msp(0),mReferencecount_canonical(0),mReferencecount_container(0)
     {
         mnId = nNextId++;
 
@@ -253,14 +253,25 @@ namespace ORB_SLAM3
         return s;
     }
 
+    vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+        for (auto itr : mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_canonical++;
+            itr->mReferencecount_container++;
+        }
+        return mvpOrderedConnectedKeyFrames;
+    }
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
     {
         unique_lock<mutex> lock(mMutexConnections);
         for (auto itr : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount_ockf++;
-            itr->mReferencecount++;
+            // itr->mReferencecount_canonical++;
+            // itr->mReferencecount_container++;
         }
         return mvpOrderedConnectedKeyFrames;
     }
@@ -290,6 +301,33 @@ namespace ORB_SLAM3
         }
     }
 
+    vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w, bool flag)
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+
+        if (mvpOrderedConnectedKeyFrames.empty())
+        {
+            return vector<KeyFrame *>();
+        }
+
+        vector<int>::iterator it = upper_bound(mvOrderedWeights.begin(), mvOrderedWeights.end(), w, KeyFrame::weightComp);
+
+        if (it == mvOrderedWeights.end() && mvOrderedWeights.back() < w)
+        {
+            return vector<KeyFrame *>();
+        }
+        else
+        {
+            int n = it - mvOrderedWeights.begin();
+            for (int i = 0; i < n; i++)
+            {
+                unique_lock<mutex> lock(mvpOrderedConnectedKeyFrames[i]->mMutexreferencecount);
+                // mvpOrderedConnectedKeyFrames[i]->mReferencecount_container++;
+                // mvpOrderedConnectedKeyFrames[i]->mReferencecount_canonical++;
+            }
+            return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
+        }
+    }
     vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w)
     {
         unique_lock<mutex> lock(mMutexConnections);
@@ -421,7 +459,6 @@ namespace ORB_SLAM3
         return mvpMapPoints[idx];
     }
 
-
     // The mObservations in the function is mostly accounted for - need to check once more
     void KeyFrame::UpdateConnections(bool upParent)
     {
@@ -445,7 +482,6 @@ namespace ORB_SLAM3
 
             if (pMP->isBad())
                 continue;
-
 
             // Here the count for observations increase
             map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
@@ -774,12 +810,6 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock1(mMutexFeatures);
 
             mConnectedKeyFrameWeights.clear();
-            for (auto i : mvpOrderedConnectedKeyFrames)
-            {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount_ockf--;
-                i->mReferencecount--;
-            }
             mvpOrderedConnectedKeyFrames.clear();
 
             // Update Spanning Tree
@@ -822,12 +852,6 @@ namespace ORB_SLAM3
                             }
                         }
                     }
-                    for (auto i : vpConnected)
-                    {
-                        unique_lock<mutex> lock(i->mMutexreferencecount);
-                        i->mReferencecount_ockf--;
-                        i->mReferencecount--;
-                    }
                 }
 
                 if (bContinue)
@@ -855,13 +879,11 @@ namespace ORB_SLAM3
                 mTcp = mTcw * mpParent->GetPoseInverse();
             }
             mbBad = true;
-            // delete this;
         }
 
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
     }
-
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);

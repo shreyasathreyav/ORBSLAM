@@ -285,6 +285,7 @@ namespace ORB_SLAM3
                         mbLoopDetected = false;
                     }
                 }
+
                 mpLastCurrentKF = mpCurrentKF;
             }
 
@@ -1098,10 +1099,17 @@ namespace ORB_SLAM3
         for (auto i : mvpCurrentConnectedKFs)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount_ockf--;
-            i->mReferencecount--;
+            if(i != mpLastCurrentKF)
+            {
+                i->mReferencecount_ockf--;
+                i->mReferencecount--;
+            }
+            else
+            {
+                i->mReferencecount--;
+            }
         }
-        // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation
+        // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation        
         mvpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
         mvpCurrentConnectedKFs.push_back(mpCurrentKF);
         {
@@ -1113,16 +1121,52 @@ namespace ORB_SLAM3
 
         KeyFrameAndPose CorrectedSim3, NonCorrectedSim3;
         CorrectedSim3[mpCurrentKF] = mg2oLoopScw;
+        {
+            //CorrectedSim3
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
         Sophus::SE3f Twc = mpCurrentKF->GetPoseInverse();
+        {
+            //Twc
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
         Sophus::SE3f Tcw = mpCurrentKF->GetPose();
+        {
+            //Tcw
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
         g2o::Sim3 g2oScw(Tcw.unit_quaternion().cast<double>(), Tcw.translation().cast<double>(), 1.0);
+        {
+            //g2oScw
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
+        
         NonCorrectedSim3[mpCurrentKF] = g2oScw;
+        {
+            //NonCorrectedSim3
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
 
         // Update keyframe pose with corrected Sim3. First transform Sim3 to SE3 (scale translation)
         Sophus::SE3d correctedTcw(mg2oLoopScw.rotation(), mg2oLoopScw.translation() / mg2oLoopScw.scale());
+        {
+            //correctedTcw
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
         mpCurrentKF->SetPose(correctedTcw.cast<float>());
 
         Map *pLoopMap = mpCurrentKF->GetMap();
+        {
+            //pLoopMap
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount++;
+        }
 
 #ifdef REGISTER_TIMES
         /*KeyFrame* pKF = mpCurrentKF;
@@ -1150,19 +1194,96 @@ namespace ORB_SLAM3
                 if (pKFi != mpCurrentKF)
                 {
                     Sophus::SE3f Tiw = pKFi->GetPose();
+                    {
+                        //Tiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
+        
                     Sophus::SE3d Tic = (Tiw * Twc).cast<double>();
+                    {
+                        //Tic
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
                     g2o::Sim3 g2oSic(Tic.unit_quaternion(), Tic.translation(), 1.0);
+                    {
+                        //g2oSic
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
                     g2o::Sim3 g2oCorrectedSiw = g2oSic * mg2oLoopScw;
+                    {
+                        //g2oCorrectedSiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
                     // Pose corrected with the Sim3 of the loop closure
                     CorrectedSim3[pKFi] = g2oCorrectedSiw;
-
+                    {
+                        //CorrectedSim3
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
                     // Update keyframe pose with corrected Sim3. First transform Sim3 to SE3 (scale translation)
                     Sophus::SE3d correctedTiw(g2oCorrectedSiw.rotation(), g2oCorrectedSiw.translation() / g2oCorrectedSiw.scale());
+                    {
+                        //correctedTiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
                     pKFi->SetPose(correctedTiw.cast<float>());
 
                     // Pose without correction
                     g2o::Sim3 g2oSiw(Tiw.unit_quaternion().cast<double>(), Tiw.translation().cast<double>(), 1.0);
+                    {
+                        //g2oSiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
                     NonCorrectedSim3[pKFi] = g2oSiw;
+
+                    {
+                        //NonCorrectedSim3
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount++;
+                    }
+
+                    //################
+                    // Decrementing { 6 / 6 }
+                    //################
+                    {
+                        //g2oCorrectedSiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount--;
+                    }
+                    {
+                        //g2oSic
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount--;
+                    }
+                    {
+                        //Tic
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount--;
+                    }
+                    {
+                        //Tiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount--;
+                    }
+                    {
+                        //g2oSiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount--;
+                    }
+                    {
+                        //correctedTiw
+                        unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                        pKFi->mReferencecount--;
+                    }
+
+                //Scope Ending
                 }
             }
 
@@ -1250,6 +1371,12 @@ namespace ORB_SLAM3
             // Update connections. Detect new links.
             pKFi->UpdateConnections();
             LoopConnections[pKFi] = pKFi->GetConnectedKeyFrames();
+            {
+                {
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
+            }
             for (vector<KeyFrame *>::iterator vit_prev = vpPreviousNeighbors.begin(), vend_prev = vpPreviousNeighbors.end(); vit_prev != vend_prev; vit_prev++)
             {
                 LoopConnections[pKFi].erase(*vit_prev);
@@ -1263,6 +1390,7 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount_ockf--;
+                i->mReferencecount--;
             }
         }
 
@@ -1311,18 +1439,56 @@ namespace ORB_SLAM3
 
             mpThreadGBA = new thread(&LoopClosing::RunGlobalBundleAdjustment, this, pLoopMap, mpCurrentKF->mnId);
         }
+                
+        {
+            //Twc
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount--;
+        }
 
+        {
+            //Tcw
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount--;
+        }
+
+        {
+            //g2oScw
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount--;
+        }
+        {
+            //pLoopMap
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount--;
+        }
+
+        {
+            //NonCorrectedSim3
+            unique_lock<mutex> lock(mpCurrentKF->mMutexreferencecount);
+            mpCurrentKF->mReferencecount--;
+        }
+  
+        for (auto  [key, value] : CorrectedSim3)
+        {
+            unique_lock<mutex> lock(key->mMutexreferencecount);
+            key->mReferencecount--;
+        }
+        for (auto  [key, value] : NonCorrectedSim3)
+        {
+            unique_lock<mutex> lock(key->mMutexreferencecount);
+            key->mReferencecount--;
+        }
+
+        for (auto  [key, value] : LoopConnections)
+        {
+            unique_lock<mutex> lock(key->mMutexreferencecount);
+            key->mReferencecount--;
+        }
         // Loop closed. Release Local Mapping.
         mpLocalMapper->Release();
 
         mLastLoopKFid = mpCurrentKF->mnId; // TODO old varible, it is not use in the new algorithm
-
-        for (auto i : mvpCurrentConnectedKFs)
-        {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount_ockf--;
-        }
-        mpCurrentKF->mReferencecount--;
     }
 
     void LoopClosing::MergeLocal()
@@ -1564,7 +1730,17 @@ namespace ORB_SLAM3
             if (pKFi != mpCurrentKF)
             {
                 Sophus::SE3d Tiw = (pKFi->GetPose()).cast<double>();
+                {
+                    //Tiw
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 g2o::Sim3 g2oSiw(Tiw.unit_quaternion(), Tiw.translation(), 1.0);
+                {
+                    //g2oSiw
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount++;
+                }
                 // Pose without correction
                 vNonCorrectedSim3[pKFi] = g2oSiw;
 
@@ -1572,11 +1748,17 @@ namespace ORB_SLAM3
                 g2o::Sim3 g2oSic(Tic.unit_quaternion(), Tic.translation(), 1.0);
                 g2oCorrectedSiw = g2oSic * mg2oMergeScw;
                 vCorrectedSim3[pKFi] = g2oCorrectedSiw;
+                {
+                    //Tiw
+                    unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                    pKFi->mReferencecount--;
+                }
             }
             else
             {
                 g2oCorrectedSiw = g2oCorrectedScw;
             }
+
             pKFi->mTcwMerge = pKFi->GetPose();
 
             // Update keyframe pose with corrected Sim3. First transform Sim3 to SE3 (scale translation)
@@ -1872,6 +2054,7 @@ namespace ORB_SLAM3
             // Optimize graph (and update the loop position for each element form the begining to the end)
             if (mpTracker->mSensor != System::MONOCULAR)
             {
+                cout <<" check here" << endl;
                 Optimizer::OptimizeEssentialGraph(mpCurrentKF, vpMergeConnectedKFs, vpLocalCurrentWindowKFs, vpCurrentMapKFs, vpCurrentMapMPs);
             }
 
@@ -1943,6 +2126,12 @@ namespace ORB_SLAM3
             }
         }
         for (auto itr : vpCovisibleKFs)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+        }
+        for (auto itr : vpMergeConnectedKFs)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
             itr->mReferencecount_ockf--;

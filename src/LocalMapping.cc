@@ -389,9 +389,9 @@ namespace ORB_SLAM3
         // For stereo inertial case
         if (mbMonocular)
             nn = 30;
-        
+
         set<KeyFrame *> notvpNeighKFs;
-        
+
         vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn);
 
         if (mbInertial)
@@ -404,7 +404,7 @@ namespace ORB_SLAM3
                 if (it == vpNeighKFs.end())
                 {
                     vpNeighKFs.push_back(pKF->mPrevKF);
-                    pKF->mPrevKF-> mReferencecount++;
+                    pKF->mPrevKF->mReferencecount++;
                     notvpNeighKFs.insert(pKF->mPrevKF);
                 }
                 pKF = pKF->mPrevKF;
@@ -443,17 +443,18 @@ namespace ORB_SLAM3
                 for (auto itr : vpNeighKFs)
                 {
                     unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    if(find(notvpNeighKFs.begin(), notvpNeighKFs.end(), itr) == notvpNeighKFs.end())
+                    if (find(notvpNeighKFs.begin(), notvpNeighKFs.end(), itr) == notvpNeighKFs.end())
                     {
                         itr->mReferencecount_ockf--;
                         itr->mReferencecount--;
                     }
-                    else continue;
+                    else
+                        continue;
                 }
-                for(auto itr: notvpNeighKFs)
+                for (auto itr : notvpNeighKFs)
                 {
                     unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    itr-> mReferencecount--;
+                    itr->mReferencecount--;
                 }
                 return;
             }
@@ -739,17 +740,18 @@ namespace ORB_SLAM3
         for (auto itr : vpNeighKFs)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
-            if(find(notvpNeighKFs.begin(), notvpNeighKFs.end(), itr) == notvpNeighKFs.end())
+            if (find(notvpNeighKFs.begin(), notvpNeighKFs.end(), itr) == notvpNeighKFs.end())
             {
                 itr->mReferencecount_ockf--;
                 itr->mReferencecount--;
             }
-            else continue;
+            else
+                continue;
         }
-        for(auto itr: notvpNeighKFs)
+        for (auto itr : notvpNeighKFs)
         {
             unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr-> mReferencecount--;
+            itr->mReferencecount--;
         }
     }
 
@@ -1003,12 +1005,7 @@ namespace ORB_SLAM3
             KeyFrame *pKF = *vit;
 
             if ((pKF->mnId == pKF->GetMap()->GetInitKFid()) || pKF->isBad())
-            {
-                if (pKF->isBad())
-                {
-                    continue;
-                }
-            }
+                continue;
             const vector<MapPoint *> vpMapPoints = pKF->GetMapPointMatches();
 
             int nObs = 3;
@@ -1034,7 +1031,6 @@ namespace ORB_SLAM3
                             const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
                                                     : (i < pKF->NLeft) ? pKF->mvKeys[i].octave
                                                                        : pKF->mvKeysRight[i].octave;
-                            // The increment will happen in the Get observation call
                             const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
                             int nObs = 0;
                             for (map<KeyFrame *, tuple<int, int>>::const_iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
@@ -1066,17 +1062,6 @@ namespace ORB_SLAM3
                                     nObs++;
                                     if (nObs > thObs)
                                         break;
-                                }
-                            }
-                            // This is the decrement for the above get call
-                            for (auto it : observations)
-                            {
-
-                                {
-
-                                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
-                                    it.first->mReferencecount--;
-                                    it.first->mReferencecount_mob--;
                                 }
                             }
                             if (nObs > thObs)
@@ -1131,12 +1116,6 @@ namespace ORB_SLAM3
             {
                 break;
             }
-        }
-        for (auto i : vpLocalKeyFrames)
-        {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount_ockf--;
-            i->mReferencecount--;
         }
     }
 

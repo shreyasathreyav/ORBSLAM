@@ -189,7 +189,7 @@ namespace ORB_SLAM3
         if (!pActiveMap)
             return;
 
-        vector<KeyFrame *> vpKFs = pActiveMap->GetAllKeyFrames();
+        const vector<KeyFrame *> vpKFs = pActiveMap->GetAllKeyFrames();
 
         if (bDrawKF)
         {
@@ -392,26 +392,267 @@ namespace ORB_SLAM3
 
                     glPopMatrix();
                 }
-                for (auto i : vpKFs)
-                {
-                    {
-                        unique_lock<mutex> lock(i->mMutexreferencecount);
-                        i->mReferencecount--;
-                        i->mReferencecount_msp--;
-                    }
-                }
-            }
-        }
-
-        for (auto i : vpKFs)
-        {
-            {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount--;
-                i->mReferencecount_msp--;
             }
         }
     }
+
+    // void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const bool bDrawInertialGraph, const bool bDrawOptLba)
+    // {
+    //     const float &w = mKeyFrameSize;
+    //     const float h = w * 0.75;
+    //     const float z = w * 0.6;
+
+    //     Map *pActiveMap = mpAtlas->GetCurrentMap();
+    //     // DEBUG LBA
+    //     std::set<long unsigned int> sOptKFs = pActiveMap->msOptKFs;
+    //     std::set<long unsigned int> sFixedKFs = pActiveMap->msFixedKFs;
+
+    //     if (!pActiveMap)
+    //         return;
+
+    //     vector<KeyFrame *> vpKFs = pActiveMap->GetAllKeyFrames();
+
+    //     if (bDrawKF)
+    //     {
+    //         for (size_t i = 0; i < vpKFs.size(); i++)
+    //         {
+    //             KeyFrame *pKF = vpKFs[i];
+    //             Eigen::Matrix4f Twc = pKF->GetPoseInverse().matrix();
+    //             unsigned int index_color = pKF->mnOriginMapId;
+
+    //             glPushMatrix();
+
+    //             glMultMatrixf((GLfloat *)Twc.data());
+
+    //             if (!pKF->GetParent()) // It is the first KF in the map
+    //             {
+    //                 glLineWidth(mKeyFrameLineWidth * 5);
+    //                 glColor3f(1.0f, 0.0f, 0.0f);
+    //                 glBegin(GL_LINES);
+    //             }
+    //             else
+    //             {
+    //                 // cout << "Child KF: " << vpKFs[i]->mnId << endl;
+    //                 glLineWidth(mKeyFrameLineWidth);
+    //                 if (bDrawOptLba)
+    //                 {
+    //                     if (sOptKFs.find(pKF->mnId) != sOptKFs.end())
+    //                     {
+    //                         glColor3f(0.0f, 1.0f, 0.0f); // Green -> Opt KFs
+    //                     }
+    //                     else if (sFixedKFs.find(pKF->mnId) != sFixedKFs.end())
+    //                     {
+    //                         glColor3f(1.0f, 0.0f, 0.0f); // Red -> Fixed KFs
+    //                     }
+    //                     else
+    //                     {
+    //                         glColor3f(0.0f, 0.0f, 1.0f); // Basic color
+    //                     }
+    //                 }
+    //                 else
+    //                 {
+    //                     glColor3f(0.0f, 0.0f, 1.0f); // Basic color
+    //                 }
+    //                 glBegin(GL_LINES);
+    //             }
+
+    //             glVertex3f(0, 0, 0);
+    //             glVertex3f(w, h, z);
+    //             glVertex3f(0, 0, 0);
+    //             glVertex3f(w, -h, z);
+    //             glVertex3f(0, 0, 0);
+    //             glVertex3f(-w, -h, z);
+    //             glVertex3f(0, 0, 0);
+    //             glVertex3f(-w, h, z);
+
+    //             glVertex3f(w, h, z);
+    //             glVertex3f(w, -h, z);
+
+    //             glVertex3f(-w, h, z);
+    //             glVertex3f(-w, -h, z);
+
+    //             glVertex3f(-w, h, z);
+    //             glVertex3f(w, h, z);
+
+    //             glVertex3f(-w, -h, z);
+    //             glVertex3f(w, -h, z);
+    //             glEnd();
+
+    //             glPopMatrix();
+
+    //             glEnd();
+    //         }
+    //     }
+
+    //     if (bDrawGraph)
+    //     {
+    //         glLineWidth(mGraphLineWidth);
+    //         glColor4f(0.0f, 1.0f, 0.0f, 0.6f);
+    //         glBegin(GL_LINES);
+
+    //         // cout << "-----------------Draw graph-----------------" << endl;
+    //         for (size_t i = 0; i < vpKFs.size(); i++)
+    //         {
+    //             // Covisibility Graph
+    //             const vector<KeyFrame *> vCovKFs = vpKFs[i]->GetCovisiblesByWeight(100);
+    //             Eigen::Vector3f Ow = vpKFs[i]->GetCameraCenter();
+    //             if (!vCovKFs.empty())
+    //             {
+    //                 for (vector<KeyFrame *>::const_iterator vit = vCovKFs.begin(), vend = vCovKFs.end(); vit != vend; vit++)
+    //                 {
+    //                     if ((*vit)->mnId < vpKFs[i]->mnId)
+    //                         continue;
+    //                     Eigen::Vector3f Ow2 = (*vit)->GetCameraCenter();
+    //                     glVertex3f(Ow(0), Ow(1), Ow(2));
+    //                     glVertex3f(Ow2(0), Ow2(1), Ow2(2));
+    //                 }
+    //             }
+
+    //             // Spanning tree
+    //             KeyFrame *pParent = vpKFs[i]->GetParent();
+    //             {
+    //                 //account for get parent
+    //                 // unique_lock<mutex> lock(pParent->mMutexreferencecount);
+    //                 // pParent->mReferencecount++;
+    //             }
+
+    //             if (pParent)
+    //             {
+    //                 Eigen::Vector3f Owp = pParent->GetCameraCenter();
+    //                 glVertex3f(Ow(0), Ow(1), Ow(2));
+    //                 glVertex3f(Owp(0), Owp(1), Owp(2));
+    //             }
+
+    //             // Loops
+    //             set<KeyFrame *> sLoopKFs = vpKFs[i]->GetLoopEdges();
+    //             for (set<KeyFrame *>::iterator sit = sLoopKFs.begin(), send = sLoopKFs.end(); sit != send; sit++)
+    //             {
+    //                 if ((*sit)->mnId < vpKFs[i]->mnId)
+    //                     continue;
+    //                 Eigen::Vector3f Owl = (*sit)->GetCameraCenter();
+    //                 glVertex3f(Ow(0), Ow(1), Ow(2));
+    //                 glVertex3f(Owl(0), Owl(1), Owl(2));
+    //             }
+    //             for (auto itr : vCovKFs)
+    //             {
+    //                 {
+    //                     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //                     itr->mReferencecount_ockf--;
+    //                     itr->mReferencecount--;
+    //                 }
+    //             }
+
+    //             {
+    //                 unique_lock<mutex> lock(pParent->mMutexreferencecount);
+    //                 pParent->mReferencecount--;
+    //             }
+
+    //         }
+
+    //         glEnd();
+    //     }
+
+    //     if (bDrawInertialGraph && pActiveMap->isImuInitialized())
+    //     {
+    //         glLineWidth(mGraphLineWidth);
+    //         glColor4f(1.0f, 0.0f, 0.0f, 0.6f);
+    //         glBegin(GL_LINES);
+
+    //         // Draw inertial links
+    //         for (size_t i = 0; i < vpKFs.size(); i++)
+    //         {
+    //             KeyFrame *pKFi = vpKFs[i];
+    //             Eigen::Vector3f Ow = pKFi->GetCameraCenter();
+    //             KeyFrame *pNext = pKFi->mNextKF;
+    //             if (pNext)
+    //             {
+    //                 Eigen::Vector3f Owp = pNext->GetCameraCenter();
+    //                 glVertex3f(Ow(0), Ow(1), Ow(2));
+    //                 glVertex3f(Owp(0), Owp(1), Owp(2));
+    //             }
+    //         }
+
+    //         glEnd();
+    //     }
+
+    //     vector<Map *> vpMaps = mpAtlas->GetAllMaps();
+
+    //     if (bDrawKF)
+    //     {
+    //         for (Map *pMap : vpMaps)
+    //         {
+    //             if (pMap == pActiveMap)
+    //                 continue;
+
+    //             vector<KeyFrame *> vpKFs = pMap->GetAllKeyFrames();
+
+    //             for (size_t i = 0; i < vpKFs.size(); i++)
+    //             {
+    //                 KeyFrame *pKF = vpKFs[i];
+    //                 Eigen::Matrix4f Twc = pKF->GetPoseInverse().matrix();
+    //                 unsigned int index_color = pKF->mnOriginMapId;
+
+    //                 glPushMatrix();
+
+    //                 glMultMatrixf((GLfloat *)Twc.data());
+
+    //                 if (!vpKFs[i]->GetParent()) // It is the first KF in the map
+    //                 {
+    //                     glLineWidth(mKeyFrameLineWidth * 5);
+    //                     glColor3f(1.0f, 0.0f, 0.0f);
+    //                     glBegin(GL_LINES);
+    //                 }
+    //                 else
+    //                 {
+    //                     glLineWidth(mKeyFrameLineWidth);
+    //                     glColor3f(mfFrameColors[index_color][0], mfFrameColors[index_color][1], mfFrameColors[index_color][2]);
+    //                     glBegin(GL_LINES);
+    //                 }
+
+    //                 glVertex3f(0, 0, 0);
+    //                 glVertex3f(w, h, z);
+    //                 glVertex3f(0, 0, 0);
+    //                 glVertex3f(w, -h, z);
+    //                 glVertex3f(0, 0, 0);
+    //                 glVertex3f(-w, -h, z);
+    //                 glVertex3f(0, 0, 0);
+    //                 glVertex3f(-w, h, z);
+
+    //                 glVertex3f(w, h, z);
+    //                 glVertex3f(w, -h, z);
+
+    //                 glVertex3f(-w, h, z);
+    //                 glVertex3f(-w, -h, z);
+
+    //                 glVertex3f(-w, h, z);
+    //                 glVertex3f(w, h, z);
+
+    //                 glVertex3f(-w, -h, z);
+    //                 glVertex3f(w, -h, z);
+    //                 glEnd();
+
+    //                 glPopMatrix();
+    //             }
+    //             for (auto i : vpKFs)
+    //             {
+    //                 {
+    //                     unique_lock<mutex> lock(i->mMutexreferencecount);
+    //                     i->mReferencecount--;
+    //                     i->mReferencecount_msp--;
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     for (auto i : vpKFs)
+    //     {
+    //         {
+    //             unique_lock<mutex> lock(i->mMutexreferencecount);
+    //             i->mReferencecount--;
+    //             i->mReferencecount_msp--;
+    //         }
+    //     }
+    // }
 
     void MapDrawer::DrawCurrentCamera(pangolin::OpenGlMatrix &Twc)
     {

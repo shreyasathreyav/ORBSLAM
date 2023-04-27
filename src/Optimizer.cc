@@ -150,7 +150,7 @@ namespace ORB_SLAM3
             vPoint->setMarginalized(true);
             optimizer.addVertex(vPoint);
 
-            // We got the observations here - so this should increment the reference count 
+            // We got the observations here - so this should increment the reference count
             const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
 
             int nEdges = 0;
@@ -307,7 +307,7 @@ namespace ORB_SLAM3
             to be no passing of keyframes from mObservations into other data structures
             */
 
-            // This decrement is for the above Get call 
+            // This decrement is for the above Get call
             for (auto it : observations)
             {
 
@@ -1232,13 +1232,56 @@ namespace ORB_SLAM3
         pKF->mnBALocalForKF = pKF->mnId;
         Map *pCurrentMap = pKF->GetMap();
 
-        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
+        // count = 0
+        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames(true);
+        // for(auto itr: vNeighKFs)
+        // {
+        //     cout << itr->mReferencecount_container ;
+        // }
+        // count = 1
+
         for (int i = 0, iend = vNeighKFs.size(); i < iend; i++)
         {
+
+            {
+                // pKFi++
+
+                unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                vNeighKFs[i]->mReferencecount_canonical++;
+                vNeighKFs[i]->mReferencecount_container++;
+            }
+
+            // count = 2
+
             KeyFrame *pKFi = vNeighKFs[i];
+
             pKFi->mnBALocalForKF = pKF->mnId;
             if (!pKFi->isBad() && pKFi->GetMap() == pCurrentMap)
+            {
+                {
+                    unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
+                    // vNeighKFs[i]->mReferencecount_ockf++;
+                    // vNeighKFs[i]->mReferencecount++;
+                    vNeighKFs[i]->mReferencecount_canonical++;
+                    vNeighKFs[i]->mReferencecount_container++;
+                }
+
+                // count = 3
+
                 lLocalKeyFrames.push_back(pKFi);
+            }
+
+            {
+                // pKFi--
+                unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                vNeighKFs[i]->mReferencecount_canonical--;
+                vNeighKFs[i]->mReferencecount_container--;
+            }
+            // count = 2
         }
 
         // Local MapPoints seen in Local KeyFrames
@@ -1247,6 +1290,13 @@ namespace ORB_SLAM3
         set<MapPoint *> sNumObsMP;
         for (list<KeyFrame *>::iterator lit = lLocalKeyFrames.begin(), lend = lLocalKeyFrames.end(); lit != lend; lit++)
         {
+            {
+                unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (*lit)->mReferencecount_canonical++;
+                (*lit)->mReferencecount_container++;
+            }
             KeyFrame *pKFi = *lit;
             if (pKFi->mnId == pMap->GetInitKFid())
             {
@@ -1266,6 +1316,13 @@ namespace ORB_SLAM3
                             pMP->mnBALocalForKF = pKF->mnId;
                         }
                     }
+            }
+            {
+                unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (*lit)->mReferencecount_canonical--;
+                (*lit)->mReferencecount_container--;
             }
         }
 
@@ -1309,11 +1366,33 @@ namespace ORB_SLAM3
         if (num_fixedKF == 0)
         {
             Verbose::PrintMess("LM-LBA: There are 0 fixed KF in the optimizations, LBA aborted", Verbose::VERBOSITY_NORMAL);
+            for (std::list<KeyFrame *>::iterator itr = ++lLocalKeyFrames.begin(); itr != lLocalKeyFrames.end(); itr++)
+            {
+                // if((*itr) == pKF) continue;
+                {
+                    unique_lock<mutex> lock((*itr)->mMutexreferencecount);
+                    (*itr)->mReferencecount_canonical--;
+                    (*itr)->mReferencecount_container--;
+                }
+            }
+
+            for (auto itr : vNeighKFs)
+            {
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount_canonical--;
+                    itr->mReferencecount_container--;
+                }
+            }
             return;
         }
 
         // Setup optimizer
         g2o::SparseOptimizer optimizer;
+
+        // This is to keep track of the keyframes that end up being used by optimizer
+        vector<KeyFrame *> optimizer_tracker;
+        
         g2o::BlockSolver_6_3::LinearSolverType *linearSolver;
 
         linearSolver = new g2o::LinearSolverEigen<g2o::BlockSolver_6_3::PoseMatrixType>();
@@ -1333,23 +1412,55 @@ namespace ORB_SLAM3
         unsigned long maxKFid = 0;
 
         // DEBUG LBA
-        pCurrentMap->msOptKFs.clear();
+        // pCurrentMap->msOptKFs.clear();
         pCurrentMap->msFixedKFs.clear();
 
         // Set Local KeyFrame vertices
         for (list<KeyFrame *>::iterator lit = lLocalKeyFrames.begin(), lend = lLocalKeyFrames.end(); lit != lend; lit++)
         {
+            {
+                unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (*lit)->mReferencecount_canonical++;
+                (*lit)->mReferencecount_container++;
+            }
+
             KeyFrame *pKFi = *lit;
+            
             g2o::VertexSE3Expmap *vSE3 = new g2o::VertexSE3Expmap();
+            //scope matching pkf
             Sophus::SE3<float> Tcw = pKFi->GetPose();
             vSE3->setEstimate(g2o::SE3Quat(Tcw.unit_quaternion().cast<double>(), Tcw.translation().cast<double>()));
             vSE3->setId(pKFi->mnId);
             vSE3->setFixed(pKFi->mnId == pMap->GetInitKFid());
+            // Increment for optimizer
+            {
+                unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (pKFi)->mReferencecount_canonical++;
+                (pKFi)->mReferencecount_container++;
+            }
+            
+            optimizer_tracker.push_back(pKFi);
+
             optimizer.addVertex(vSE3);
             if (pKFi->mnId > maxKFid)
+            {
+                //scope maching optimizer
                 maxKFid = pKFi->mnId;
+            }
             // DEBUG LBA
-            pCurrentMap->msOptKFs.insert(pKFi->mnId);
+            // pCurrentMap->msOptKFs.insert(pKFi->mnId);
+
+            {
+                unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (*lit)->mReferencecount_canonical--;
+                (*lit)->mReferencecount_container--;
+            }
         }
         num_OptKF = lLocalKeyFrames.size();
 
@@ -1362,6 +1473,8 @@ namespace ORB_SLAM3
             vSE3->setEstimate(g2o::SE3Quat(Tcw.unit_quaternion().cast<double>(), Tcw.translation().cast<double>()));
             vSE3->setId(pKFi->mnId);
             vSE3->setFixed(true);
+            // Looks like we need a container here to capture the stuff used by optimizer
+            // Goes well beyond the scope
             optimizer.addVertex(vSE3);
             {
                 unique_lock<mutex> lock(pKFi->mMutexreferencecount);
@@ -1561,11 +1674,30 @@ namespace ORB_SLAM3
 
         if (pbStopFlag)
             if (*pbStopFlag)
+            {
+                for (auto itr : vNeighKFs)
+                {
+                    {
+                        unique_lock<mutex> lock(itr->mMutexreferencecount);
+                        itr->mReferencecount_canonical--;
+                        itr->mReferencecount_container--;
+                    }
+                }
+                for (std::list<KeyFrame *>::iterator itr = ++lLocalKeyFrames.begin(); itr != lLocalKeyFrames.end(); itr++)
+                {
+                    // if((*itr) == pKF) continue;
+                    {
+                        unique_lock<mutex> lock((*itr)->mMutexreferencecount);
+                        (*itr)->mReferencecount_canonical--;
+                        (*itr)->mReferencecount_container--;
+                    }
+                }
                 return;
+            }
 
         optimizer.initializeOptimization();
+        // This is the last instance of optimizer within this function; scope of optimizer ends here
         optimizer.optimize(10);
-
         vector<pair<KeyFrame *, MapPoint *>> vToErase;
         vToErase.reserve(vpEdgesMono.size() + vpEdgesBody.size() + vpEdgesStereo.size());
 
@@ -1633,11 +1765,29 @@ namespace ORB_SLAM3
         // Keyframes
         for (list<KeyFrame *>::iterator lit = lLocalKeyFrames.begin(), lend = lLocalKeyFrames.end(); lit != lend; lit++)
         {
+            {
+                unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (*lit)->mReferencecount_canonical++;
+                (*lit)->mReferencecount_container++;
+            }
+            
             KeyFrame *pKFi = *lit;
+
             g2o::VertexSE3Expmap *vSE3 = static_cast<g2o::VertexSE3Expmap *>(optimizer.vertex(pKFi->mnId));
             g2o::SE3Quat SE3quat = vSE3->estimate();
             Sophus::SE3f Tiw(SE3quat.rotation().cast<float>(), SE3quat.translation().cast<float>());
+            
             pKFi->SetPose(Tiw);
+            
+            {
+                unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+                // vNeighKFs[i]->mReferencecount_ockf++;
+                // vNeighKFs[i]->mReferencecount++;
+                (*lit)->mReferencecount_canonical--;
+                (*lit)->mReferencecount_container--;
+            }
         }
 
         // Points
@@ -1674,6 +1824,36 @@ namespace ORB_SLAM3
                 it->mReferencecount--;
             }
         }
+        for (std::list<KeyFrame *>::iterator itr = ++lLocalKeyFrames.begin(); itr != lLocalKeyFrames.end(); itr++)
+        {
+            // if((*itr) == pKF) continue;
+            {
+                unique_lock<mutex> lock((*itr)->mMutexreferencecount);
+                (*itr)->mReferencecount_canonical--;
+                (*itr)->mReferencecount_container--;
+            }
+        }
+        for(auto itr: optimizer_tracker)
+        {
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_canonical--;
+                itr->mReferencecount_container--;
+            }
+        }
+        for (auto itr : vNeighKFs)
+        {
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_canonical--;
+                itr->mReferencecount_container--;
+                cout << "Container"
+                     << " " << (itr)->mReferencecount_container << " Canonical " << (itr)->mReferencecount_canonical << endl;
+            }
+            // cout << endl;
+        }
+
+        cout << endl;
     }
 
     void Optimizer::OptimizeEssentialGraph(Map *pMap, KeyFrame *pLoopKF, KeyFrame *pCurKF,
@@ -1683,6 +1863,7 @@ namespace ORB_SLAM3
     {
         // Setup optimizer
         g2o::SparseOptimizer optimizer;
+        vector<KeyFrame *> rc_vpConnectedKFs;
         optimizer.setVerbose(false);
         g2o::BlockSolver_7_3::LinearSolverType *linearSolver =
             new g2o::LinearSolverEigen<g2o::BlockSolver_7_3::PoseMatrixType>();
@@ -1857,6 +2038,12 @@ namespace ORB_SLAM3
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin(); vit != vpConnectedKFs.end(); vit++)
             {
                 KeyFrame *pKFn = *vit;
+                {
+                    // pKFn
+                    unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                    pKFn->mReferencecount++;
+                    pKFn->mReferencecount_ockf++;
+                }
                 if (pKFn && pKFn != pParentKF && !pKF->hasChild(pKFn) /*&& !sLoopEdges.count(pKFn)*/)
                 {
                     if (!pKFn->isBad() && pKFn->mnId < pKF->mnId)
@@ -1881,7 +2068,23 @@ namespace ORB_SLAM3
                         en->setMeasurement(Sni);
                         en->information() = matLambda;
                         optimizer.addEdge(en);
+                        {
+                            // accounting for the optimizer
+                            unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                            pKFn->mReferencecount++;      // pointer/attribute in optimizer
+                            pKFn->mReferencecount++;      // container live count
+                            pKFn->mReferencecount_ockf++; // container live count
+                            pKFn->mReferencecount_ockf++; // container live count
+                        }
+                        rc_vpConnectedKFs.push_back(pKFn);
                     }
+                }
+
+                {
+                    // pKFn
+                    unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                    pKFn->mReferencecount--;
+                    pKFn->mReferencecount_ockf--;
                 }
             }
 
@@ -1902,6 +2105,14 @@ namespace ORB_SLAM3
                 ep->setMeasurement(Spi);
                 ep->information() = matLambda;
                 optimizer.addEdge(ep);
+            }
+            for (auto itr : vpConnectedKFs)
+            {
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
+                }
             }
         }
 
@@ -1963,6 +2174,14 @@ namespace ORB_SLAM3
                 i->mReferencecount_msp--;
             }
         }
+        for (auto itr : rc_vpConnectedKFs)
+        {
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount--;
+                itr->mReferencecount--;
+            }
+        }
 
         // TODO Check this changeindex
         pMap->IncreaseChangeIndex();
@@ -1978,6 +2197,7 @@ namespace ORB_SLAM3
         Verbose::PrintMess("Opt_Essential: There are " + to_string(vpNonCorrectedMPs.size()) + " MPs non-corrected in the merged map", Verbose::VERBOSITY_DEBUG);
 
         g2o::SparseOptimizer optimizer;
+        vector<KeyFrame *> rc_vpConnectedKFs;
         optimizer.setVerbose(false);
         g2o::BlockSolver_7_3::LinearSolverType *linearSolver =
             new g2o::LinearSolverEigen<g2o::BlockSolver_7_3::PoseMatrixType>();
@@ -2199,49 +2419,178 @@ namespace ORB_SLAM3
             }
 
             // Covisibility graph edges
-            const vector<KeyFrame *> vpConnectedKFs = pKFi->GetCovisiblesByWeight(minFeat);
+            // count = 0 || countif = 0
+            // const vector<KeyFrame *> vpConnectedKFs = pKFi->GetCovisiblesByWeight(minFeat);
+            const vector<KeyFrame *> vpConnectedKFs = pKFi->GetCovisiblesByWeight(minFeat, true);
+            // count = 1 || countif = 1
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin(); vit != vpConnectedKFs.end(); vit++)
             {
                 KeyFrame *pKFn = *vit;
+                {
+                    // count = 2 || countif = 2 // pKFn
+                    unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                    pKFn->mReferencecount_ockf++;
+                    pKFn->mReferencecount++;
+                    // pKFn->mReferencecount_canonical++;
+                    // pKFn->mReferencecount_container++;
+                }
                 if (pKFn && pKFn != pParentKFi && !pKFi->hasChild(pKFn) && !sLoopEdges.count(pKFn) && spKFs.find(pKFn) != spKFs.end())
                 {
+                    // {1} countif = 2
                     if (!pKFn->isBad() && pKFn->mnId < pKFi->mnId)
                     {
-
                         g2o::Sim3 Snw = vScw[pKFn->mnId];
+                        {
+                            // {2} countif = 3
+                            // Snw
+                            unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                            pKFn->mReferencecount_ockf++;
+                            pKFn->mReferencecount++;
+                            // pKFn->mReferencecount_canonical++;
+                            // pKFn->mReferencecount_container++;
+                        }
                         bool bHasRelation = false;
 
+                        // {2} countif = 3
                         if (vpGoodPose[nIDi] && vpGoodPose[pKFn->mnId])
                         {
+                            {
+                                // {3} countif = 2
+                                // Snw
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf--;
+                                pKFn->mReferencecount--;
+                            }
                             Snw = vCorrectedSwc[pKFn->mnId].inverse();
+                            {
+                                // {3} countif = 3
+                                // Snw
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf++;
+                                pKFn->mReferencecount++;
+                            }
+
                             bHasRelation = true;
                         }
+                        // {2} countif = 3
                         else if (vpBadPose[nIDi] && vpBadPose[pKFn->mnId])
                         {
+                            {
+                                // {2} count else if = 2  // Snw
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf--;
+                                pKFn->mReferencecount--;
+                                // pKFn->mReferencecount_canonical--;
+                                // pKFn->mReferencecount_container--;
+                            }
                             Snw = vScw[pKFn->mnId];
+                            {
+                                // {2} count else if = 3  // Snw
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf++;
+                                pKFn->mReferencecount++;
+                                // pKFn->mReferencecount_canonical++;
+                                // pKFn->mReferencecount_container++;
+                            }
                             bHasRelation = true;
                         }
 
+                        // {2} countif = 3 || {2} count else if = 3
                         if (bHasRelation)
                         {
                             g2o::Sim3 Sni = Snw * Swi;
+                            {
+                                // {3} countif = 4 || {3} count else if = 4                 // Sni
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf++;
+                                pKFn->mReferencecount++;
+                                // pKFn->mReferencecount_canonical++;
+                                // pKFn->mReferencecount_container++;
+                            }
 
                             g2o::EdgeSim3 *en = new g2o::EdgeSim3();
                             en->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex *>(optimizer.vertex(pKFn->mnId)));
+                            {
+                                // {3} countif = 5 || {3} count else if = 5               //en
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf++;
+                                pKFn->mReferencecount++;
+                                // pKFn->mReferencecount_canonical++;
+                                // pKFn->mReferencecount_container++;
+                            }
                             en->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex *>(optimizer.vertex(nIDi)));
                             en->setMeasurement(Sni);
                             en->information() = matLambda;
                             optimizer.addEdge(en);
                             num_connections++;
+                            {
+                                // {3} countif = 6 || {3} count else if = 6
+                                // accounting for the optimizer
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf++; // pointer/attribute in optimizer
+                                pKFn->mReferencecount++;      // container live count
+                                // pKFn->mReferencecount_canonical++;
+                                // pKFn->mReferencecount_container++;
+                            }
+                            rc_vpConnectedKFs.push_back(pKFn);
+                            {
+                                // {3} countif = 5 || {3} count else if = 5
+                                // Sni
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf--;
+                                pKFn->mReferencecount--;
+                                // pKFn->mReferencecount_canonical--;
+                                // pKFn->mReferencecount_container--;
+                            }
+                            {
+                                // {3} countif = 4 || {3} count else if = 4
+                                // en
+                                unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                                pKFn->mReferencecount_ockf--;
+                                pKFn->mReferencecount--;
+                                // pKFn->mReferencecount_canonical--;
+                                // pKFn->mReferencecount_container--;
+                            }
                         }
+
+                        // {2} countif = 3 || {2} count else if = 3  ||  {3} countif = 4 || {3} count else if = 4
+                        {
+                            // Snw
+                            unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                            pKFn->mReferencecount_ockf--;
+                            pKFn->mReferencecount--;
+                            // pKFn->mReferencecount_canonical--;
+                            // pKFn->mReferencecount_container--;
+                        }
+                        // {2} countif = 2 || {2} count else if = 2  || {3} countif = 3 || {3} count else if = 3
                     }
                 }
+                {
+                    unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                    pKFn->mReferencecount_ockf--;
+                    pKFn->mReferencecount--;
+                    // pKFn->mReferencecount_canonical--;
+                    // pKFn->mReferencecount_container--;
+                }
+                // count = 1 ||  // {2} countif = 1 || {2} count else if = 1  || {3} countif = 2 || {3} count else if = 2
             }
 
             if (num_connections == 0)
             {
                 Verbose::PrintMess("Opt_Essential: KF " + to_string(pKFi->mnId) + " has 0 connections", Verbose::VERBOSITY_DEBUG);
             }
+            for (auto itr : vpConnectedKFs)
+            {
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
+                    // itr->mReferencecount_canonical--;
+                    // itr->mReferencecount_container--;
+                    // cout << itr->mReferencecount_canonical << " "  <<  itr->mReferencecount_container << endl;
+                }
+            }
+            // {1} count = 0 || // {2} countif = 0 || {2} count else if = 0  || {3} countif = 1 || {3} count else if = 1
         }
 
         // Optimize!
@@ -2312,6 +2661,18 @@ namespace ORB_SLAM3
                 i->mReferencecount_msp--;
             }
         }
+
+        for (auto itr : rc_vpConnectedKFs)
+        {
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount--;
+                itr->mReferencecount_ockf--;
+                // itr->mReferencecount_canonical--;
+                // itr->mReferencecount_container--;
+            }
+        }
+        // {1} count = 0 || // {2} countif = 0 || {2} count else if = 0  || {3} countif = 0 || {3} count else if = 0
     }
 
     int Optimizer::OptimizeSim3(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &vpMatches1, g2o::Sim3 &g2oS12, const float th2,
@@ -3272,6 +3633,15 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(it->mMutexreferencecount);
                 it->mReferencecount--;
+            }
+        }
+        for (auto itr : vpNeighsKFs)
+        {
+
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
             }
         }
     }
@@ -4851,7 +5221,7 @@ namespace ORB_SLAM3
            Vegr reference count  - 1
 
         */
-       // Reference counting for this block is over but need to be verified once more
+        // Reference counting for this block is over but need to be verified once more
         for (int i = 0; i < N; i++)
         {
             // cout << "inserting inertial edge " << i << endl;
@@ -6124,6 +6494,7 @@ namespace ORB_SLAM3
 
         // Setup optimizer
         g2o::SparseOptimizer optimizer;
+        vector<KeyFrame *> rc_vpConnectedKFs;
         optimizer.setVerbose(false);
         g2o::BlockSolverX::LinearSolverType *linearSolver =
             new g2o::LinearSolverEigen<g2o::BlockSolverX::PoseMatrixType>();
@@ -6336,6 +6707,11 @@ namespace ORB_SLAM3
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin(); vit != vpConnectedKFs.end(); vit++)
             {
                 KeyFrame *pKFn = *vit;
+                {
+                    // pKFn
+                    unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                    pKFn->mReferencecount++;
+                }
                 if (pKFn && pKFn != pParentKF && pKFn != prevKF && pKFn != pKF->mNextKF && !pKF->hasChild(pKFn) && !sLoopEdges.count(pKFn))
                 {
                     if (!pKFn->isBad() && pKFn->mnId < pKF->mnId)
@@ -6362,7 +6738,26 @@ namespace ORB_SLAM3
                         e->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex *>(optimizer.vertex(pKFn->mnId)));
                         e->information() = matLambda;
                         optimizer.addEdge(e);
+                        {
+                            // accounting for the optimizer
+                            unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                            pKFn->mReferencecount++; // pointer/attribute in optimizer
+                            pKFn->mReferencecount++; // container live count
+                        }
+                        rc_vpConnectedKFs.push_back(pKFn);
                     }
+                }
+                {
+                    unique_lock<mutex> lock(pKFn->mMutexreferencecount);
+                    pKFn->mReferencecount--;
+                }
+            }
+            for (auto itr : vpConnectedKFs)
+            {
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
                 }
             }
         }
@@ -6420,6 +6815,14 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount--;
                 i->mReferencecount_msp--;
+            }
+        }
+        for (auto itr : rc_vpConnectedKFs)
+        {
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount--;
+                itr->mReferencecount--;
             }
         }
     }
