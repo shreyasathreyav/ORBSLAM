@@ -1106,10 +1106,11 @@ namespace ORB_SLAM3
         return nInitialCorrespondences - nBad;
     }
 
-    //completed and verified
+    // completed and verified
 
     void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int &num_fixedKF, int &num_OptKF, int &num_MPs, int &num_edges)
     {
+        // cout << "LocalBundleAdjustment beginning" << endl;
         // Local KeyFrames: First Breath Search from Current Keyframe
         list<KeyFrame *> lLocalKeyFrames;
 
@@ -1118,7 +1119,7 @@ namespace ORB_SLAM3
         Map *pCurrentMap = pKF->GetMap();
 
         // count = 0
-        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
+        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames(true);
         // for(auto itr: vNeighKFs)
         // {
         //     cout << itr->mReferencecount_container ;
@@ -1176,8 +1177,8 @@ namespace ORB_SLAM3
         {
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                (*lit) -> mReferencecount_ockf++;
-                (*lit) -> mReferencecount++;
+                (*lit)->mReferencecount_ockf++;
+                (*lit)->mReferencecount++;
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
@@ -1293,8 +1294,8 @@ namespace ORB_SLAM3
         {
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                (*lit) -> mReferencecount_ockf++;
-                (*lit) -> mReferencecount++;
+                (*lit)->mReferencecount_ockf++;
+                (*lit)->mReferencecount++;
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
@@ -1329,8 +1330,8 @@ namespace ORB_SLAM3
 
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                (*lit) -> mReferencecount_ockf--;
-                (*lit) -> mReferencecount--;
+                (*lit)->mReferencecount_ockf--;
+                (*lit)->mReferencecount--;
                 // (*lit)->mReferencecount_canonical--;
                 // (*lit)->mReferencecount_container--;
             }
@@ -1635,8 +1636,8 @@ namespace ORB_SLAM3
 
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                (*lit) -> mReferencecount_ockf--;
-                (*lit) -> mReferencecount--;
+                (*lit)->mReferencecount_ockf--;
+                (*lit)->mReferencecount--;
                 // (*lit)->mReferencecount_canonical--;
                 // (*lit)->mReferencecount_container--;
             }
@@ -1669,8 +1670,8 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
                 // itr->mReferencecount_canonical--;
                 // itr->mReferencecount_container--;
-                itr -> mReferencecount_ockf--;
-                itr -> mReferencecount--;
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
             }
         }
         for (auto itr : vNeighKFs)
@@ -1681,13 +1682,14 @@ namespace ORB_SLAM3
                 itr->mReferencecount--;
                 // itr->mReferencecount_canonical--;
                 // itr->mReferencecount_container--;
-                // cout << "Container"
-                //      << " " << (itr)->mReferencecount_ockf << " Canonical " << (itr)->mReferencecount << endl;
+                // cout << "KF " << itr->mnId
+                //  << " " << (itr)->mReferencecount_ockf << " Canonical " << (itr)->mReferencecount << endl;
             }
             // cout << endl;
         }
 
         // cout << endl;
+        // cout << "LocalBundleAdjustment end" << endl;
     }
 
     void Optimizer::OptimizeEssentialGraph(Map *pMap, KeyFrame *pLoopKF, KeyFrame *pCurKF,
@@ -2570,7 +2572,8 @@ namespace ORB_SLAM3
 
     void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int &num_fixedKF, int &num_OptKF, int &num_MPs, int &num_edges, bool bLarge, bool bRecInit)
     {
-        cout << "RRRRRRRRRRRRRRRRRRRRRRRR" << endl;
+        // uncalled funtion
+        //  cout << "RRRRRRRRRRRRRRRRRRRRRRRR" << endl;
         Map *pCurrentMap = pKF->GetMap();
 
         int maxOpt = 10;
@@ -2584,7 +2587,7 @@ namespace ORB_SLAM3
         const unsigned long maxKFid = pKF->mnId;
 
         vector<KeyFrame *> vpOptimizableKFs;
-        const vector<KeyFrame *> vpNeighsKFs = pKF->GetVectorCovisibleKeyFrames();
+        const vector<KeyFrame *> vpNeighsKFs = pKF->GetVectorCovisibleKeyFrames(true);
         list<KeyFrame *> lpOptVisKFs;
 
         vpOptimizableKFs.reserve(Nd);

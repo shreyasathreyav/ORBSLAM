@@ -905,9 +905,10 @@ void LocalMapping::KeyFrameCulling()
     // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
     // in at least other 3 keyframes (in the same or finer scale)
     // We only consider close stereo points
+    // cout << "KeyFrame Culling beginning" << endl;
     const int Nd = 21;
     mpCurrentKeyFrame->UpdateBestCovisibles();
-    vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
+    vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames(true);
 
     float redundant_th;
     if(!mbInertial)
@@ -939,10 +940,28 @@ void LocalMapping::KeyFrameCulling()
     for(vector<KeyFrame*>::iterator vit=vpLocalKeyFrames.begin(), vend=vpLocalKeyFrames.end(); vit!=vend; vit++)
     {
         count++;
+
+        {
+            unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+            (*vit)->mReferencecount_ockf++;
+            (*vit)->mReferencecount++;
+            (*vit)->mReferencecount_canonical++;
+            (*vit)->mReferencecount_container++;
+        }
         KeyFrame* pKF = *vit;
 
         if((pKF->mnId==pKF->GetMap()->GetInitKFid()) || pKF->isBad())
+        {
+            {
+                // /pkf
+                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                (*vit)->mReferencecount_ockf--;
+                (*vit)->mReferencecount--;
+                (*vit)->mReferencecount_canonical--;
+                (*vit)->mReferencecount_container--;
+            }
             continue;
+        }
         const vector<MapPoint*> vpMapPoints = pKF->GetMapPointMatches();
 
         int nObs = 3;
@@ -1012,10 +1031,26 @@ void LocalMapping::KeyFrameCulling()
             if (mbInertial)
             {
                 if (mpAtlas->KeyFramesInMap()<=Nd)
+                {
+                    // /pkf
+                    unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                    (*vit)->mReferencecount_ockf--;
+                    (*vit)->mReferencecount--;
+                    (*vit)->mReferencecount_canonical--;
+                    (*vit)->mReferencecount_container--;
                     continue;
+                }
 
                 if(pKF->mnId>(mpCurrentKeyFrame->mnId-2))
+                {
+                    // /pkf
+                    unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                    (*vit)->mReferencecount_ockf--;
+                    (*vit)->mReferencecount--;
+                    (*vit)->mReferencecount_canonical--;
+                    (*vit)->mReferencecount_container--;
                     continue;
+                }
 
                 if(pKF->mPrevKF && pKF->mNextKF)
                 {
@@ -1048,9 +1083,43 @@ void LocalMapping::KeyFrameCulling()
         }
         if((count > 20 && mbAbortBA) || count>100)
         {
+            {
+                // /pkf
+                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                (*vit)->mReferencecount_ockf--;
+                (*vit)->mReferencecount--;
+                (*vit)->mReferencecount_canonical--;
+                (*vit)->mReferencecount_container--;
+            }
             break;
         }
+    
+        {
+            // /pkf
+            unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+            (*vit)->mReferencecount_ockf--;
+            (*vit)->mReferencecount--;
+            (*vit)->mReferencecount_canonical--;
+            (*vit)->mReferencecount_container--;
+        }
     }
+
+    for(auto itr: vpLocalKeyFrames)
+    {
+        {
+            //vpLocalKeyFrames
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+            itr->mReferencecount_canonical--;
+            itr->mReferencecount_container--;
+
+            cout << "Reference count" << itr->mReferencecount_ockf << endl;
+        }
+        // cout << endl;
+    }
+    // cout << "KeyFrame Culling end" << endl;
+
 }
 
 void LocalMapping::RequestReset()

@@ -240,29 +240,29 @@ namespace ORB_SLAM3
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        for (auto itr : mvpOrderedConnectedKeyFrames)
-        {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount++;
-            itr->mReferencecount_ockf++;
-        }
+        // for (auto itr : mvpOrderedConnectedKeyFrames)
+        // {
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     itr->mReferencecount++;
+        //     itr->mReferencecount_ockf++;
+        // }
         return mvpOrderedConnectedKeyFrames;
     }
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)
     {
         unique_lock<mutex> lock(mMutexConnections);
-        for (auto itr : mvpOrderedConnectedKeyFrames)
-        {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount++;
-            itr->mReferencecount_ockf++;
-        }
         // for (auto itr : mvpOrderedConnectedKeyFrames)
         // {
         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-        //     itr->mReferencecount_canonical++;
-        //     itr->mReferencecount_container++;
+        //     itr->mReferencecount++;
+        //     itr->mReferencecount_ockf++;
         // }
+        for (auto itr : mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_canonical++;
+            itr->mReferencecount_container++;
+        }
         return mvpOrderedConnectedKeyFrames;
     }
 
@@ -624,6 +624,8 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock1(mMutexFeatures);
 
             mConnectedKeyFrameWeights.clear();
+
+
             mvpOrderedConnectedKeyFrames.clear();
 
             // Update Spanning Tree
