@@ -1106,6 +1106,8 @@ namespace ORB_SLAM3
         return nInitialCorrespondences - nBad;
     }
 
+    //completed and verified
+
     void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int &num_fixedKF, int &num_OptKF, int &num_MPs, int &num_edges)
     {
         // Local KeyFrames: First Breath Search from Current Keyframe
@@ -1116,7 +1118,7 @@ namespace ORB_SLAM3
         Map *pCurrentMap = pKF->GetMap();
 
         // count = 0
-        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames(true);
+        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
         // for(auto itr: vNeighKFs)
         // {
         //     cout << itr->mReferencecount_container ;
@@ -1128,12 +1130,11 @@ namespace ORB_SLAM3
 
             {
                 // pKFi++
-
                 unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                vNeighKFs[i]->mReferencecount_canonical++;
-                vNeighKFs[i]->mReferencecount_container++;
+                vNeighKFs[i]->mReferencecount_ockf++;
+                vNeighKFs[i]->mReferencecount++;
+                // vNeighKFs[i]->mReferencecount_canonical++;
+                // vNeighKFs[i]->mReferencecount_container++;
             }
 
             // count = 2
@@ -1145,10 +1146,10 @@ namespace ORB_SLAM3
             {
                 {
                     unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
-                    // vNeighKFs[i]->mReferencecount_ockf++;
-                    // vNeighKFs[i]->mReferencecount++;
-                    vNeighKFs[i]->mReferencecount_canonical++;
-                    vNeighKFs[i]->mReferencecount_container++;
+                    vNeighKFs[i]->mReferencecount_ockf++;
+                    vNeighKFs[i]->mReferencecount++;
+                    // vNeighKFs[i]->mReferencecount_canonical++;
+                    // vNeighKFs[i]->mReferencecount_container++;
                 }
 
                 // count = 3
@@ -1159,10 +1160,10 @@ namespace ORB_SLAM3
             {
                 // pKFi--
                 unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                vNeighKFs[i]->mReferencecount_canonical--;
-                vNeighKFs[i]->mReferencecount_container--;
+                vNeighKFs[i]->mReferencecount_ockf--;
+                vNeighKFs[i]->mReferencecount--;
+                // vNeighKFs[i]->mReferencecount_canonical--;
+                // vNeighKFs[i]->mReferencecount_container--;
             }
             // count = 2
         }
@@ -1175,10 +1176,10 @@ namespace ORB_SLAM3
         {
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (*lit)->mReferencecount_canonical++;
-                (*lit)->mReferencecount_container++;
+                (*lit) -> mReferencecount_ockf++;
+                (*lit) -> mReferencecount++;
+                // (*lit)->mReferencecount_canonical++;
+                // (*lit)->mReferencecount_container++;
             }
             KeyFrame *pKFi = *lit;
             if (pKFi->mnId == pMap->GetInitKFid())
@@ -1202,10 +1203,10 @@ namespace ORB_SLAM3
             }
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (*lit)->mReferencecount_canonical--;
-                (*lit)->mReferencecount_container--;
+                (*lit)->mReferencecount_ockf--;
+                (*lit)->mReferencecount--;
+                // (*lit)->mReferencecount_canonical--;
+                // (*lit)->mReferencecount_container--;
             }
         }
 
@@ -1239,8 +1240,10 @@ namespace ORB_SLAM3
                 // if((*itr) == pKF) continue;
                 {
                     unique_lock<mutex> lock((*itr)->mMutexreferencecount);
-                    (*itr)->mReferencecount_canonical--;
-                    (*itr)->mReferencecount_container--;
+                    (*itr)->mReferencecount_ockf--;
+                    (*itr)->mReferencecount--;
+                    // (*itr)->mReferencecount_canonical--;
+                    // (*itr)->mReferencecount_container--;
                 }
             }
 
@@ -1248,8 +1251,10 @@ namespace ORB_SLAM3
             {
                 {
                     unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    itr->mReferencecount_canonical--;
-                    itr->mReferencecount_container--;
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
+                    // itr->mReferencecount_canonical--;
+                    // itr->mReferencecount_container--;
                 }
             }
             return;
@@ -1288,10 +1293,10 @@ namespace ORB_SLAM3
         {
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (*lit)->mReferencecount_canonical++;
-                (*lit)->mReferencecount_container++;
+                (*lit) -> mReferencecount_ockf++;
+                (*lit) -> mReferencecount++;
+                // (*lit)->mReferencecount_canonical++;
+                // (*lit)->mReferencecount_container++;
             }
 
             KeyFrame *pKFi = *lit;
@@ -1305,10 +1310,10 @@ namespace ORB_SLAM3
             // Increment for optimizer
             {
                 unique_lock<mutex> lock(pKFi->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (pKFi)->mReferencecount_canonical++;
-                (pKFi)->mReferencecount_container++;
+                (pKFi)->mReferencecount_ockf++;
+                (pKFi)->mReferencecount++;
+                // (pKFi)->mReferencecount_canonical++;
+                // (pKFi)->mReferencecount_container++;
             }
 
             optimizer_tracker.push_back(pKFi);
@@ -1324,10 +1329,10 @@ namespace ORB_SLAM3
 
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (*lit)->mReferencecount_canonical--;
-                (*lit)->mReferencecount_container--;
+                (*lit) -> mReferencecount_ockf--;
+                (*lit) -> mReferencecount--;
+                // (*lit)->mReferencecount_canonical--;
+                // (*lit)->mReferencecount_container--;
             }
         }
         num_OptKF = lLocalKeyFrames.size();
@@ -1522,8 +1527,10 @@ namespace ORB_SLAM3
                 {
                     {
                         unique_lock<mutex> lock(itr->mMutexreferencecount);
-                        itr->mReferencecount_canonical--;
-                        itr->mReferencecount_container--;
+                        itr->mReferencecount--;
+                        itr->mReferencecount_ockf--;
+                        // itr->mReferencecount_canonical--;
+                        // itr->mReferencecount_container--;
                     }
                 }
                 for (std::list<KeyFrame *>::iterator itr = ++lLocalKeyFrames.begin(); itr != lLocalKeyFrames.end(); itr++)
@@ -1531,8 +1538,10 @@ namespace ORB_SLAM3
                     // if((*itr) == pKF) continue;
                     {
                         unique_lock<mutex> lock((*itr)->mMutexreferencecount);
-                        (*itr)->mReferencecount_canonical--;
-                        (*itr)->mReferencecount_container--;
+                        // (*itr)->mReferencecount_canonical--;
+                        // (*itr)->mReferencecount_container--;
+                        (*itr)->mReferencecount--;
+                        (*itr)->mReferencecount_ockf--;
                     }
                 }
                 return;
@@ -1610,10 +1619,10 @@ namespace ORB_SLAM3
         {
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (*lit)->mReferencecount_canonical++;
-                (*lit)->mReferencecount_container++;
+                (*lit)->mReferencecount_ockf++;
+                (*lit)->mReferencecount++;
+                // (*lit)->mReferencecount_canonical++;
+                // (*lit)->mReferencecount_container++;
             }
 
             KeyFrame *pKFi = *lit;
@@ -1626,10 +1635,10 @@ namespace ORB_SLAM3
 
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-                // vNeighKFs[i]->mReferencecount_ockf++;
-                // vNeighKFs[i]->mReferencecount++;
-                (*lit)->mReferencecount_canonical--;
-                (*lit)->mReferencecount_container--;
+                (*lit) -> mReferencecount_ockf--;
+                (*lit) -> mReferencecount--;
+                // (*lit)->mReferencecount_canonical--;
+                // (*lit)->mReferencecount_container--;
             }
         }
 
@@ -1648,31 +1657,37 @@ namespace ORB_SLAM3
             // if((*itr) == pKF) continue;
             {
                 unique_lock<mutex> lock((*itr)->mMutexreferencecount);
-                (*itr)->mReferencecount_canonical--;
-                (*itr)->mReferencecount_container--;
+                (*itr)->mReferencecount--;
+                (*itr)->mReferencecount_ockf--;
+                // (*itr)->mReferencecount_canonical--;
+                // (*itr)->mReferencecount_container--;
             }
         }
         for (auto itr : optimizer_tracker)
         {
             {
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount_canonical--;
-                itr->mReferencecount_container--;
+                // itr->mReferencecount_canonical--;
+                // itr->mReferencecount_container--;
+                itr -> mReferencecount_ockf--;
+                itr -> mReferencecount--;
             }
         }
         for (auto itr : vNeighKFs)
         {
             {
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount_canonical--;
-                itr->mReferencecount_container--;
-                cout << "Container"
-                     << " " << (itr)->mReferencecount_container << " Canonical " << (itr)->mReferencecount_canonical << endl;
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+                // itr->mReferencecount_canonical--;
+                // itr->mReferencecount_container--;
+                // cout << "Container"
+                //      << " " << (itr)->mReferencecount_ockf << " Canonical " << (itr)->mReferencecount << endl;
             }
             // cout << endl;
         }
 
-        cout << endl;
+        // cout << endl;
     }
 
     void Optimizer::OptimizeEssentialGraph(Map *pMap, KeyFrame *pLoopKF, KeyFrame *pCurKF,
@@ -2555,6 +2570,7 @@ namespace ORB_SLAM3
 
     void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int &num_fixedKF, int &num_OptKF, int &num_MPs, int &num_edges, bool bLarge, bool bRecInit)
     {
+        cout << "RRRRRRRRRRRRRRRRRRRRRRRR" << endl;
         Map *pCurrentMap = pKF->GetMap();
 
         int maxOpt = 10;

@@ -313,10 +313,19 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
-    // Global reference count
+    // Test1
     long long mReferencecount_canonical; 
-    
+    //Test2
     long long  mReferencecount_container; 
+    
+    //Global
+    long long mReferencecount; 
+    
+    //mvpOrderedConnectedKeyFrames
+    long long mReferencecount_ockf; 
+    
+
+
 
     static long unsigned int nNextId;
     long unsigned int mnId;
