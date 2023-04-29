@@ -898,7 +898,7 @@ void LocalMapping::InterruptBA()
 {
     mbAbortBA = true;
 }
-
+//DONE RC => mvpOrderedConnectedKeyFrames
 void LocalMapping::KeyFrameCulling()
 {
     // Check redundant keyframes (only local keyframes)
@@ -908,7 +908,7 @@ void LocalMapping::KeyFrameCulling()
     // cout << "KeyFrame Culling beginning" << endl;
     const int Nd = 21;
     mpCurrentKeyFrame->UpdateBestCovisibles();
-    vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames(true);
+    vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
 
     float redundant_th;
     if(!mbInertial)

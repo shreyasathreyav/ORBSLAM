@@ -240,12 +240,12 @@ namespace ORB_SLAM3
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        // for (auto itr : mvpOrderedConnectedKeyFrames)
-        // {
-        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-        //     itr->mReferencecount++;
-        //     itr->mReferencecount_ockf++;
-        // }
+        for (auto itr : mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount++;
+            itr->mReferencecount_ockf++;
+        }
         return mvpOrderedConnectedKeyFrames;
     }
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)

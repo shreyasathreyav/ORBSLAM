@@ -1106,7 +1106,7 @@ namespace ORB_SLAM3
         return nInitialCorrespondences - nBad;
     }
 
-    // completed and verified
+    //DONE RC => mvpOrderedConnectedKeyFrames
 
     void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int &num_fixedKF, int &num_OptKF, int &num_MPs, int &num_edges)
     {
@@ -1119,7 +1119,7 @@ namespace ORB_SLAM3
         Map *pCurrentMap = pKF->GetMap();
 
         // count = 0
-        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames(true);
+        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
         // for(auto itr: vNeighKFs)
         // {
         //     cout << itr->mReferencecount_container ;
