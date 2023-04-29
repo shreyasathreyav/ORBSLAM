@@ -1119,7 +1119,7 @@ namespace ORB_SLAM3
         Map *pCurrentMap = pKF->GetMap();
 
         // count = 0
-        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
+        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames(true);
         // for(auto itr: vNeighKFs)
         // {
         //     cout << itr->mReferencecount_container ;

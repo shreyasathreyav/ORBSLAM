@@ -908,7 +908,7 @@ void LocalMapping::KeyFrameCulling()
     // cout << "KeyFrame Culling beginning" << endl;
     const int Nd = 21;
     mpCurrentKeyFrame->UpdateBestCovisibles();
-    vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
+    vector<KeyFrame*> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames(true);
 
     float redundant_th;
     if(!mbInertial)
@@ -1116,7 +1116,7 @@ void LocalMapping::KeyFrameCulling()
 
             cout << "Reference count" << itr->mReferencecount_ockf << endl;
         }
-        cout << endl;
+        // cout << endl;
     }
     // cout << endl;
     // cout << "KeyFrame Culling end" << endl;

@@ -57,7 +57,7 @@ namespace ORB_SLAM3
                                                                        mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile), mnMergeCorrectedForKF(0),
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
-                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0),mReferencecount_ockf(0)
+                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0)
     {
         mnId = nNextId++;
 
@@ -240,12 +240,12 @@ namespace ORB_SLAM3
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        for (auto itr : mvpOrderedConnectedKeyFrames)
-        {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount++;
-            itr->mReferencecount_ockf++;
-        }
+        // for (auto itr : mvpOrderedConnectedKeyFrames)
+        // {
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     itr->mReferencecount++;
+        //     itr->mReferencecount_ockf++;
+        // }
         return mvpOrderedConnectedKeyFrames;
     }
     vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)
@@ -625,7 +625,6 @@ namespace ORB_SLAM3
 
             mConnectedKeyFrameWeights.clear();
 
-
             mvpOrderedConnectedKeyFrames.clear();
 
             // Update Spanning Tree
@@ -642,6 +641,7 @@ namespace ORB_SLAM3
                 int max = -1;
                 KeyFrame *pC;
                 KeyFrame *pP;
+                vector<KeyFrame *> pP_tracker;
 
                 for (set<KeyFrame *>::iterator sit = mspChildrens.begin(), send = mspChildrens.end(); sit != send; sit++)
                 {
@@ -650,22 +650,46 @@ namespace ORB_SLAM3
                         continue;
 
                     // Check if a parent candidate is connected to the keyframe
-                    vector<KeyFrame *> vpConnected = pKF->GetVectorCovisibleKeyFrames();
+                    vector<KeyFrame *> vpConnected = pKF->GetVectorCovisibleKeyFrames(true);
                     for (size_t i = 0, iend = vpConnected.size(); i < iend; i++)
                     {
                         for (set<KeyFrame *>::iterator spcit = sParentCandidates.begin(), spcend = sParentCandidates.end(); spcit != spcend; spcit++)
                         {
+
                             if (vpConnected[i]->mnId == (*spcit)->mnId)
                             {
                                 int w = pKF->GetWeight(vpConnected[i]);
                                 if (w > max)
                                 {
                                     pC = pKF;
+
                                     pP = vpConnected[i];
+                                    // // Increment for vpConnected[i]
+                                    {
+                                        unique_lock<mutex> lock(vpConnected[i]->mMutexreferencecount);
+                                        // pP->mReferencecount_canonical++;
+                                        // pP->mReferencecount_container++;
+                                        pP->mReferencecount++;
+                                        pP->mReferencecount_ockf++;
+                                    }
+                                    pP_tracker.push_back(pP);
                                     max = w;
                                     bContinue = true;
                                 }
                             }
+                        }
+                    }
+                    for (auto itr : vpConnected)
+                    {
+                        {
+                            unique_lock<mutex> lock(itr->mMutexreferencecount);
+                            // itr->mReferencecount_canonical--;
+                            // itr->mReferencecount_container--;
+                            itr->mReferencecount--;
+                            itr->mReferencecount_ockf--;
+                            // cout << "KF => " << itr->mReferencecount_canonical << endl;
+                            // itr->mReferencecount_ockf--;
+                            // itr->mReferencecount--;
                         }
                     }
                 }
@@ -677,7 +701,27 @@ namespace ORB_SLAM3
                     mspChildrens.erase(pC);
                 }
                 else
+                {
+                    for (auto itr : pP_tracker)
+                    {
+                        unique_lock<mutex> lock(itr->mMutexreferencecount);
+                        // itr->mReferencecount_canonical--;
+                        // itr->mReferencecount_container--;
+                        itr->mReferencecount--;
+                        itr->mReferencecount_ockf--;
+                        // cout << "KF => " <<itr->mnId << " "<< itr->mReferencecount_canonical << endl;
+                    }
                     break;
+                }
+                for (auto itr : pP_tracker)
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    // itr->mReferencecount_canonical--;
+                    // itr->mReferencecount_container--;
+                    itr->mReferencecount--;
+                    itr->mReferencecount_ockf--;
+                    // cout << "KF => "<<itr->mnId << " " << itr->mReferencecount_canonical << endl;
+                }
             }
 
             // If a children has no covisibility links with any parent candidate, assign to the original parent of this KF
