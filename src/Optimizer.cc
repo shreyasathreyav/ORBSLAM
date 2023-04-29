@@ -1545,6 +1545,16 @@ namespace ORB_SLAM3
                         (*itr)->mReferencecount_ockf--;
                     }
                 }
+                for (auto itr : optimizer_tracker)
+                {
+                    {
+                        unique_lock<mutex> lock(itr->mMutexreferencecount);
+                        // itr->mReferencecount_canonical--;
+                        // itr->mReferencecount_container--;
+                        itr->mReferencecount_ockf--;
+                        itr->mReferencecount--;
+                    }
+                }
                 return;
             }
 
@@ -1683,7 +1693,8 @@ namespace ORB_SLAM3
                 // itr->mReferencecount_canonical--;
                 // itr->mReferencecount_container--;
                 // cout << "KF " << itr->mnId
-                //  << " " << (itr)->mReferencecount_ockf << " Canonical " << (itr)->mReferencecount << endl;
+                    //  << " " << (itr)->mReferencecount_container << " Canonical " << (itr)->mReferencecount_canonical << endl;
+                    //  << " " << (itr)->mReferencecount_ockf << " ockf " << (itr)->mReferencecount << endl;
             }
             // cout << endl;
         }

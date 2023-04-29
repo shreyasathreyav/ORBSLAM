@@ -945,8 +945,8 @@ void LocalMapping::KeyFrameCulling()
             unique_lock<mutex> lock((*vit)->mMutexreferencecount);
             (*vit)->mReferencecount_ockf++;
             (*vit)->mReferencecount++;
-            (*vit)->mReferencecount_canonical++;
-            (*vit)->mReferencecount_container++;
+            // (*vit)->mReferencecount_canonical++;
+            // (*vit)->mReferencecount_container++;
         }
         KeyFrame* pKF = *vit;
 
@@ -957,8 +957,8 @@ void LocalMapping::KeyFrameCulling()
                 unique_lock<mutex> lock((*vit)->mMutexreferencecount);
                 (*vit)->mReferencecount_ockf--;
                 (*vit)->mReferencecount--;
-                (*vit)->mReferencecount_canonical--;
-                (*vit)->mReferencecount_container--;
+                // (*vit)->mReferencecount_canonical--;
+                // (*vit)->mReferencecount_container--;
             }
             continue;
         }
@@ -1036,8 +1036,8 @@ void LocalMapping::KeyFrameCulling()
                     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
                     (*vit)->mReferencecount_ockf--;
                     (*vit)->mReferencecount--;
-                    (*vit)->mReferencecount_canonical--;
-                    (*vit)->mReferencecount_container--;
+                    // (*vit)->mReferencecount_canonical--;
+                    // (*vit)->mReferencecount_container--;
                     continue;
                 }
 
@@ -1047,8 +1047,8 @@ void LocalMapping::KeyFrameCulling()
                     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
                     (*vit)->mReferencecount_ockf--;
                     (*vit)->mReferencecount--;
-                    (*vit)->mReferencecount_canonical--;
-                    (*vit)->mReferencecount_container--;
+                    // (*vit)->mReferencecount_canonical--;
+                    // (*vit)->mReferencecount_container--;
                     continue;
                 }
 
@@ -1088,8 +1088,8 @@ void LocalMapping::KeyFrameCulling()
                 unique_lock<mutex> lock((*vit)->mMutexreferencecount);
                 (*vit)->mReferencecount_ockf--;
                 (*vit)->mReferencecount--;
-                (*vit)->mReferencecount_canonical--;
-                (*vit)->mReferencecount_container--;
+                // (*vit)->mReferencecount_canonical--;
+                // (*vit)->mReferencecount_container--;
             }
             break;
         }
@@ -1099,8 +1099,8 @@ void LocalMapping::KeyFrameCulling()
             unique_lock<mutex> lock((*vit)->mMutexreferencecount);
             (*vit)->mReferencecount_ockf--;
             (*vit)->mReferencecount--;
-            (*vit)->mReferencecount_canonical--;
-            (*vit)->mReferencecount_container--;
+            // (*vit)->mReferencecount_canonical--;
+            // (*vit)->mReferencecount_container--;
         }
     }
 
@@ -1111,13 +1111,14 @@ void LocalMapping::KeyFrameCulling()
             unique_lock<mutex> lock(itr->mMutexreferencecount);
             itr->mReferencecount_ockf--;
             itr->mReferencecount--;
-            itr->mReferencecount_canonical--;
-            itr->mReferencecount_container--;
+            // itr->mReferencecount_canonical--;
+            // itr->mReferencecount_container--;
 
             cout << "Reference count" << itr->mReferencecount_ockf << endl;
         }
-        // cout << endl;
+        cout << endl;
     }
+    // cout << endl;
     // cout << "KeyFrame Culling end" << endl;
 
 }
