@@ -384,7 +384,6 @@ namespace ORB_SLAM3
                 }
             }
         }
-
         return nPoints;
     }
 
