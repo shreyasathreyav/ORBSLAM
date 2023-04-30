@@ -257,15 +257,53 @@ namespace ORB_SLAM3
             itr->mReferencecount++;
             itr->mReferencecount_ockf++;
         }
-        for (auto itr : mvpOrderedConnectedKeyFrames)
-        {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount_canonical++;
-            itr->mReferencecount_container++;
-        }
+        // for (auto itr : mvpOrderedConnectedKeyFrames)
+        // {
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     itr->mReferencecount_canonical++;
+        //     itr->mReferencecount_container++;
+        // }
         return mvpOrderedConnectedKeyFrames;
     }
 
+    vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N, bool flag)
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+        if ((int)mvpOrderedConnectedKeyFrames.size() < N)
+        {
+            for (auto itr : mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount++;
+                itr->mReferencecount_ockf++;
+            }
+            // for (auto itr : mvpOrderedConnectedKeyFrames)
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     itr->mReferencecount_canonical++;
+            //     itr->mReferencecount_container++;
+            // }
+            return mvpOrderedConnectedKeyFrames;
+        }
+        else
+        {
+            vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
+            for (auto itr : arr)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount++;
+                itr->mReferencecount_ockf++;
+            }
+            // for (auto itr : arr)
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     itr->mReferencecount_canonical++;
+            //     itr->mReferencecount_container++;
+            // }
+            return arr;
+            // return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
+        }
+    }
     vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N)
     {
         unique_lock<mutex> lock(mMutexConnections);
@@ -592,6 +630,7 @@ namespace ORB_SLAM3
 
     void KeyFrame::SetBadFlag()
     {
+        // cout << "SetBadFlag begins here" << endl;
         {
             unique_lock<mutex> lock(mMutexConnections);
             if (mnId == mpMap->GetInitKFid())
@@ -742,6 +781,8 @@ namespace ORB_SLAM3
 
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
+
+        // cout << "SetBadFlag ended here" << endl;
     }
 
     bool KeyFrame::isBad()

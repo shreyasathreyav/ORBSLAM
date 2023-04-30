@@ -229,6 +229,8 @@ public:
     std::vector<KeyFrame* > GetVectorCovisibleKeyFrames(bool flag);
     std::vector<KeyFrame* > GetVectorCovisibleKeyFrames();
     std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N);
+    std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N, bool flag);
+    
     
     std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w, bool flag);
 
