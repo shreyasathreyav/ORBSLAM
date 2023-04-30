@@ -1114,7 +1114,7 @@ void LocalMapping::KeyFrameCulling()
             // itr->mReferencecount_canonical--;
             // itr->mReferencecount_container--;
 
-            cout << "Reference count" << itr->mReferencecount_ockf << endl;
+            // cout << "Reference count" << itr->mReferencecount_ockf << endl;
         }
         // cout << endl;
     }

@@ -271,6 +271,7 @@ void LoopClosing::Run()
                         nLoop += 1;
 
 #endif
+                        cout << "Correct called\n";
                         CorrectLoop();
 #ifdef REGISTER_TIMES
                         std::chrono::steady_clock::time_point time_EndLoop = std::chrono::steady_clock::now();
@@ -477,8 +478,9 @@ bool LoopClosing::NewDetectCommonRegions()
         return true;
     }
 
-    //TODO: This is only necessary if we use a minimun score for pick the best candidates
-    const vector<KeyFrame*> vpConnectedKeyFrames = mpCurrentKF->GetVectorCovisibleKeyFrames();
+    // cout << "I am called" <<endl;
+    //TODO: This is only necessary if we use a minimum score for pick the best candidates
+    // const vector<KeyFrame*> vpConnectedKeyFrames = mpCurrentKF->GetVectorCovisibleKeyFrames();
 
     // Extract candidates from the bag of words
     vector<KeyFrame*> vpMergeBowCand, vpLoopBowCand;
@@ -1004,6 +1006,11 @@ void LoopClosing::CorrectLoop()
     //assert(mpCurrentKF->GetMap()->CheckEssentialGraph());
 
     // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation
+    // cout << "I am called\n";
+
+
+    //Correct loop not called during testing
+
     mvpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
     mvpCurrentConnectedKFs.push_back(mpCurrentKF);
 
@@ -1144,6 +1151,9 @@ void LoopClosing::CorrectLoop()
     for(vector<KeyFrame*>::iterator vit=mvpCurrentConnectedKFs.begin(), vend=mvpCurrentConnectedKFs.end(); vit!=vend; vit++)
     {
         KeyFrame* pKFi = *vit;
+        
+        //Correct loop not called during testing
+        
         vector<KeyFrame*> vpPreviousNeighbors = pKFi->GetVectorCovisibleKeyFrames();
 
         // Update connections. Detect new links.
@@ -1213,6 +1223,8 @@ void LoopClosing::CorrectLoop()
 
 void LoopClosing::MergeLocal()
 {
+    cout << "gere";
+    
     int numTemporalKFs = 25; //Temporal KFs in the local window if the map is inertial.
 
     //Relationship to rebuild the essential graph, it is used two times, first in the local window and later in the rest of the map
@@ -1574,7 +1586,10 @@ void LoopClosing::MergeLocal()
 
     //Update the connections between the local window
     mpMergeMatchedKF->UpdateConnections();
-
+    
+    
+    cout << "I am called in merge local" << endl;
+    //not called during testing
     vpMergeConnectedKFs = mpMergeMatchedKF->GetVectorCovisibleKeyFrames();
     vpMergeConnectedKFs.push_back(mpMergeMatchedKF);
     //vpCheckFuseMapPoint.reserve(spMapPointMerge.size());
@@ -1781,7 +1796,7 @@ void LoopClosing::MergeLocal()
 
 void LoopClosing::MergeLocal2()
 {
-    //cout << "Merge detected!!!!" << endl;
+    cout << "Merge detected!!!!" << endl;
 
     int numTemporalKFs = 11; //TODO (set by parameter): Temporal KFs in the local window if the map is inertial.
 
@@ -1958,6 +1973,7 @@ void LoopClosing::MergeLocal2()
     vector<KeyFrame*> vpCurrentConnectedKFs;
 
     mvpMergeConnectedKFs.push_back(mpMergeMatchedKF);
+    //not called during testing
     vector<KeyFrame*> aux = mpMergeMatchedKF->GetVectorCovisibleKeyFrames();
     mvpMergeConnectedKFs.insert(mvpMergeConnectedKFs.end(), aux.begin(), aux.end());
     if (mvpMergeConnectedKFs.size()>6)
@@ -1967,8 +1983,15 @@ void LoopClosing::MergeLocal2()
 
     mpCurrentKF->UpdateConnections();
     vpCurrentConnectedKFs.push_back(mpCurrentKF);
+
+    //not called during testing
+
     /*vpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
     vpCurrentConnectedKFs.push_back(mpCurrentKF);*/
+
+    //not called during testing
+
+
     aux = mpCurrentKF->GetVectorCovisibleKeyFrames();
     vpCurrentConnectedKFs.insert(vpCurrentConnectedKFs.end(), aux.begin(), aux.end());
     if (vpCurrentConnectedKFs.size()>6)
