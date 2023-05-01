@@ -1110,7 +1110,7 @@ namespace ORB_SLAM3
 
     void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int &num_fixedKF, int &num_OptKF, int &num_MPs, int &num_edges)
     {
-        // cout << "LocalBundleAdjustment beginning" << endl;
+        cout << "LocalBundleAdjustment beginning" << endl;
         // Local KeyFrames: First Breath Search from Current Keyframe
         list<KeyFrame *> lLocalKeyFrames;
 
@@ -1700,7 +1700,7 @@ namespace ORB_SLAM3
         }
 
         // cout << endl;
-        // cout << "LocalBundleAdjustment end" << endl;
+        cout << "LocalBundleAdjustment end" << endl;
     }
 
     void Optimizer::OptimizeEssentialGraph(Map *pMap, KeyFrame *pLoopKF, KeyFrame *pCurKF,
