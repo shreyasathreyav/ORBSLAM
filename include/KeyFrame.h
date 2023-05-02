@@ -326,8 +326,8 @@ public:
     //mvpOrderedConnectedKeyFrames
     long long mReferencecount_ockf; 
     
-
-
+    // Test container
+      vector<KeyFrame *> test_container;
 
     static long unsigned int nNextId;
     long unsigned int mnId;

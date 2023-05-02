@@ -219,11 +219,39 @@ namespace ORB_SLAM3
         {
             if (!vPairs[i].second->isBad())
             {
+
                 lKFs.push_front(vPairs[i].second);
                 lWs.push_front(vPairs[i].first);
             }
         }
+        // Increment lkFs
 
+        // for (auto it : mvpOrderedConnectedKeyFrames)
+        // {
+
+        //     unique_lock<mutex> lock(it->mMutexreferencecount);
+        //     it->mReferencecount_canonical--;
+        //     cout << "MNID: " << it->mnId << " Canonical reference count" << it->mReferencecount_canonical << endl;
+        // }
+        for (auto it : test_container)
+        {
+
+            unique_lock<mutex> lock(it->mMutexreferencecount);
+            it->mReferencecount_canonical--;
+            // cout << "MNID: " << it->mnId << " Canonical reference count" << it->mReferencecount_canonical << endl;
+            // cout << "Size of mvpOrdered" << mvpOrderedConnectedKeyFrames.size() << endl;
+            // cout << "Size of lKFS" << lKFs.size() << endl;
+        }
+        test_container.clear();
+        // iterate through mvpockf and decrement
+        for (auto it : lKFs)
+        {
+
+            unique_lock<mutex> lock(it->mMutexreferencecount);
+            test_container.push_back(it);
+
+            it->mReferencecount_canonical++;
+        }
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
         mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
     }
@@ -277,12 +305,12 @@ namespace ORB_SLAM3
                 itr->mReferencecount++;
                 itr->mReferencecount_ockf++;
             }
-            for (auto itr : mvpOrderedConnectedKeyFrames)
-            {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount_canonical++;
-                itr->mReferencecount_container++;
-            }
+            // for (auto itr : mvpOrderedConnectedKeyFrames)
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     itr->mReferencecount_canonical++;
+            //     itr->mReferencecount_container++;
+            // }
             return mvpOrderedConnectedKeyFrames;
         }
         else
@@ -294,12 +322,12 @@ namespace ORB_SLAM3
                 itr->mReferencecount++;
                 itr->mReferencecount_ockf++;
             }
-            for (auto itr : arr)
-            {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount_canonical++;
-                itr->mReferencecount_container++;
-            }
+            // for (auto itr : arr)
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     itr->mReferencecount_canonical++;
+            //     itr->mReferencecount_container++;
+            // }
             return arr;
             // return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
         }
@@ -804,7 +832,6 @@ namespace ORB_SLAM3
                 bUpdate = true;
             }
         }
-
 
         if (bUpdate)
             UpdateBestCovisibles();
