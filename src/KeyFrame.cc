@@ -277,12 +277,12 @@ namespace ORB_SLAM3
                 itr->mReferencecount++;
                 itr->mReferencecount_ockf++;
             }
-            // for (auto itr : mvpOrderedConnectedKeyFrames)
-            // {
-            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //     itr->mReferencecount_canonical++;
-            //     itr->mReferencecount_container++;
-            // }
+            for (auto itr : mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_canonical++;
+                itr->mReferencecount_container++;
+            }
             return mvpOrderedConnectedKeyFrames;
         }
         else
@@ -294,12 +294,12 @@ namespace ORB_SLAM3
                 itr->mReferencecount++;
                 itr->mReferencecount_ockf++;
             }
-            // for (auto itr : arr)
-            // {
-            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //     itr->mReferencecount_canonical++;
-            //     itr->mReferencecount_container++;
-            // }
+            for (auto itr : arr)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount_canonical++;
+                itr->mReferencecount_container++;
+            }
             return arr;
             // return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
         }
@@ -630,17 +630,17 @@ namespace ORB_SLAM3
 
     void KeyFrame::SetBadFlag()
     {
-        cout << "SetBadFlag begins here" << endl;
+        // cout << "SetBadFlag begins here" << endl;
         {
             unique_lock<mutex> lock(mMutexConnections);
             if (mnId == mpMap->GetInitKFid())
             {
-                cout << " SetBadFlag Ends here" << endl;
+                // cout << " SetBadFlag Ends here" << endl;
                 return;
             }
             else if (mbNotErase)
             {
-                cout << " SetBadFlag Ends here" << endl;
+                // cout << " SetBadFlag Ends here" << endl;
                 mbToBeErased = true;
                 return;
             }
@@ -784,7 +784,7 @@ namespace ORB_SLAM3
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
 
-        cout << "SetBadFlag ended here" << endl;
+        // cout << "SetBadFlag ended here" << endl;
     }
 
     bool KeyFrame::isBad()

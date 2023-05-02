@@ -137,7 +137,7 @@ public:
     // Current Frame
     Frame mCurrentFrame;
     Frame mLastFrame;
-
+    vector<KeyFrame *> grc_vNeighs;
     cv::Mat mImGray;
 
     // Initialization Variables (Monocular)

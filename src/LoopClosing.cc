@@ -570,7 +570,7 @@ namespace ORB_SLAM3
     bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand, KeyFrame *&pMatchedKF2, KeyFrame *&pLastCurrentKF, g2o::Sim3 &g2oScw,
                                                  int &nNumCoincidences, std::vector<MapPoint *> &vpMPs, std::vector<MapPoint *> &vpMatchedMPs)
     {
-        // cout << "Inside the loop closing function" << endl;
+        // cout << "DetectCommonRegionsFromBoW Begins" << endl;
         int nBoWMatches = 20;
         int nBoWInliers = 15;
         int nSim3Inliers = 20;
@@ -605,7 +605,14 @@ namespace ORB_SLAM3
 
             // std::cout << "KF candidate: " << pKFi->mnId << std::endl;
             // Current KF against KF with covisibles version
+            // std::vector<KeyFrame *> vpCovKFi = pKFi->GetBestCovisibilityKeyFrames(nNumCovisibles, true);
             std::vector<KeyFrame *> vpCovKFi = pKFi->GetBestCovisibilityKeyFrames(nNumCovisibles);
+
+            std::vector<KeyFrame *> rc_vpCovKFi;
+            for (auto i : vpCovKFi)
+            {
+                rc_vpCovKFi.push_back(i);
+            }
             if (vpCovKFi.empty())
             {
                 std::cout << "Covisible list empty" << std::endl;
@@ -629,6 +636,16 @@ namespace ORB_SLAM3
             if (bAbortByNearKF)
             {
                 // std::cout << "Check BoW aborted because is close to the matched one " << std::endl;
+                for (auto i : rc_vpCovKFi)
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    {
+                        // i->mReferencecount_canonical--;
+                        // i->mReferencecount_container--;
+                        i->mReferencecount_ockf--;
+                        i->mReferencecount--;
+                    }
+                }
                 continue;
             }
             // std::cout << "Check BoW continue because is far to the matched one " << std::endl;
@@ -707,9 +724,18 @@ namespace ORB_SLAM3
                     // Verbose::PrintMess("BoW guess: Convergende with " + to_string(nInliers) + " geometrical inliers among " + to_string(nBoWInliers) + " BoW matches", Verbose::VERBOSITY_DEBUG);
                     //  Match by reprojection
                     vpCovKFi.clear();
+
+                    // vpCovKFi = pMostBoWMatchesKF->GetBestCovisibilityKeyFrames(nNumCovisibles, true);
                     vpCovKFi = pMostBoWMatchesKF->GetBestCovisibilityKeyFrames(nNumCovisibles);
+
+                    vector<KeyFrame *> rc1_vpCovKFi;
+                    for (auto i : vpCovKFi)
+                    {
+                        rc1_vpCovKFi.push_back(i);
+                    }
                     vpCovKFi.push_back(pMostBoWMatchesKF);
-                    set<KeyFrame *> spCheckKFs(vpCovKFi.begin(), vpCovKFi.end());
+
+                    // set<KeyFrame *> spCheckKFs(vpCovKFi.begin(), vpCovKFi.end());
 
                     // std::cout << "There are " << vpCovKFi.size() <<" near KFs" << std::endl;
 
@@ -807,6 +833,7 @@ namespace ORB_SLAM3
                                 // vpMatchedMPs = vpMatchedMP;
                                 // vpMPs = vpMapPoints;
                                 //  Check the Sim3 transformation with the current KeyFrame covisibles
+                                // vector<KeyFrame *> vpCurrentCovKFs = mpCurrentKF->GetBestCovisibilityKeyFrames(nNumCovisibles, true);
                                 vector<KeyFrame *> vpCurrentCovKFs = mpCurrentKF->GetBestCovisibilityKeyFrames(nNumCovisibles);
 
                                 int j = 0;
@@ -846,7 +873,28 @@ namespace ORB_SLAM3
                                     vpBestMapPoints = vpMapPoints;
                                     vpBestMatchedMapPoints = vpMatchedMP;
                                 }
+
+                                for (auto i : vpCurrentCovKFs)
+                                {
+                                    unique_lock<mutex> lock(i -> mMutexreferencecount);
+                                    {
+                                        // i->mReferencecount_canonical--;
+                                        // i->mReferencecount_container--;
+                                        i->mReferencecount_ockf--;
+                                        i->mReferencecount--;
+                                    }
+                                }
                             }
+                        }
+                    }
+                    for (auto i : rc1_vpCovKFi)
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        {
+                            // i->mReferencecount_canonical--;
+                            // i->mReferencecount_container--;
+                            i->mReferencecount_ockf--;
+                            i->mReferencecount--;
                         }
                     }
                 }
@@ -856,6 +904,18 @@ namespace ORB_SLAM3
                 }*/
             }
             index++;
+
+            for (auto i : rc_vpCovKFi)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                {
+                    // i->mReferencecount_canonical--;
+                    // i->mReferencecount_container--;
+                    i->mReferencecount_ockf--;
+                    i->mReferencecount--;
+                    // cout << "MNID" << i->mnId << " " << i->mReferencecount_ockf << endl;
+                }
+            }
         }
 
         if (nBestMatchesReproj > 0)
@@ -867,6 +927,7 @@ namespace ORB_SLAM3
             g2oScw = g2oBestScw;
             vpMPs = vpBestMapPoints;
             vpMatchedMPs = vpBestMatchedMapPoints;
+            // cout << "DetectCommonRegionsFromBoW ends" << endl;
 
             return nNumCoincidences >= 3;
         }
@@ -883,6 +944,7 @@ namespace ORB_SLAM3
                 }
             }
         }
+        // cout << "DetectCommonRegionsFromBoW ends" << endl;
         return false;
     }
 

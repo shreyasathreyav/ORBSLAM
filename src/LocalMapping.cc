@@ -385,11 +385,12 @@ namespace ORB_SLAM3
     void LocalMapping::CreateNewMapPoints()
     {
         // Retrieve neighbor keyframes in covisibility graph
-        cout << "CreateNewMapPoints Begins" << endl;
+        // cout << "CreateNewMapPoints Begins" << endl;
         int nn = 10;
         // For stereo inertial case
         if (mbMonocular)
             nn = 30;
+        // vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn, true);
         vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn);
         vector<KeyFrame *> rc_vpNeighKFs;
         for (auto i : vpNeighKFs)
@@ -762,17 +763,18 @@ namespace ORB_SLAM3
             itr->mReferencecount_ockf--;
             itr->mReferencecount--;
         }
-        cout << "CreateNewMapPoints ends" << endl;
+        // cout << "CreateNewMapPoints ends" << endl;
     }
 
     void LocalMapping::SearchInNeighbors()
     {
         // Retrieve neighbor keyframes
-        cout << "SearchInNeighbors Start " << endl;
+        // cout << "SearchInNeighbors Start " << endl;
         int nn = 10;
         if (mbMonocular)
             nn = 30;
-        const vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn, true);
+        // const vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn, true);
+        const vector<KeyFrame *> vpNeighKFs = mpCurrentKeyFrame->GetBestCovisibilityKeyFrames(nn);
         vector<KeyFrame *> vpTargetKFs;
 
         // Incremented the count here by one
@@ -791,7 +793,8 @@ namespace ORB_SLAM3
         // Extend to some second neighbors if abort is not requested
         for (int i = 0, imax = vpTargetKFs.size(); i < imax; i++)
         {
-            const vector<KeyFrame *> vpSecondNeighKFs = vpTargetKFs[i]->GetBestCovisibilityKeyFrames(20, true);
+            // const vector<KeyFrame *> vpSecondNeighKFs = vpTargetKFs[i]->GetBestCovisibilityKeyFrames(20, true);
+            const vector<KeyFrame *> vpSecondNeighKFs = vpTargetKFs[i]->GetBestCovisibilityKeyFrames(20);
             for (vector<KeyFrame *>::const_iterator vit2 = vpSecondNeighKFs.begin(), vend2 = vpSecondNeighKFs.end(); vit2 != vend2; vit2++)
             {
                 KeyFrame *pKFi2 = *vit2;
@@ -906,7 +909,7 @@ namespace ORB_SLAM3
             itr->mReferencecount--;
             // cout << itr->mReferencecount <<endl;
         }
-        cout << "SearchInNeighbors ends" << endl;
+        // cout << "SearchInNeighbors ends" << endl;
     }
 
     void LocalMapping::RequestStop()
@@ -992,7 +995,7 @@ namespace ORB_SLAM3
         // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
         // in at least other 3 keyframes (in the same or finer scale)
         // We only consider close stereo points
-        cout << "KeyFrame Culling beginning" << endl;
+        // cout << "KeyFrame Culling beginning" << endl;
         const int Nd = 21;
         mpCurrentKeyFrame->UpdateBestCovisibles();
         vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames(true);
@@ -1207,7 +1210,7 @@ namespace ORB_SLAM3
             // cout << endl;
         }
         // cout << endl;
-        cout << "KeyFrame Culling end" << endl;
+        // cout << "KeyFrame Culling end" << endl;
     }
 
     void LocalMapping::RequestReset()

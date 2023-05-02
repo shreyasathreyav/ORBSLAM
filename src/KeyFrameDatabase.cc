@@ -597,7 +597,7 @@ namespace ORB_SLAM3
     // DO REFERENCE COUNTING HERE
     void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame *> &vpLoopCand, vector<KeyFrame *> &vpMergeCand, int nNumCandidates)
     {
-        cout << "DetectBNCandidates" << endl;
+        // cout << "DetectBNCandidates" << endl;
         list<KeyFrame *> lKFsSharingWords;
         set<KeyFrame *> spConnectedKF;
 
@@ -633,7 +633,7 @@ namespace ORB_SLAM3
         {
 
             // cout << "Exited here" << endl;
-            cout << "End of DetectNBestCandidates" << endl;
+            // cout << "End of DetectNBestCandidates" << endl;
 
             return;
         }
@@ -668,7 +668,7 @@ namespace ORB_SLAM3
 
         if (lScoreAndMatch.empty())
         {
-            cout << "End of DetectNBestCandidates" << endl;
+            // cout << "End of DetectNBestCandidates" << endl;
 
             return;
         }
@@ -680,6 +680,7 @@ namespace ORB_SLAM3
         for (list<pair<float, KeyFrame *>>::iterator it = lScoreAndMatch.begin(), itend = lScoreAndMatch.end(); it != itend; it++)
         {
             KeyFrame *pKFi = it->second;
+            // vector<KeyFrame *> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10,true);
             vector<KeyFrame *> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10);
 
             float bestScore = it->first;
@@ -779,10 +780,10 @@ namespace ORB_SLAM3
                 itr.second->mReferencecount--;
 
                 // cout << "This is the canonical count" << itr.second->mnId << " " << itr.second->mReferencecount_canonical << endl;
-                cout << "This is the ockf count" << itr.second->mnId << " " << itr.second->mReferencecount_ockf << endl;
+                // cout << "This is the ockf count" << itr.second->mnId << " " << itr.second->mReferencecount_ockf << endl;
             }
         }
-        cout << "End of DetectNBestCandidates" << endl;
+        // cout << "End of DetectNBestCandidates" << endl;
     }
 
     // This function is not called
@@ -853,6 +854,7 @@ namespace ORB_SLAM3
         for (list<pair<float, KeyFrame *>>::iterator it = lScoreAndMatch.begin(), itend = lScoreAndMatch.end(); it != itend; it++)
         {
             KeyFrame *pKFi = it->second;
+            //not called chill!!!
             vector<KeyFrame *> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10);
 
             float bestScore = it->first;
