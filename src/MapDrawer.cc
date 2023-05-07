@@ -272,6 +272,7 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
         for(size_t i=0; i<vpKFs.size(); i++)
         {
             // Covisibility Graph
+            // cout << " I am called" << endl;
             const vector<KeyFrame*> vCovKFs = vpKFs[i]->GetCovisiblesByWeight(100);
             Eigen::Vector3f Ow = vpKFs[i]->GetCameraCenter();
             if(!vCovKFs.empty())
@@ -304,6 +305,14 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
                 Eigen::Vector3f Owl = (*sit)->GetCameraCenter();
                 glVertex3f(Ow(0),Ow(1),Ow(2));
                 glVertex3f(Owl(0),Owl(1),Owl(2));
+            }
+
+            for(auto i: vCovKFs)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount_ockf--;
+                i->mReferencecount--;
+                // cout << i->mReferencecount_canonical << endl;
             }
         }
 

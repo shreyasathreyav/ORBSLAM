@@ -1317,7 +1317,10 @@ namespace ORB_SLAM3
                     if(!pMPinKF->isBad())
                     {
                         if(pMPinKF->Observations()>pMP->Observations())
+                        {
+                            // cout << " Fuse Called " << endl;
                             pMP->Replace(pMPinKF);
+                        }
                         else
                             pMPinKF->Replace(pMP);
                     }

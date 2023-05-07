@@ -514,12 +514,35 @@ namespace ORB_SLAM3
 
         if (mbMergeDetected || mbLoopDetected)
         {
+            for (auto i : vpLoopBowCand)
+            {
+                unique_lock<mutex>(i->mMutexreferencecount);
+                i->mReferencecount--;
+                i->mReferencecount_ockf--;
+            }
+            for (auto i : vpMergeBowCand)
+            {
+                unique_lock<mutex>(i->mMutexreferencecount);
+                i->mReferencecount--;
+                i->mReferencecount_ockf--;
+            }
             return true;
         }
 
         mpCurrentKF->SetErase();
         mpCurrentKF->mbCurrentPlaceRecognition = false;
-
+        for (auto i : vpLoopBowCand)
+        {
+            unique_lock<mutex>(i->mMutexreferencecount);
+            i->mReferencecount--;
+            i->mReferencecount_ockf--;
+        }
+        for (auto i : vpMergeBowCand)
+        {
+            unique_lock<mutex>(i->mMutexreferencecount);
+            i->mReferencecount--;
+            i->mReferencecount_ockf--;
+        }
         return false;
     }
 
@@ -876,7 +899,7 @@ namespace ORB_SLAM3
 
                                 for (auto i : vpCurrentCovKFs)
                                 {
-                                    unique_lock<mutex> lock(i -> mMutexreferencecount);
+                                    unique_lock<mutex> lock(i->mMutexreferencecount);
                                     {
                                         // i->mReferencecount_canonical--;
                                         // i->mReferencecount_container--;

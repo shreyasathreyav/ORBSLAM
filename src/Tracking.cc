@@ -3557,7 +3557,7 @@ namespace ORB_SLAM3
             KeyFrame *pKF = *itKF;
 
             // const vector<KeyFrame *> vNeighs = pKF->GetBestCovisibilityKeyFrames(10, true);
-                   const vector<KeyFrame *> vNeighs = pKF->GetBestCovisibilityKeyFrames(10);
+            const vector<KeyFrame *> vNeighs = pKF->GetBestCovisibilityKeyFrames(10);
 
             for (vector<KeyFrame *>::const_iterator itNeighKF = vNeighs.begin(), itEndNeighKF = vNeighs.end(); itNeighKF != itEndNeighKF; itNeighKF++)
             {

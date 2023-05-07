@@ -1119,7 +1119,7 @@ namespace ORB_SLAM3
         Map *pCurrentMap = pKF->GetMap();
 
         // count = 0
-        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames(true);
+        const vector<KeyFrame *> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
         // for(auto itr: vNeighKFs)
         // {
         //     cout << itr->mReferencecount_container ;
@@ -1877,6 +1877,7 @@ namespace ORB_SLAM3
             }
 
             // Covisibility graph edges
+            // cout << "Here" <<endl;
             const vector<KeyFrame *> vpConnectedKFs = pKF->GetCovisiblesByWeight(minFeat);
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin(); vit != vpConnectedKFs.end(); vit++)
             {
@@ -2205,6 +2206,7 @@ namespace ORB_SLAM3
             }
 
             // Covisibility graph edges
+            // cout << "Here" << endl;
             const vector<KeyFrame *> vpConnectedKFs = pKFi->GetCovisiblesByWeight(minFeat);
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin(); vit != vpConnectedKFs.end(); vit++)
             {
@@ -5683,6 +5685,7 @@ namespace ORB_SLAM3
             }
 
             // 1.3 Covisibility graph edges
+            // cout << "here" << endl;
             const vector<KeyFrame *> vpConnectedKFs = pKF->GetCovisiblesByWeight(minFeat);
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin(); vit != vpConnectedKFs.end(); vit++)
             {

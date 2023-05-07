@@ -226,13 +226,13 @@ public:
     void UpdateConnections(bool upParent=true);
     void UpdateBestCovisibles();
     std::set<KeyFrame *> GetConnectedKeyFrames();
-    std::vector<KeyFrame* > GetVectorCovisibleKeyFrames(bool flag);
+    // std::vector<KeyFrame* > GetVectorCovisibleKeyFrames(bool flag);
     std::vector<KeyFrame* > GetVectorCovisibleKeyFrames();
     std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N);
-    std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N, bool flag);
+    // std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N, bool flag);
     
     
-    std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w, bool flag);
+    // std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w, bool flag);
 
     std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w);
     int GetWeight(KeyFrame* pKF);
@@ -327,7 +327,7 @@ public:
     long long mReferencecount_ockf; 
     
     // Test container
-      vector<KeyFrame *> test_container;
+    //   vector<KeyFrame *> test_container;
 
     static long unsigned int nNextId;
     long unsigned int mnId;

@@ -998,7 +998,7 @@ namespace ORB_SLAM3
         // cout << "KeyFrame Culling beginning" << endl;
         const int Nd = 21;
         mpCurrentKeyFrame->UpdateBestCovisibles();
-        vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames(true);
+        vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
 
         float redundant_th;
         if (!mbInertial)
