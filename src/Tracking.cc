@@ -3357,6 +3357,12 @@ namespace ORB_SLAM3
             {
                 if (pMP->isBad())
                 {
+                    for (auto it : pMP->mObservations)
+                    {
+
+                        unique_lock<mutex> lock(it.first->mMutextest_count);
+                        it.first->test_count--;
+                    }
                     *vit = static_cast<MapPoint *>(NULL);
                 }
                 else

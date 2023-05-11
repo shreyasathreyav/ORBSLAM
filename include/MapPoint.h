@@ -207,13 +207,13 @@ public:
 
     unsigned int mnOriginMapId;
 
+     // Keyframes observing the point and associated index in keyframe
+     std::map<KeyFrame*,std::tuple<int,int> > mObservations;
 protected:    
 
      // Position in absolute coordinates
      Eigen::Vector3f mWorldPos;
 
-     // Keyframes observing the point and associated index in keyframe
-     std::map<KeyFrame*,std::tuple<int,int> > mObservations;
      // For save relation without pointer, this is necessary for save/load function
      std::map<long unsigned int, int> mBackupObservationsId1;
      std::map<long unsigned int, int> mBackupObservationsId2;
