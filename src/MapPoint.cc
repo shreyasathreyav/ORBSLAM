@@ -142,7 +142,21 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFeatures);
         tuple<int, int> indexes;
-
+        if(pKF->isBad())
+        {
+            // float count = 0; float _size = pKF->mvpMapPoints.size();  
+            // for(auto i: pKF->mvpMapPoints)
+            // {
+            //     if(i)
+            //     {
+            //         count++;
+            //     cout << "Bad MP " << i->mnId <<endl;
+            //     }
+            // }
+            // cout << (count/_size)*100 << endl;
+            cout << "BAD KF" <<endl;
+            return;
+        }
         if (mObservations.count(pKF))
         {
             indexes = mObservations[pKF];
@@ -298,7 +312,7 @@ namespace ORB_SLAM3
             tuple<int, int> indexes = mit->second;
             int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
 
-            if (!pMP->IsInKeyFrame(pKF))
+            if (!pMP->IsInKeyFrame(pKF) && !pKF->isBad())
             {
                 if (leftIndex != -1)
                 {

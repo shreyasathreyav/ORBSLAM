@@ -314,7 +314,7 @@ namespace ORB_SLAM3
             {
                 if (!pMP->isBad())
                 {
-                    if (!pMP->IsInKeyFrame(mpCurrentKeyFrame))
+                    if (!pMP->IsInKeyFrame(mpCurrentKeyFrame) && !mpCurrentKeyFrame->isBad())
                     {
                         pMP->AddObservation(mpCurrentKeyFrame, i);
                         pMP->UpdateNormalAndDepth();

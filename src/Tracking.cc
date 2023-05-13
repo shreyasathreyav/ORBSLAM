@@ -2385,7 +2385,7 @@ namespace ORB_SLAM3
             mpAtlas->AddKeyFrame(pKFini);
 
             // Create MapPoints and asscoiate to KeyFrame
-            if (!mpCamera2)
+            if (!mpCamera2 && !pKFini->isBad())
             {
                 for (int i = 0; i < mCurrentFrame.N; i++)
                 {
@@ -2410,7 +2410,7 @@ namespace ORB_SLAM3
                 for (int i = 0; i < mCurrentFrame.Nleft; i++)
                 {
                     int rightIndex = mCurrentFrame.mvLeftToRightMatch[i];
-                    if (rightIndex != -1)
+                    if (rightIndex != -1 && !pKFini->isBad())
                     {
                         Eigen::Vector3f x3D = mCurrentFrame.mvStereo3Dpoints[i];
 
@@ -3292,7 +3292,7 @@ namespace ORB_SLAM3
                         mCurrentFrame.mvpMapPoints[i] = static_cast<MapPoint *>(NULL);
                     }
 
-                    if (bCreateNew)
+                    if (bCreateNew && !pKF->isBad())
                     {
                         Eigen::Vector3f x3D;
 
@@ -3317,6 +3317,7 @@ namespace ORB_SLAM3
                             pKF->AddMapPoint(pNewMP, mCurrentFrame.Nleft + mCurrentFrame.mvLeftToRightMatch[i]);
                         }
 
+                        pNewMP->AddObservation(pKF, i);
                         pKF->AddMapPoint(pNewMP, i);
                         pNewMP->ComputeDistinctiveDescriptors();
                         pNewMP->UpdateNormalAndDepth();
@@ -3357,12 +3358,11 @@ namespace ORB_SLAM3
             {
                 if (pMP->isBad())
                 {
-                    for (auto it : pMP->mObservations)
-                    {
-
-                        unique_lock<mutex> lock(it.first->mMutextest_count);
-                        it.first->test_count--;
-                    }
+                    // for (auto it : pMP->mObservations)
+                    // {
+                    //     unique_lock<mutex> lock(it.first->mMutextest_count);
+                    //     it.first->test_count--;
+                    // }
                     *vit = static_cast<MapPoint *>(NULL);
                 }
                 else

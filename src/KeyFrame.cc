@@ -432,7 +432,16 @@ namespace ORB_SLAM3
     void KeyFrame::AddMapPoint(MapPoint *pMP, const size_t &idx)
     {
         unique_lock<mutex> lock(mMutexFeatures);
-        mvpMapPoints[idx] = pMP;
+        {
+            // if(mvpMapPoints[idx] != 0)
+            // {
+            //     mvpMapPoints[idx]->mObservations.erase(this);
+            //     this->test_count--;
+            // }
+            // cout << "BEFORE: " << mvpMapPoints[idx]->mnId <<endl;
+            mvpMapPoints[idx] = pMP;
+            // cout << "AFTER: " << mvpMapPoints[idx]->mnId <<endl;
+        }
     }
 
     void KeyFrame::EraseMapPointMatch(const int &idx)
@@ -453,6 +462,7 @@ namespace ORB_SLAM3
 
     void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
     {
+        if(!this->isBad())
         mvpMapPoints[idx] = pMP;
     }
 
@@ -744,6 +754,8 @@ namespace ORB_SLAM3
             if (mvpMapPoints[i])
             {
                 mvpMapPoints[i]->EraseObservation(this);
+                mvpMapPoints[i] = static_cast<MapPoint*> (NULL);
+                // cout << "KF => " << this->mnId <<  " " << this->test_count << endl;  
             }
         }
 
@@ -888,7 +900,7 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexConnections);
         // if (mbBad)
-        // std::cout << "KF => " << this->mnId << " " << mReferencecount << " " << mReferencecount_ockf << endl;
+        // std::cout << "KF => " << this->mnId  << " " << test_count << endl;
         return mbBad;
     }
 
@@ -1143,6 +1155,7 @@ namespace ORB_SLAM3
         // Rebuild the empty variables
 
         // Pose
+        cout << "POSTLOAD" <<endl;
         SetPose(mTcw);
 
         mTrl = mTlr.inverse();

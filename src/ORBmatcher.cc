@@ -1309,12 +1309,12 @@ namespace ORB_SLAM3
             }
 
             // If there is already a MapPoint replace otherwise add new measurement
-            if(bestDist<=TH_LOW)
+            if(bestDist<=TH_LOW && !pKF->isBad())
             {
                 MapPoint* pMPinKF = pKF->GetMapPoint(bestIdx);
                 if(pMPinKF)
                 {
-                    if(!pMPinKF->isBad())
+                    if(!pMPinKF->isBad() && !pKF->isBad())
                     {
                         if(pMPinKF->Observations()>pMP->Observations())
                         {
@@ -1437,13 +1437,16 @@ namespace ORB_SLAM3
             }
 
             // If there is already a MapPoint replace otherwise add new measurement
-            if(bestDist<=TH_LOW)
+            if(bestDist<=TH_LOW && !pKF->isBad())
             {
                 MapPoint* pMPinKF = pKF->GetMapPoint(bestIdx);
                 if(pMPinKF)
                 {
-                    if(!pMPinKF->isBad())
+                    if(!pMPinKF->isBad() && !pKF->isBad())
+                    {
+                        // cout << "HEYAAA" <<endl;
                         vpReplacePoint[iMP] = pMPinKF;
+                    }
                 }
                 else
                 {
