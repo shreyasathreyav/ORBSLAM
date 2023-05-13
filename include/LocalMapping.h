@@ -80,6 +80,7 @@ public:
     double GetCurrKFTime();
     KeyFrame* GetCurrKF();
 
+    vector<KeyFrame *> tester_obs;
     std::mutex mMutexImuInit;
 
     Eigen::MatrixXd mcovInertial;
@@ -137,7 +138,7 @@ protected:
 
     void MapPointCulling();
     void SearchInNeighbors();
-    void KeyFrameCulling();
+    void KeyFrameCulling(vector<KeyFrame *>& test_container);
 
     System *mpSystem;
 

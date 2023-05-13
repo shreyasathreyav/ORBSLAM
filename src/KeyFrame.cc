@@ -431,7 +431,20 @@ namespace ORB_SLAM3
 
     void KeyFrame::AddMapPoint(MapPoint *pMP, const size_t &idx)
     {
+        if(this->isBad()){
+
+            cout << "We have a bad keyframe here" << endl;
+        }
         unique_lock<mutex> lock(mMutexFeatures);
+        if(mvpMapPoints[idx] != NULL){
+
+    
+            {
+                unique_lock<mutex> lock(this->mMutextest_count);
+                this->test_count--;
+            }
+            mvpMapPoints[idx]->mObservations.erase(this);
+        }
         mvpMapPoints[idx] = pMP;
     }
 
@@ -744,6 +757,7 @@ namespace ORB_SLAM3
             if (mvpMapPoints[i])
             {
                 mvpMapPoints[i]->EraseObservation(this);
+                mvpMapPoints[i] = static_cast<MapPoint *>(NULL);
             }
         }
 
@@ -881,14 +895,18 @@ namespace ORB_SLAM3
 
         // cout << "KF => " << this->mnId <<  " " << mReferencecount << " " <<mReferencecount_ockf << endl;
         // cout << "SetBadFlag ends " << endl;
-        cout << "KF => " << this->mnId <<  " " << this->test_count << endl;  
+        cout << "KF => " << this->mnId << " " << this->test_count << endl;
     }
 
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);
         // if (mbBad)
+        // {
+        //     cout << "KF => " << this->mnId << " " << this->test_count << endl;
+        // }
         // std::cout << "KF => " << this->mnId << " " << mReferencecount << " " << mReferencecount_ockf << endl;
+
         return mbBad;
     }
 

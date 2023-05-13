@@ -447,6 +447,9 @@ namespace ORB_SLAM3
 
         // bool mbHasHessian;
         // cv::Mat mHessianPose;
+        
+        // MapPoints associated to keypoints
+        std::vector<MapPoint *> mvpMapPoints;
 
         // The following variables need to be accessed trough a mutex to be thread safe.
     protected:
@@ -470,7 +473,7 @@ namespace ORB_SLAM3
         IMU::Bias mImuBias;
 
         // MapPoints associated to keypoints
-        std::vector<MapPoint *> mvpMapPoints;
+        // std::vector<MapPoint *> mvpMapPoints;
         // For save relation without pointer, this is necessary for save/load function
         std::vector<long long int> mvBackupMapPointsId;
 

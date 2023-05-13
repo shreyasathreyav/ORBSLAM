@@ -2276,7 +2276,15 @@ namespace ORB_SLAM3
                 for (int i = 0; i < mCurrentFrame.N; i++)
                 {
                     if (mCurrentFrame.mvpMapPoints[i] && mCurrentFrame.mvbOutlier[i])
+                    {
+                        // for (auto it : mCurrentFrame.mvpMapPoints[i]->mObservations)
+                        // {
+
+                        //     unique_lock<mutex> lock(it.first->mMutextest_count);
+                        //     it.first->test_count--;
+                        // }
                         mCurrentFrame.mvpMapPoints[i] = static_cast<MapPoint *>(NULL);
+                    }
                 }
             }
 
@@ -3025,7 +3033,10 @@ namespace ORB_SLAM3
                         mnMatchesInliers++;
                 }
                 else if (mSensor == System::STEREO)
+                {
+
                     mCurrentFrame.mvpMapPoints[i] = static_cast<MapPoint *>(NULL);
+                }
             }
         }
 
@@ -3357,12 +3368,6 @@ namespace ORB_SLAM3
             {
                 if (pMP->isBad())
                 {
-                    for (auto it : pMP->mObservations)
-                    {
-
-                        unique_lock<mutex> lock(it.first->mMutextest_count);
-                        it.first->test_count--;
-                    }
                     *vit = static_cast<MapPoint *>(NULL);
                 }
                 else
@@ -3770,9 +3775,6 @@ namespace ORB_SLAM3
                     if (nGood < 10)
                         continue;
 
-                    for (int io = 0; io < mCurrentFrame.N; io++)
-                        if (mCurrentFrame.mvbOutlier[io])
-                            mCurrentFrame.mvpMapPoints[io] = static_cast<MapPoint *>(NULL);
 
                     // If few inliers, search by projection in a coarse window and optimize again
                     if (nGood < 50)

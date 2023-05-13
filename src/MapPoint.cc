@@ -140,15 +140,38 @@ namespace ORB_SLAM3
 
     void MapPoint::AddObservation(KeyFrame *pKF, int idx)
     {
+        bool setc = false;
+        bool test = pKF->isBad();
+        int check = 0;
+        if(test){
+            check = 1;
+        }
+        if(test){
+            cout << test << endl;
+
+            cout << "Bad keyframe being inserted into mObservations" << endl;
+            // for(auto it : pKF->mvpMapPoints){
+
+            //     if(it){
+
+            //         cout <<"This mappoint is not set to null" << endl;
+            //     }
+            // }
+        }
         unique_lock<mutex> lock(mMutexFeatures);
         tuple<int, int> indexes;
 
         if (mObservations.count(pKF))
         {
             indexes = mObservations[pKF];
+            
         }
         else
         {
+            if(setc){
+
+                cout << "Beind added to mObservations" << endl;
+            }
             indexes = tuple<int, int>(-1, -1);
             {
                 unique_lock<mutex> lock(pKF->mMutextest_count);

@@ -183,7 +183,7 @@ namespace ORB_SLAM3
                     }
 
                     // Check redundant local Keyframes
-                    KeyFrameCulling();
+                    KeyFrameCulling(tester_obs);
 
 #ifdef REGISTER_TIMES
                     std::chrono::steady_clock::time_point time_EndKFCulling = std::chrono::steady_clock::now();
@@ -989,17 +989,23 @@ namespace ORB_SLAM3
         mbAbortBA = true;
     }
     // DONE RC => mvpOrderedConnectedKeyFrames
-    void LocalMapping::KeyFrameCulling()
+    void LocalMapping::KeyFrameCulling(vector<KeyFrame *> &tester_obs)
     {
         // Check redundant keyframes (only local keyframes)
         // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
         // in at least other 3 keyframes (in the same or finer scale)
         // We only consider close stereo points
         // cout << "KeyFrame Culling beginning" << endl;
+
         const int Nd = 21;
         mpCurrentKeyFrame->UpdateBestCovisibles();
         vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
+        // for (auto it : tester_obs)
+        // {
 
+        //     cout << it->mnId << " " << it->test_count << endl;
+        // }
+        tester_obs.clear();
         float redundant_th;
         if (!mbInertial)
             redundant_th = 0.9;
@@ -1169,6 +1175,8 @@ namespace ORB_SLAM3
                 }
                 else
                 {
+                    // cout << "This is the else that is executed" << endl;
+                    tester_obs.push_back(pKF);
                     pKF->SetBadFlag();
                 }
             }
