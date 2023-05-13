@@ -36,7 +36,7 @@ namespace ORB_SLAM3
                            mfLogScaleFactor(0), mvScaleFactors(0), mvLevelSigma2(0), mvInvLevelSigma2(0), mnMinX(0), mnMinY(0), mnMaxX(0),
                            mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
                            mbToBeErased(false), mbBad(false), mHalfBaseline(0), mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0),
-                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0)
+                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0)
 
     {
     }
@@ -57,7 +57,7 @@ namespace ORB_SLAM3
                                                                        mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile), mnMergeCorrectedForKF(0),
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
-                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0)
+                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0)
     {
         mnId = nNextId++;
 
@@ -432,6 +432,16 @@ namespace ORB_SLAM3
     void KeyFrame::AddMapPoint(MapPoint *pMP, const size_t &idx)
     {
         unique_lock<mutex> lock(mMutexFeatures);
+        if (mvpMapPoints[idx] != NULL)
+        {
+
+            {
+                unique_lock<mutex> lock(this->mMutexreferencecount);
+                this->mReferencecount--;
+                this->mReferencecount_mob--;
+            }
+            // mvpMapPoints[idx]->mObservations.erase(this);
+        }
         mvpMapPoints[idx] = pMP;
     }
 
@@ -744,6 +754,7 @@ namespace ORB_SLAM3
             if (mvpMapPoints[i])
             {
                 mvpMapPoints[i]->EraseObservation(this);
+                // mvpMapPoints[i] = static_cast<MapPoint *>(NULL);
             }
         }
 
@@ -768,7 +779,12 @@ namespace ORB_SLAM3
                 sParentCandidates.insert(mpParent);
 
             // Assign at each iteration one children with a parent (the pair with highest covisibility weight)
-            // Include that children as new parent candidate for the rest
+            // Include that children as new        // if (mbBad)
+        // {
+        //     if(this->mReferencecount_ockf != 0)
+        //     cout << "KF => " << this->mnId << " " << this->mReferencecount_mob << " " << this->mReferencecount_ockf << endl;
+        //     std::cout << "KF => " << this->mnId << " " << mReferencecount << " " << mReferencecount_ockf << endl;
+        // } parent candidate for the rest
             while (!mspChildrens.empty())
             {
                 bool bContinue = false;
@@ -881,13 +897,19 @@ namespace ORB_SLAM3
 
         // cout << "KF => " << this->mnId <<  " " << mReferencecount << " " <<mReferencecount_ockf << endl;
         // cout << "SetBadFlag ends " << endl;
+        // cout << "KF => " << this->mnId << " " << this->mReferencecount_mob << " " << this->mReferencecount << endl;
     }
 
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);
         if (mbBad)
-        std::cout << "KF => " << this->mnId << " " << mReferencecount << " " << mReferencecount_ockf << endl;
+        {
+            if(this->mReferencecount_ockf < 0)
+            cout << "KF => " << this->mnId << " " << this->mReferencecount_mob << " " << this->mReferencecount_ockf << endl;
+            // std::cout << "KF => " << this->mnId << " " << mReferencecount << " " << mReferencecount_ockf << endl;
+        }
+
         return mbBad;
     }
 
