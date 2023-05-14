@@ -325,6 +325,9 @@ public:
     
     //mvpOrderedConnectedKeyFrames
     long long mReferencecount_ockf; 
+
+    // Test Count
+    long long test_count;
     
     // Test container
     //   vector<KeyFrame *> test_container;

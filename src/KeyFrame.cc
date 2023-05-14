@@ -36,7 +36,7 @@ namespace ORB_SLAM3
                            mfLogScaleFactor(0), mvScaleFactors(0), mvLevelSigma2(0), mvInvLevelSigma2(0), mnMinX(0), mnMinY(0), mnMaxX(0),
                            mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
                            mbToBeErased(false), mbBad(false), mHalfBaseline(0), mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0),
-                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0)
+                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), test_count(0)
 
     {
     }
@@ -57,7 +57,7 @@ namespace ORB_SLAM3
                                                                        mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile), mnMergeCorrectedForKF(0),
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
-                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0)
+                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), test_count(0)
     {
         mnId = nNextId++;
 
@@ -226,12 +226,17 @@ namespace ORB_SLAM3
         }
 
         // iterate through mvpockf and decrement
-
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf--;
             i->mReferencecount--;
+        }
+
+        for (auto i : mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->test_count--;
         }
 
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
@@ -241,6 +246,12 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->mReferencecount_ockf++;
             i->mReferencecount++;
+        }
+
+        for (auto i : mvpOrderedConnectedKeyFrames)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->test_count++;
         }
 
         mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
@@ -599,6 +610,11 @@ namespace ORB_SLAM3
                 i->mReferencecount--;
             }
 
+            for (auto i : mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->test_count--;
+            }
             mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
             for (auto i : mvpOrderedConnectedKeyFrames)
@@ -606,6 +622,11 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount_ockf++;
                 i->mReferencecount++;
+            }
+            for (auto i : mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->test_count++;
             }
 
             mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
@@ -751,7 +772,6 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock(mMutexConnections);
             unique_lock<mutex> lock1(mMutexFeatures);
 
-            mConnectedKeyFrameWeights.clear();
 
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
@@ -760,6 +780,13 @@ namespace ORB_SLAM3
                 itr->mReferencecount_ockf--;
             }
 
+            for (auto itr : mvpOrderedConnectedKeyFrames)
+            {
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->test_count--;
+                // itr->test_count--;
+            }
+            mConnectedKeyFrameWeights.clear();
             mvpOrderedConnectedKeyFrames.clear();
 
             // Update Spanning Tree
@@ -879,6 +906,7 @@ namespace ORB_SLAM3
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
 
+        // cout << "KF => " << this->mnId << " " << this->test_count <<" "<< this->mReferencecount_ockf << endl;
         // cout << "KF => " << this->mnId <<  " " << mReferencecount << " " <<mReferencecount_ockf << endl;
         // cout << "SetBadFlag ends " << endl;
     }
@@ -887,7 +915,13 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexConnections);
         if (mbBad)
-        std::cout << "KF => " << this->mnId << " " << mReferencecount << " " << mReferencecount_ockf << endl;
+        {
+            if (mReferencecount_ockf != 0 || test_count != 0)
+            {
+
+                cout << "KF => " << this->mnId << " " << this->test_count << " " << this->mReferencecount_ockf << endl;
+            }
+        }
         return mbBad;
     }
 
@@ -910,6 +944,10 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock2((*index)->mMutexreferencecount);
                 (*index)->mReferencecount--;
                 (*index)->mReferencecount_ockf--;
+            }
+            {
+                unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+                (*index)->test_count--;
             }
             mvpOrderedConnectedKeyFrames.erase(index);
         }
