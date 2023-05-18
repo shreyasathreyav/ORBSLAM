@@ -330,7 +330,7 @@ public:
     long long test_count;
     
     // Test container
-    //   vector<KeyFrame *> test_container;
+    set<KeyFrame *> test_container;
 
     static long unsigned int nNextId;
     long unsigned int mnId;

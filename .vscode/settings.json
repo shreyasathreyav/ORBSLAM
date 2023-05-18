@@ -5,6 +5,7 @@
         "shared_mutex": "cpp",
         "__mutex_base": "cpp",
         "*.tcc": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "*.ipp": "cpp"
     }
 }

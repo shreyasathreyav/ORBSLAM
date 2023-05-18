@@ -233,11 +233,25 @@ namespace ORB_SLAM3
             i->mReferencecount--;
         }
 
+        // cout << "Beginning of one for loop" << endl;
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
             i->test_count--;
+
+            // if (i->isBad())
+            // {
+
+            //     cout << i->mnId <<" "<< this->mnId << " "<< i->test_count << " preblem UpdateBestCovisibles " << i << endl;
+
+            //     if(i->test_container.find(this) == i->test_container.end()){
+
+            //         cout << "This particular keyframe did not exist inside kfw" << endl;
+            //     }
+
+            // }
         }
+        // cout << "End of one for loop" << endl;
 
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
@@ -614,6 +628,8 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->test_count--;
+                // if (i->isBad())
+                //     cout << "preblem" << endl;
             }
             mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
@@ -758,6 +774,7 @@ namespace ORB_SLAM3
         for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend = mConnectedKeyFrameWeights.end(); mit != mend; mit++)
         {
             mit->first->EraseConnection(this);
+            // this->EraseConnection(mit->first);
         }
 
         for (size_t i = 0; i < mvpMapPoints.size(); i++)
@@ -767,11 +784,30 @@ namespace ORB_SLAM3
                 mvpMapPoints[i]->EraseObservation(this);
             }
         }
+        for (size_t i = 0; i < mvpMapPoints.size(); i++)
+        {
+            if (mvpMapPoints[i])
+            {
+
+                for (auto i : mvpMapPoints[i]->mObservations)
+                {
+                    KeyFrame *ptr = i.first;
+                    auto index = std::find(ptr->mvpOrderedConnectedKeyFrames.begin(), ptr->mvpOrderedConnectedKeyFrames.end(), this);
+                    if (index != ptr->mvpOrderedConnectedKeyFrames.end())
+                    {
+                        {
+                            unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+                            (*index)->test_count--;
+                        }
+                        ptr->mvpOrderedConnectedKeyFrames.erase(index);
+                    }
+                }
+            }
+        }
 
         {
             unique_lock<mutex> lock(mMutexConnections);
             unique_lock<mutex> lock1(mMutexFeatures);
-
 
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
@@ -785,6 +821,11 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
                 itr->test_count--;
                 // itr->test_count--;
+            }
+            for (auto it : mConnectedKeyFrameWeights)
+            {
+
+                test_container.insert(it.first);
             }
             mConnectedKeyFrameWeights.clear();
             mvpOrderedConnectedKeyFrames.clear();
@@ -906,8 +947,30 @@ namespace ORB_SLAM3
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
 
-        // cout << "KF => " << this->mnId << " " << this->test_count <<" "<< this->mReferencecount_ockf << endl;
-        // cout << "KF => " << this->mnId <<  " " << mReferencecount << " " <<mReferencecount_ockf << endl;
+        for (size_t i = 0; i < mvpMapPoints.size(); i++)
+        {
+            if (mvpMapPoints[i])
+            {
+
+                for (auto i : mvpMapPoints[i]->mObservations)
+                {
+                    KeyFrame *ptr = i.first;
+                    auto index = std::find(ptr->mvpOrderedConnectedKeyFrames.begin(), ptr->mvpOrderedConnectedKeyFrames.end(), this);
+                    if (index != ptr->mvpOrderedConnectedKeyFrames.end())
+                    {
+                        {
+                            unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+                            (*index)->test_count--;
+                        }
+                        ptr->mvpOrderedConnectedKeyFrames.erase(index);
+                    }
+                }
+            }
+        }
+
+        // if (this->test_count != 0)
+        // cout << "KF => " << this->mnId <<  " " << test_count << " " <<mReferencecount_ockf << endl;
+            // cout << "KF => " << this->mnId << " " << this->test_count << endl;
         // cout << "SetBadFlag ends " << endl;
     }
 
@@ -916,11 +979,8 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexConnections);
         if (mbBad)
         {
-            if (mReferencecount_ockf != 0 || test_count != 0)
-            {
-
-                cout << "KF => " << this->mnId << " " << this->test_count << " " << this->mReferencecount_ockf << endl;
-            }
+            if(this->test_count == 0 && this->mReferencecount_ockf ==0)
+            cout << "KF => " << this->mnId << " : " << this->test_count << " " <<this->mReferencecount_ockf << " " << endl;
         }
         return mbBad;
     }
@@ -937,20 +997,20 @@ namespace ORB_SLAM3
             }
         }
 
-        auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
-        if (index != mvpOrderedConnectedKeyFrames.end())
-        {
-            {
-                unique_lock<mutex> lock2((*index)->mMutexreferencecount);
-                (*index)->mReferencecount--;
-                (*index)->mReferencecount_ockf--;
-            }
-            {
-                unique_lock<mutex> lock2((*index)->mMutexreferencecount);
-                (*index)->test_count--;
-            }
-            mvpOrderedConnectedKeyFrames.erase(index);
-        }
+        // auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
+        // if (index != mvpOrderedConnectedKeyFrames.end())
+        // {
+        //     {
+        //         unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+        //         (*index)->mReferencecount--;
+        //         (*index)->mReferencecount_ockf--;
+        //     }
+        //     {
+        //         unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+        //         (*index)->test_count--;
+        //     }
+        //     mvpOrderedConnectedKeyFrames.erase(index);
+        // }
 
         if (bUpdate)
             UpdateBestCovisibles();
