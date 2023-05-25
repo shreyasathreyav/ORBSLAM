@@ -198,7 +198,8 @@ public:
     KeyFrame(Frame &F, Map* pMap, KeyFrameDatabase* pKFDB);
 
     std::mutex mMutexreferencecount;
-
+    vector<KeyFrame *> inverse_store;
+    vector<KeyFrame *> ockf_store;
     // Pose functions
     void SetPose(const Sophus::SE3f &Tcw);
     void SetVelocity(const Eigen::Vector3f &Vw_);

@@ -193,6 +193,11 @@ namespace ORB_SLAM3
     {
         {
             unique_lock<mutex> lock(mMutexConnections);
+            if (pKF->isBad())
+            {
+
+                cout << "We have a bad keyframe entering here" << endl;
+            }
             if (!mConnectedKeyFrameWeights.count(pKF))
                 mConnectedKeyFrameWeights[pKF] = weight;
             else if (mConnectedKeyFrameWeights[pKF] != weight)
@@ -234,23 +239,23 @@ namespace ORB_SLAM3
         }
 
         // cout << "Beginning of one for loop" << endl;
-        for (auto i : mvpOrderedConnectedKeyFrames)
-        {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->test_count--;
+        // for (auto i : mvpOrderedConnectedKeyFrames)
+        // {
+        //     unique_lock<mutex> lock(i->mMutexreferencecount);
+        //     i->test_count--;
 
-            // if (i->isBad())
-            // {
+        //     // if (i->isBad())
+        //     // {
 
-            //     cout << i->mnId <<" "<< this->mnId << " "<< i->test_count << " preblem UpdateBestCovisibles " << i << endl;
+        //     //     cout << i->mnId <<" "<< this->mnId << " "<< i->test_count << " preblem UpdateBestCovisibles " << i << endl;
 
-            //     if(i->test_container.find(this) == i->test_container.end()){
+        //     //     if(i->test_container.find(this) == i->test_container.end()){
 
-            //         cout << "This particular keyframe did not exist inside kfw" << endl;
-            //     }
+        //     //         cout << "This particular keyframe did not exist inside kfw" << endl;
+        //     //     }
 
-            // }
-        }
+        //     // }
+        // }
         // cout << "End of one for loop" << endl;
 
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
@@ -258,6 +263,8 @@ namespace ORB_SLAM3
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
             unique_lock<mutex> lock(i->mMutexreferencecount);
+            i->inverse_store.push_back(this);
+            ockf_store.push_back(i);
             i->mReferencecount_ockf++;
             i->mReferencecount++;
         }
@@ -624,18 +631,21 @@ namespace ORB_SLAM3
                 i->mReferencecount--;
             }
 
-            for (auto i : mvpOrderedConnectedKeyFrames)
-            {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->test_count--;
-                // if (i->isBad())
-                //     cout << "preblem" << endl;
-            }
+            // for (auto i : mvpOrderedConnectedKeyFrames)
+            // {
+            //     unique_lock<mutex> lock(i->mMutexreferencecount);
+            //     i->test_count--;
+            //     // if (i->isBad())
+            //     //     cout << "preblem" << endl;
+            // }
             mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
             for (auto i : mvpOrderedConnectedKeyFrames)
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->inverse_store.push_back(this);
+                ockf_store.push_back(i);
+
                 i->mReferencecount_ockf++;
                 i->mReferencecount++;
             }
@@ -771,37 +781,38 @@ namespace ORB_SLAM3
             }
         }
 
+        mbBad = true;
+        vector<KeyFrame *> misc_found;
+
+        // cout << mnId << " " << test_count << endl;
+        for (auto it : inverse_store)
+        {
+
+            auto index = std::find(it->ockf_store.begin(), it->ockf_store.end(), this);
+            // while (index != it->ockf_store.end())
+            if (index != it->ockf_store.end())
+
+            {
+
+                // cout << "This guy was found" << endl;
+                this->test_count--;
+                // it->ockf_store.erase(index);
+                // index = std::find(it->ockf_store.begin(), it->ockf_store.end(), this);
+            }
+        }
         for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend = mConnectedKeyFrameWeights.end(); mit != mend; mit++)
         {
             mit->first->EraseConnection(this);
             // this->EraseConnection(mit->first);
         }
+        if(test_count != 0)
+        cout << test_count << " " << endl;
 
         for (size_t i = 0; i < mvpMapPoints.size(); i++)
         {
             if (mvpMapPoints[i])
             {
                 mvpMapPoints[i]->EraseObservation(this);
-            }
-        }
-        for (size_t i = 0; i < mvpMapPoints.size(); i++)
-        {
-            if (mvpMapPoints[i])
-            {
-
-                for (auto i : mvpMapPoints[i]->mObservations)
-                {
-                    KeyFrame *ptr = i.first;
-                    auto index = std::find(ptr->mvpOrderedConnectedKeyFrames.begin(), ptr->mvpOrderedConnectedKeyFrames.end(), this);
-                    if (index != ptr->mvpOrderedConnectedKeyFrames.end())
-                    {
-                        {
-                            unique_lock<mutex> lock2((*index)->mMutexreferencecount);
-                            (*index)->test_count--;
-                        }
-                        ptr->mvpOrderedConnectedKeyFrames.erase(index);
-                    }
-                }
             }
         }
 
@@ -816,12 +827,13 @@ namespace ORB_SLAM3
                 itr->mReferencecount_ockf--;
             }
 
-            for (auto itr : mvpOrderedConnectedKeyFrames)
-            {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->test_count--;
-                // itr->test_count--;
-            }
+            // for (auto itr : mvpOrderedConnectedKeyFrames)
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     itr->test_count--;
+            //     // itr->test_count--;
+            // }
+
             for (auto it : mConnectedKeyFrameWeights)
             {
 
@@ -941,47 +953,47 @@ namespace ORB_SLAM3
                 mpParent->EraseChild(this);
                 mTcp = mTcw * mpParent->GetPoseInverse();
             }
-            mbBad = true;
+            // mbBad = true;
         }
 
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
 
-        for (size_t i = 0; i < mvpMapPoints.size(); i++)
-        {
-            if (mvpMapPoints[i])
-            {
+        // for (size_t i = 0; i < mvpMapPoints.size(); i++)
+        // {
+        //     if (mvpMapPoints[i])
+        //     {
 
-                for (auto i : mvpMapPoints[i]->mObservations)
-                {
-                    KeyFrame *ptr = i.first;
-                    auto index = std::find(ptr->mvpOrderedConnectedKeyFrames.begin(), ptr->mvpOrderedConnectedKeyFrames.end(), this);
-                    if (index != ptr->mvpOrderedConnectedKeyFrames.end())
-                    {
-                        {
-                            unique_lock<mutex> lock2((*index)->mMutexreferencecount);
-                            (*index)->test_count--;
-                        }
-                        ptr->mvpOrderedConnectedKeyFrames.erase(index);
-                    }
-                }
-            }
-        }
+        //         for (auto i : mvpMapPoints[i]->mObservations)
+        //         {
+        //             KeyFrame *ptr = i.first;
+        //             auto index = std::find(ptr->mvpOrderedConnectedKeyFrames.begin(), ptr->mvpOrderedConnectedKeyFrames.end(), this);
+        //             if (index != ptr->mvpOrderedConnectedKeyFrames.end())
+        //             {
+        //                 {
+        //                     unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+        //                     (*index)->test_count--;
+        //                 }
+        //                 ptr->mvpOrderedConnectedKeyFrames.erase(index);
+        //             }
+        //         }
+        //     }
+        // }
 
         // if (this->test_count != 0)
         // cout << "KF => " << this->mnId <<  " " << test_count << " " <<mReferencecount_ockf << endl;
-            // cout << "KF => " << this->mnId << " " << this->test_count << endl;
+        // cout << "KF => " << this->mnId << " " << this->test_count << endl;
         // cout << "SetBadFlag ends " << endl;
     }
 
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        if (mbBad)
-        {
-            if(this->test_count == 0 && this->mReferencecount_ockf ==0)
-            cout << "KF => " << this->mnId << " : " << this->test_count << " " <<this->mReferencecount_ockf << " " << endl;
-        }
+        // if (mbBad)
+        // {
+        //     if(this->test_count == 0 && this->mReferencecount_ockf ==0)
+        //     cout << "KF => " << this->mnId << " : " << this->test_count << " " <<this->mReferencecount_ockf << " " << endl;
+        // }
         return mbBad;
     }
 
