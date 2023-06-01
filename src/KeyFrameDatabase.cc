@@ -743,25 +743,25 @@ namespace ORB_SLAM3
                 if (pKF->GetMap() == pKFi->GetMap() && vpLoopCand.size() < nNumCandidates)
                 {
                     // This is the increment that will make the reference count not zero
-                    // {
-                    //     unique_lock<mutex>(pKFi->mMutexreferencecount);
+                    {
+                        unique_lock<mutex>(pKFi->mMutexreferencecount);
                     //     pKFi->mReferencecount_canonical++;
                     //     pKFi->mReferencecount++;
-                    //     pKFi->mReferencecount_ockf++;
-                    //     pKFi->mReferencecount++;
-                    // }
+                        pKFi->mReferencecount_ockf++;
+                        pKFi->mReferencecount++;
+                    }
                     vpLoopCand.push_back(pKFi);
                 }
                 else if (pKF->GetMap() != pKFi->GetMap() && vpMergeCand.size() < nNumCandidates && !pKFi->GetMap()->IsBad())
                 {
                     // This is the increment that will make the reference count not zero
-                    // {
-                    //     unique_lock<mutex>(pKFi->mMutexreferencecount);
+                    {
+                        unique_lock<mutex>(pKFi->mMutexreferencecount);
                     //     pKFi->mReferencecount_canonical++;
+                        pKFi->mReferencecount++;
+                        pKFi->mReferencecount_ockf++;
                     //     pKFi->mReferencecount++;
-                    //     pKFi->mReferencecount_ockf++;
-                    //     pKFi->mReferencecount++;
-                    // }
+                    }
                     vpMergeCand.push_back(pKFi);
                 }
                 spAlreadyAddedKF.insert(pKFi);

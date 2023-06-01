@@ -889,15 +889,19 @@ namespace ORB_SLAM3
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
 
-        cout << "KF => " << this->mnId <<  " " << mReferencecount_mob << endl;
+        if(mReferencecount_ockf < 0)
+        cout << "KF => " << this->mnId <<  " " << mReferencecount_ockf << endl;
         // cout << "SetBadFlag ends " << endl;
     }
 
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        // if (mbBad)
-            // std::cout << "KF => " << this->mnId << " " << mReferencecount_mob << endl;
+        if (mbBad)
+        {
+            if(mReferencecount_ockf < 0)
+            std::cout << "KF => " << this->mnId << " " << mReferencecount_ockf << endl;
+        }
         return mbBad;
     }
 

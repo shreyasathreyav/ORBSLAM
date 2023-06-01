@@ -1155,6 +1155,7 @@ namespace ORB_SLAM3
                             pKF->mNextKF = NULL;
                             pKF->mPrevKF = NULL;
                             pKF->SetBadFlag();
+                            arr.push_back(pKF);
                         }
                         else if (!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition() - pKF->mPrevKF->GetImuPosition()).norm() < 0.02) && (t < 3))
                         {
@@ -1164,12 +1165,14 @@ namespace ORB_SLAM3
                             pKF->mNextKF = NULL;
                             pKF->mPrevKF = NULL;
                             pKF->SetBadFlag();
+                            arr.push_back(pKF);
                         }
                     }
                 }
                 else
                 {
                     pKF->SetBadFlag();
+                    arr.push_back(pKF);
                 }
             }
             if ((count > 20 && mbAbortBA) || count > 100)
@@ -1209,6 +1212,12 @@ namespace ORB_SLAM3
             }
             // cout << endl;
         }
+        // cout << "No of deleted keyFrames " << arr.size() << endl;
+        // for(auto i: arr)
+        // {
+        //     if(i->mReferencecount_mob !=0 || i->mReferencecount_ockf != 0)
+        //     cout << "KF => " << i->mnId <<  " " << i->mReferencecount_mob << "   " << i->mReferencecount_ockf << endl;
+        // }
         // cout << endl;
         // cout << "KeyFrame Culling end" << endl;
     }
@@ -1647,6 +1656,7 @@ namespace ORB_SLAM3
         for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
         {
             (*lit)->SetBadFlag();
+            // arr.push_back((*lit));
             delete *lit;
         }
         mlNewKeyFrames.clear();
