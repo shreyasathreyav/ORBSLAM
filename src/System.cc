@@ -819,6 +819,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
     //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size() << endl;
     //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size() << endl;
 
+    KeyFrame* KF;
 
     for(auto lit=mpTracker->mlRelativeFramePoses.begin(),
         lend=mpTracker->mlRelativeFramePoses.end();lit!=lend;lit++, lRit++, lT++, lbL++)
@@ -875,9 +876,12 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
         }
 
         // cout << "5" << endl;
+        KF = pKF;
     }
     //cout << "end saving trajectory" << endl;
     f.close();
+
+    cout << endl <<KF->mnId << " ..." << endl;
     cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
 }
 

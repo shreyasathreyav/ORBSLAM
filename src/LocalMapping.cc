@@ -298,8 +298,10 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(mMutexNewKFs);
             mpCurrentKeyFrame = mlNewKeyFrames.front();
+            // cout << mpCurrentKeyFrame->mnId << endl;
             mlNewKeyFrames.pop_front();
         }
+
 
         // Compute Bags of Words structures
         mpCurrentKeyFrame->ComputeBoW();
@@ -1212,12 +1214,23 @@ namespace ORB_SLAM3
             }
             // cout << endl;
         }
-        // cout << "No of deleted keyFrames " << arr.size() << endl;
-        // for(auto i: arr)
-        // {
-        //     if(i->mReferencecount_mob !=0 || i->mReferencecount_ockf != 0)
-        //     cout << "KF => " << i->mnId <<  " " << i->mReferencecount_mob << "   " << i->mReferencecount_ockf << endl;
-        // }
+        cout << "# keyFrames  in Deletion " << arr.size() << endl;
+        for(auto i: arr)
+        {
+            if(i->mReferencecount_ockf == 0 && i->DeletionSafe == false)
+            {
+                i->DeletionSafe = true;
+            }
+            if( i->DeletionSafe == true && i->mReferencecount_ockf != 0)
+            {
+                cout << "####################################" << endl
+                    << "PROBLEM !!!!!" <<endl
+                    << "####################################" << endl;
+            }
+
+            if(i->mReferencecount_mob !=0 || i->mReferencecount_ockf != 0)
+            cout << "KF => " << i->mnId <<  " " << i->mReferencecount_mob << "   " << i->mReferencecount_ockf << endl;
+        }
         // cout << endl;
         // cout << "KeyFrame Culling end" << endl;
     }

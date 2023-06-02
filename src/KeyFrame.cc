@@ -36,7 +36,8 @@ namespace ORB_SLAM3
                            mfLogScaleFactor(0), mvScaleFactors(0), mvLevelSigma2(0), mvInvLevelSigma2(0), mnMinX(0), mnMinY(0), mnMaxX(0),
                            mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
                            mbToBeErased(false), mbBad(false), mHalfBaseline(0), mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0),
-                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0)
+                           NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0),
+                           DeletionSafe(false)
 
     {
     }
@@ -57,7 +58,8 @@ namespace ORB_SLAM3
                                                                        mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile), mnMergeCorrectedForKF(0),
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
-                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0),mReferencecount_mob(0)
+                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0),mReferencecount_mob(0),
+                                                                       DeletionSafe(false)
     {
         mnId = nNextId++;
 
@@ -889,19 +891,19 @@ namespace ORB_SLAM3
         mpMap->EraseKeyFrame(this);
         mpKeyFrameDB->erase(this);
 
-        if(mReferencecount_ockf < 0)
-        cout << "KF => " << this->mnId <<  " " << mReferencecount_ockf << endl;
+        // if(mReferencecount_ockf < 0)
+        // cout << "KF => " << this->mnId <<  " " << mReferencecount_ockf << endl;
         // cout << "SetBadFlag ends " << endl;
     }
 
     bool KeyFrame::isBad()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        if (mbBad)
-        {
-            if(mReferencecount_ockf < 0)
-            std::cout << "KF => " << this->mnId << " " << mReferencecount_ockf << endl;
-        }
+        // if (mbBad)
+        // {
+            // if(mReferencecount_ockf < 0)
+            // std::cout << "KF => " << this->mnId << " " << mReferencecount_ockf << endl;
+        // }
         return mbBad;
     }
 

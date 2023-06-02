@@ -315,6 +315,7 @@ public:
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
+    bool DeletionSafe;
     // Test1
     long long mReferencecount_canonical; 
     //Test2
