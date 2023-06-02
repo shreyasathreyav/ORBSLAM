@@ -56,6 +56,7 @@ namespace ORB_SLAM3
     void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<MapPoint *> &vpMP,
                                      int nIterations, bool *pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
     {
+        cout << "Inside Bundle Adjustment" << endl;
         vector<bool> vbNotIncludedMP;
         vbNotIncludedMP.resize(vpMP.size());
 
@@ -107,6 +108,7 @@ namespace ORB_SLAM3
         vpMapPointEdgeStereo.reserve(nExpectedSize);
 
         // Set KeyFrame vertices
+        vector<KeyFrame *> obs_tracker;
 
         for (size_t i = 0; i < vpKFs.size(); i++)
         {
@@ -139,7 +141,13 @@ namespace ORB_SLAM3
             vPoint->setMarginalized(true);
             optimizer.addVertex(vPoint);
 
-            const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
+            // Incremented all the keyframes in the get call
+            const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations(true);
+            for(auto it : observations)
+            {
+
+                obs_tracker.push_back(it.first);
+            }
 
             int nEdges = 0;
             // SET EDGES
@@ -380,6 +388,14 @@ namespace ORB_SLAM3
                 pMP->mnBAGlobalForKF = nLoopKF;
             }
         }
+        
+        for(auto it : obs_tracker){
+
+            unique_lock<mutex> lock(it->mMutexreferencecount);
+
+            it->mReferencecount_canonical--;
+            cout << it->mnId << " " << it->mReferencecount_canonical << endl;
+        }
     }
 
     void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const long unsigned int nLoopId, bool *pbStopFlag, bool bInit, float priorG, float priorA, Eigen::VectorXd *vSingVal, bool *bHess)
@@ -588,7 +604,7 @@ namespace ORB_SLAM3
         const unsigned long iniMPid = maxKFid * 5;
 
         vector<bool> vbNotIncludedMP(vpMPs.size(), false);
-
+        
         for (size_t i = 0; i < vpMPs.size(); i++)
         {
             MapPoint *pMP = vpMPs[i];

@@ -95,7 +95,9 @@ public:
     unsigned int mnKFs;
     double mFirstTs;
     int mnMatchesInliers;
-    vector<KeyFrame*> arr;
+    // vector<KeyFrame*> arr;
+    set<KeyFrame*> arr;
+
     // For debugging (erase in normal mode)
     int mInitFr;
     int mIdxIteration;

@@ -221,6 +221,18 @@ namespace ORB_SLAM3
         return mObservations;
     }
 
+    std::map<KeyFrame *, std::tuple<int, int>> MapPoint::GetObservations(bool flag)
+    {
+        unique_lock<mutex> lock(mMutexFeatures);
+        for(auto it : mObservations){
+
+            unique_lock<mutex> lock(it.first->mMutexreferencecount);
+            // it.first->mReferencecount_mob++;
+            // it.first->mReferencecount++;
+            it.first->mReferencecount_canonical++;
+        }
+        return mObservations;
+    }
     int MapPoint::Observations()
     {
         unique_lock<mutex> lock(mMutexFeatures);

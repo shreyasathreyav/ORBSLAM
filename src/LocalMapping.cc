@@ -302,7 +302,6 @@ namespace ORB_SLAM3
             mlNewKeyFrames.pop_front();
         }
 
-
         // Compute Bags of Words structures
         mpCurrentKeyFrame->ComputeBoW();
 
@@ -1157,7 +1156,8 @@ namespace ORB_SLAM3
                             pKF->mNextKF = NULL;
                             pKF->mPrevKF = NULL;
                             pKF->SetBadFlag();
-                            arr.push_back(pKF);
+                            // arr.push_back(pKF);
+                            arr.insert(pKF);
                         }
                         else if (!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition() - pKF->mPrevKF->GetImuPosition()).norm() < 0.02) && (t < 3))
                         {
@@ -1167,14 +1167,16 @@ namespace ORB_SLAM3
                             pKF->mNextKF = NULL;
                             pKF->mPrevKF = NULL;
                             pKF->SetBadFlag();
-                            arr.push_back(pKF);
+                            // arr.push_back(pKF);
+                            arr.insert(pKF);
                         }
                     }
                 }
                 else
                 {
                     pKF->SetBadFlag();
-                    arr.push_back(pKF);
+                    // arr.push_back(pKF);
+                    arr.insert(pKF);
                 }
             }
             if ((count > 20 && mbAbortBA) || count > 100)
@@ -1215,22 +1217,56 @@ namespace ORB_SLAM3
             // cout << endl;
         }
         cout << "# keyFrames  in Deletion " << arr.size() << endl;
-        for(auto i: arr)
-        {
-            if(i->mReferencecount_ockf == 0 && i->DeletionSafe == false)
-            {
-                i->DeletionSafe = true;
-            }
-            if( i->DeletionSafe == true && i->mReferencecount_ockf != 0)
-            {
-                cout << "####################################" << endl
-                    << "PROBLEM !!!!!" <<endl
-                    << "####################################" << endl;
-            }
 
-            if(i->mReferencecount_mob !=0 || i->mReferencecount_ockf != 0)
-            cout << "KF => " << i->mnId <<  " " << i->mReferencecount_mob << "   " << i->mReferencecount_ockf << endl;
+        vector<KeyFrame *> cont_del(arr.begin(), arr.end());
+        for (int i = 0; i < cont_del.size(); i++)
+        {
+
+            if (cont_del.at(i)->mReferencecount_ockf == 0 && cont_del.at(i)->mReferencecount_mob == 0)
+            {
+
+                KeyFrame *holder = cont_del.at(i);
+
+                arr.erase(holder);
+                auto del = std::find(cont_del.begin(), cont_del.end(), holder);
+
+                cont_del.erase(del);
+
+                delete *del;
+                // delete *del;
+
+
+                // cout << (*del)->mnId << endl;
+            }
         }
+
+        // for(auto i: cont_del)
+        // {
+
+        //     // if(i->mReferencecount_mob !=0 || i->mReferencecount_ockf != 0)
+        //     // cout << "KF => " << i->mnId <<  " " << i->mReferencecount_mob << "   " << i->mReferencecount_ockf << endl;
+        //     if(i->mReferencecount_ockf == 0 && i->mReferencecount_mob == 0)
+        //     {
+
+        //         auto del = find(arr.begin(),arr.end(), i);
+
+        //         // if(arr.find(i) != arr.end() )
+        //         {
+        //             arr.erase(i);
+        //             // del = find(arr.begin(),arr.end(), i);
+        //         }
+        //         // cout << "TO DELETED" << (*del)->mnId <<endl;
+        //         delete i;
+        //         // del = static_cast;
+        //     }
+        //     // if( i->DeletionSafe == true && i->mReferencecount_ockf != 0)
+        //     // {
+        //     //     cout << "####################################" << endl
+        //     //         << "PROBLEM !!!!!" <<endl
+        //     //         << "####################################" << endl;
+        //     // }
+        // }
+
         // cout << endl;
         // cout << "KeyFrame Culling end" << endl;
     }

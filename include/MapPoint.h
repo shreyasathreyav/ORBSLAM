@@ -117,6 +117,8 @@ namespace ORB_SLAM3
         KeyFrame *GetReferenceKeyFrame();
 
         std::map<KeyFrame *, std::tuple<int, int>> GetObservations();
+        std::map<KeyFrame *, std::tuple<int, int>> GetObservations(bool flag);
+
         int Observations();
 
         void AddObservation(KeyFrame *pKF, int idx);

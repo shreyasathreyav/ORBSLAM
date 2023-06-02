@@ -881,7 +881,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
     //cout << "end saving trajectory" << endl;
     f.close();
 
-    cout << endl <<KF->mnId << " ..." << endl;
+    // cout << endl <<KF->mnId << " ..." << endl;
     cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
 }
 
