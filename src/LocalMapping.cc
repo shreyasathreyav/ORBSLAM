@@ -1217,28 +1217,40 @@ namespace ORB_SLAM3
             // cout << endl;
         }
         cout << "# keyFrames  in Deletion " << arr.size() << endl;
-
-        vector<KeyFrame *> cont_del(arr.begin(), arr.end());
-        for (int i = 0; i < cont_del.size(); i++)
+        static int totaldeletion = 0;
+        // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
+        for ( auto it = arr.begin(); it != arr.end();)
         {
-
-            if (cont_del.at(i)->mReferencecount_ockf == 0 && cont_del.at(i)->mReferencecount_mob == 0)
+            if((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0)
             {
-
-                KeyFrame *holder = cont_del.at(i);
-
-                arr.erase(holder);
-                auto del = std::find(cont_del.begin(), cont_del.end(), holder);
-
-                cont_del.erase(del);
-
-                delete *del;
-                // delete *del;
-
-
-                // cout << (*del)->mnId << endl;
-            }
+                totaldeletion++;
+                auto something = it;
+                it = arr.erase(it);
+                delete *something;
+                // cout << (*something)->mnId << endl;
+            }   
+            else
+            it++;
         }
+        cout << "ToTal Deletions " << totaldeletion << endl; 
+        // for (int i = 0; i < cont_del.size(); i++)
+        // {
+
+        //     if (cont_del.at(i)->mReferencecount_ockf == 0 && cont_del.at(i)->mReferencecount_mob == 0)
+        //     {
+
+        //         KeyFrame *holder = cont_del.at(i);
+
+        //         arr.erase(holder);
+        //         auto del = std::find(cont_del.begin(), cont_del.end(), holder);
+
+        //         cont_del.erase(del);
+        //         // delete *del;
+        //         // delete *del;
+
+        //         // cout << (*del)->mnId << endl;
+        //     }
+        // }
 
         // for(auto i: cont_del)
         // {

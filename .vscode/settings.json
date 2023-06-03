@@ -75,6 +75,8 @@
         "deque": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "unordered_set": "cpp",
+        "__hash_table": "cpp"
     }
 }
