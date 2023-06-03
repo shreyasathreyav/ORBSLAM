@@ -3464,6 +3464,7 @@ namespace ORB_SLAM3
     {
         // Each map point vote for the keyframes in which it has been observed
         map<KeyFrame *, int> keyframeCounter;
+        vector<KeyFrame *> arr;
         if (!mpAtlas->isImuInitialized() || (mCurrentFrame.mnId < mnLastRelocFrameId + 2))
         {
             for (int i = 0; i < mCurrentFrame.N; i++)
@@ -3473,9 +3474,12 @@ namespace ORB_SLAM3
                 {
                     if (!pMP->isBad())
                     {
-                        const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
+                        const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations(true);
                         for (map<KeyFrame *, tuple<int, int>>::const_iterator it = observations.begin(), itend = observations.end(); it != itend; it++)
+                        {
+                            arr.push_back(it->first);
                             keyframeCounter[it->first]++;
+                        }
                     }
                     else
                     {
@@ -3496,9 +3500,12 @@ namespace ORB_SLAM3
                         continue;
                     if (!pMP->isBad())
                     {
-                        const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
+                        const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations(true);
                         for (map<KeyFrame *, tuple<int, int>>::const_iterator it = observations.begin(), itend = observations.end(); it != itend; it++)
+                        {
+                            arr.push_back(it->first);
                             keyframeCounter[it->first]++;
+                        }
                     }
                     else
                     {
@@ -3511,6 +3518,18 @@ namespace ORB_SLAM3
 
         int max = 0;
         KeyFrame *pKFmax = static_cast<KeyFrame *>(NULL);
+
+        for (auto i : mvpLocalKeyFrames_obs_tracker_updatelocalKF)
+        {
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                // i->mReferencecount_canonical--;
+                i->mReferencecount_mob--;
+                // if (i->mReferencecount_canonical == 0)
+                // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
+            }
+        }
+        mvpLocalKeyFrames_obs_tracker_updatelocalKF.clear();
 
         mvpLocalKeyFrames.clear();
 
@@ -3544,6 +3563,11 @@ namespace ORB_SLAM3
             }
 
             mvpLocalKeyFrames.push_back(pKF);
+            {
+                unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                pKF->mReferencecount_mob++;
+            }
+            mvpLocalKeyFrames_obs_tracker_updatelocalKF.push_back(pKF);
             pKF->mnTrackReferenceForFrame = mCurrentFrame.mnId;
         }
 
@@ -3650,6 +3674,14 @@ namespace ORB_SLAM3
         {
             mpReferenceKF = pKFmax;
             mCurrentFrame.mpReferenceKF = mpReferenceKF;
+        }
+        for (auto i : arr)
+        {
+            unique_lock<mutex> lock(i->mMutexreferencecount);
+            // i->mReferencecount_canonical--;
+            i->mReferencecount_mob--;
+            // if(i->mReferencecount_canonical != 0)
+            // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
         }
     }
 

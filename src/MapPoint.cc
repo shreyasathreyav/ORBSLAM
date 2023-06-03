@@ -227,9 +227,9 @@ namespace ORB_SLAM3
         for(auto it : mObservations){
 
             unique_lock<mutex> lock(it.first->mMutexreferencecount);
-            // it.first->mReferencecount_mob++;
+            it.first->mReferencecount_mob++;
             // it.first->mReferencecount++;
-            it.first->mReferencecount_canonical++;
+            // it.first->mReferencecount_canonical++;
         }
         return mObservations;
     }

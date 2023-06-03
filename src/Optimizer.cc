@@ -142,7 +142,7 @@ namespace ORB_SLAM3
             optimizer.addVertex(vPoint);
 
             // Incremented all the keyframes in the get call
-            const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations(true);
+            const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
             for(auto it : observations)
             {
 
@@ -393,8 +393,8 @@ namespace ORB_SLAM3
 
             unique_lock<mutex> lock(it->mMutexreferencecount);
 
-            it->mReferencecount_canonical--;
-            cout << it->mnId << " " << it->mReferencecount_canonical << endl;
+            // it->mReferencecount_canonical--;
+            // cout << it->mnId << " " << it->mReferencecount_canonical << endl;
         }
     }
 

@@ -272,6 +272,7 @@ protected:
     //Local Map
     KeyFrame* mpReferenceKF;
     std::vector<KeyFrame*> mvpLocalKeyFrames;
+    vector<KeyFrame*> mvpLocalKeyFrames_obs_tracker_updatelocalKF;
     std::vector<MapPoint*> mvpLocalMapPoints;
     
     // System

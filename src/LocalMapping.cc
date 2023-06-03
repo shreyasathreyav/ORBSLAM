@@ -1216,12 +1216,13 @@ namespace ORB_SLAM3
             }
             // cout << endl;
         }
-        cout << "# keyFrames  in Deletion " << arr.size() << endl;
+        // cout << "# keyFrames  in Deletion " << arr.size() << endl;
         static int totaldeletion = 0;
         // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
         for ( auto it = arr.begin(); it != arr.end();)
         {
-            if((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0)
+            // cout << "Canonical Count "<< (*it)->mReferencecount_canonical << endl;
+            if((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_canonical == 0)
             {
                 totaldeletion++;
                 auto something = it;

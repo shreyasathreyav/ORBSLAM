@@ -58,7 +58,7 @@ namespace ORB_SLAM3
                                                                        mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile), mnMergeCorrectedForKF(0),
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
-                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0),mReferencecount_mob(0),
+                                                                       mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0),
                                                                        DeletionSafe(false)
     {
         mnId = nNextId++;
@@ -196,9 +196,19 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(mMutexConnections);
             if (!mConnectedKeyFrameWeights.count(pKF))
+            {
+                {
+                    unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                    pKF->mReferencecount_canonical++;
+                }
                 mConnectedKeyFrameWeights[pKF] = weight;
+            }
+
             else if (mConnectedKeyFrameWeights[pKF] != weight)
+            {
+
                 mConnectedKeyFrameWeights[pKF] = weight;
+            }
             else
                 return;
         }
@@ -600,8 +610,19 @@ namespace ORB_SLAM3
         }
 
         {
-            unique_lock<mutex> lockCon(mMutexConnections);
+            for (auto it : KFcounter)
+            {
 
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount_canonical++;
+            }
+            unique_lock<mutex> lockCon(mMutexConnections);
+            for (auto it : mConnectedKeyFrameWeights)
+            {
+
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount_canonical--;
+            }
             mConnectedKeyFrameWeights = KFcounter;
 
             for (auto i : mvpOrderedConnectedKeyFrames)
@@ -763,6 +784,12 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock(mMutexConnections);
             unique_lock<mutex> lock1(mMutexFeatures);
 
+
+            for (auto it : mConnectedKeyFrameWeights)
+            {
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount_canonical--;
+            }
             mConnectedKeyFrameWeights.clear();
 
             for (auto itr : mvpOrderedConnectedKeyFrames)
@@ -901,8 +928,8 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexConnections);
         // if (mbBad)
         // {
-            // if(mReferencecount_ockf < 0)
-            // std::cout << "KF => " << this->mnId << " " << mReferencecount_ockf << endl;
+        // if(mReferencecount_ockf < 0)
+        // std::cout << "KF => " << this->mnId << " " << mReferencecount_ockf << endl;
         // }
         return mbBad;
     }
@@ -915,6 +942,10 @@ namespace ORB_SLAM3
             if (mConnectedKeyFrameWeights.count(pKF))
             {
                 mConnectedKeyFrameWeights.erase(pKF);
+                {
+                    unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                    pKF->mReferencecount_canonical--;
+                }
                 bUpdate = true;
             }
         }
