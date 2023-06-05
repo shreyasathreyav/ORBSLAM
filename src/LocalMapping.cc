@@ -1216,7 +1216,7 @@ namespace ORB_SLAM3
             }
             // cout << endl;
         }
-        // cout << "# keyFrames  in Deletion " << arr.size() << endl;
+        cout << "# keyFrames  in Deletion " << arr.size() << endl;
         static int totaldeletion = 0;
         // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
         for ( auto it = arr.begin(); it != arr.end();)
