@@ -42,6 +42,10 @@ namespace ORB_SLAM3
         mNumLM = 0;
         mNumKFCulling = 0;
 
+        kf_passed = 0;
+        leftover_deletion_count = 0;
+        totaldeletion = 0;
+
 #ifdef REGISTER_TIMES
         nLBA_exec = 0;
         nLBA_abort = 0;
@@ -1157,7 +1161,13 @@ namespace ORB_SLAM3
                             pKF->mPrevKF = NULL;
                             pKF->SetBadFlag();
                             // arr.push_back(pKF);
+                            if (arr.count(pKF) == 0)
+                            {
+
+                                kf_passed++;
+                            }
                             arr.insert(pKF);
+                            SB_total_count.insert(pKF);
                         }
                         else if (!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition() - pKF->mPrevKF->GetImuPosition()).norm() < 0.02) && (t < 3))
                         {
@@ -1167,8 +1177,14 @@ namespace ORB_SLAM3
                             pKF->mNextKF = NULL;
                             pKF->mPrevKF = NULL;
                             pKF->SetBadFlag();
+                            if (arr.count(pKF) == 0)
+                            {
+
+                                kf_passed++;
+                            }
                             // arr.push_back(pKF);
                             arr.insert(pKF);
+                            SB_total_count.insert(pKF);
                         }
                     }
                 }
@@ -1176,7 +1192,13 @@ namespace ORB_SLAM3
                 {
                     pKF->SetBadFlag();
                     // arr.push_back(pKF);
+                    if (arr.count(pKF) == 0)
+                    {
+
+                        kf_passed++;
+                    }
                     arr.insert(pKF);
+                    SB_total_count.insert(pKF);
                 }
             }
             if ((count > 20 && mbAbortBA) || count > 100)
@@ -1216,69 +1238,45 @@ namespace ORB_SLAM3
             }
             // cout << endl;
         }
-        cout << "# keyFrames  in Deletion " << arr.size() << endl;
-        static int totaldeletion = 0;
+        // cout << "# Number of keyframes in deletion set : " << arr.size() << endl;
+        cout << "############################################################################################################################" << endl;
         // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
-        for ( auto it = arr.begin(); it != arr.end();)
+        for (auto it = arr.begin(); it != arr.end();)
         {
             // cout << "Canonical Count "<< (*it)->mReferencecount_canonical << endl;
-            if((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_canonical == 0)
+            if ((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_canonical == 0)
             {
                 totaldeletion++;
                 auto something = it;
                 it = arr.erase(it);
                 delete *something;
                 // cout << (*something)->mnId << endl;
-            }   
+            }
             else
-            it++;
+                it++;
         }
-        cout << "ToTal Deletions " << totaldeletion << endl; 
-        // for (int i = 0; i < cont_del.size(); i++)
-        // {
+        cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
+        cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
+        cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+        cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
 
-        //     if (cont_del.at(i)->mReferencecount_ockf == 0 && cont_del.at(i)->mReferencecount_mob == 0)
-        //     {
+        if (kf_passed != 0)
+        {
 
-        //         KeyFrame *holder = cont_del.at(i);
+            float result = (float)totaldeletion / (float)kf_passed;
 
-        //         arr.erase(holder);
-        //         auto del = std::find(cont_del.begin(), cont_del.end(), holder);
+            cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-        //         cont_del.erase(del);
-        //         // delete *del;
-        //         // delete *del;
+            result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
+            cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
-        //         // cout << (*del)->mnId << endl;
-        //     }
-        // }
+            result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
+            cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
 
-        // for(auto i: cont_del)
-        // {
-
-        //     // if(i->mReferencecount_mob !=0 || i->mReferencecount_ockf != 0)
-        //     // cout << "KF => " << i->mnId <<  " " << i->mReferencecount_mob << "   " << i->mReferencecount_ockf << endl;
-        //     if(i->mReferencecount_ockf == 0 && i->mReferencecount_mob == 0)
-        //     {
-
-        //         auto del = find(arr.begin(),arr.end(), i);
-
-        //         // if(arr.find(i) != arr.end() )
-        //         {
-        //             arr.erase(i);
-        //             // del = find(arr.begin(),arr.end(), i);
-        //         }
-        //         // cout << "TO DELETED" << (*del)->mnId <<endl;
-        //         delete i;
-        //         // del = static_cast;
-        //     }
-        //     // if( i->DeletionSafe == true && i->mReferencecount_ockf != 0)
-        //     // {
-        //     //     cout << "####################################" << endl
-        //     //         << "PROBLEM !!!!!" <<endl
-        //     //         << "####################################" << endl;
-        //     // }
-        // }
+            result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
+            cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+        }
+        cout << "############################################################################################################################" << endl;
 
         // cout << endl;
         // cout << "KeyFrame Culling end" << endl;
