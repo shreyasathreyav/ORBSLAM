@@ -1,0 +1,11 @@
+# Total number of keyframes to have passed the SetBadFlag : 102
+# Total number of deleted keyframes                       : 67
+# Current KeyFrame ID                                     : 396
+# Number of keyframes within map                          : 295
+# Percentage of deletion                                  : 65.686271667480469%
+# Percentage of deletion (wrt kfs in map)                 : 22.711864471435547%
+# Percentage of deletion (wrt kfs max mnid)               : 16.919191360473633%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 25.757575988769531%
+############################################################################################################################
+Shutdown
+terminate called without an active exception
