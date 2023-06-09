@@ -524,6 +524,8 @@ void System::Shutdown()
 
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
+
+    return;
     /*if(mpViewer)
     {
         mpViewer->RequestFinish();

@@ -1377,6 +1377,7 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFinish);
         mbFinishRequested = true;
+        std::terminate();
     }
 
     bool LocalMapping::CheckFinish()
