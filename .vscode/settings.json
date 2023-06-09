@@ -77,6 +77,25 @@
         "semaphore": "cpp",
         "string_view": "cpp",
         "unordered_set": "cpp",
-        "__hash_table": "cpp"
+        "__hash_table": "cpp",
+        "csignal": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "strstream": "cpp",
+        "cfenv": "cpp",
+        "charconv": "cpp",
+        "codecvt": "cpp",
+        "optional": "cpp",
+        "regex": "cpp",
+        "source_location": "cpp",
+        "format": "cpp",
+        "future": "cpp",
+        "iomanip": "cpp",
+        "span": "cpp",
+        "stdfloat": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     }
 }
