@@ -1239,7 +1239,7 @@ namespace ORB_SLAM3
             // cout << endl;
         }
         // cout << "# Number of keyframes in deletion set : " << arr.size() << endl;
-        cout << "############################################################################################################################" << endl;
+        // cout << "############################################################################################################################" << endl;
         // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
         for (auto it = arr.begin(); it != arr.end();)
         {
@@ -1255,28 +1255,28 @@ namespace ORB_SLAM3
             else
                 it++;
         }
-        cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
-        cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
-        cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-        cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
+        // cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
+        // cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
+        // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+        // cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
 
-        if (kf_passed != 0)
-        {
+        // if (kf_passed != 0)
+        // {
 
-            float result = (float)totaldeletion / (float)kf_passed;
+        //     float result = (float)totaldeletion / (float)kf_passed;
 
-            cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+        //     cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-            result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
-            cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+        //     result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
+        //     cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
-            result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
-            cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
+        //     result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
+        //     cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
 
-            result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
-            cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
-        }
-        cout << "############################################################################################################################" << endl;
+        //     result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
+        //     cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+        // }
+        // cout << "############################################################################################################################" << endl;
 
         // cout << endl;
         // cout << "KeyFrame Culling end" << endl;
@@ -1377,7 +1377,7 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFinish);
         mbFinishRequested = true;
-        std::terminate();
+        // std::terminate();
     }
 
     bool LocalMapping::CheckFinish()
