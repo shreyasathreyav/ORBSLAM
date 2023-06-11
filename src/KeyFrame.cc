@@ -452,29 +452,95 @@ namespace ORB_SLAM3
                 this->mReferencecount_mob--;
                 this->mReferencecount--;
             }
+
+            if (mvpMapPoints[idx]->checker)
+                cout << "Reference count check : " << mvpMapPoints[idx]->mReferencecount_canonicalmp << endl;
+            // This is a decrement for mappoints
+            if (mvpMapPoints[idx]->checker)
+            {
+                unique_lock<mutex> lock(mvpMapPoints[idx]->mMutexReferencecount_mp);
+                mvpMapPoints[idx]->mReferencecount_canonicalmp--;
+            }
             mvpMapPoints[idx]->mObservations.erase(this);
         }
+        // This is reference counting for mappoints - increment
+        {
+            unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
+            pMP->mReferencecount_canonicalmp++;
+        }
+        pMP->checker = true;
         mvpMapPoints[idx] = pMP;
     }
 
     void KeyFrame::EraseMapPointMatch(const int &idx)
     {
         unique_lock<mutex> lock(mMutexFeatures);
+        {
+
+            if (mvpMapPoints[idx]->checker)
+            {
+
+                unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
+                // cout << "Reference count check : " << mvpMapPoints[idx]->mReferencecount_canonicalmp << endl;
+                mvpMapPoints[idx]->mReferencecount_canonicalmp--;
+            }
+        }
         mvpMapPoints[idx] = static_cast<MapPoint *>(NULL);
     }
 
     void KeyFrame::EraseMapPointMatch(MapPoint *pMP)
     {
+        unique_lock<mutex> lock(mMutexFeatures);
+
         tuple<size_t, size_t> indexes = pMP->GetIndexInKeyFrame(this);
         size_t leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
         if (leftIndex != -1)
-            mvpMapPoints[leftIndex] = static_cast<MapPoint *>(NULL);
+        {
+
+            {
+                if (mvpMapPoints[leftIndex]->checker)
+                {
+                    unique_lock<mutex> lock1(mvpMapPoints[leftIndex]->mMutexReferencecount_mp);
+                    // cout << "Reference count check : " << mvpMapPoints[leftIndex]->mReferencecount_canonicalmp << endl;
+
+                    mvpMapPoints[leftIndex]->mReferencecount_canonicalmp--;
+                }
+                mvpMapPoints[leftIndex] = static_cast<MapPoint *>(NULL);
+            }
+        }
         if (rightIndex != -1)
+        {
+            {
+                if (mvpMapPoints[rightIndex]->checker)
+                {
+
+                    unique_lock<mutex> lock1(mvpMapPoints[rightIndex]->mMutexReferencecount_mp);
+                    mvpMapPoints[rightIndex]->mReferencecount_canonicalmp--;
+                    // cout << "Reference count check : " << mvpMapPoints[rightIndex]->mReferencecount_canonicalmp << endl;
+                }
+            }
             mvpMapPoints[rightIndex] = static_cast<MapPoint *>(NULL);
+        }
     }
 
     void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
     {
+        unique_lock<mutex> lock(mMutexFeatures);
+
+        // Decrement for idx
+
+            // cout << "Reference count check : " << mvpMapPoints[idx]->mReferencecount_canonicalmp << endl;
+        if (mvpMapPoints[idx]->checker)
+        {
+            unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
+            mvpMapPoints[idx]->mReferencecount_canonicalmp--;
+        }
+        // Increment for pMP
+        {
+            unique_lock<mutex> lock1(pMP->mMutexReferencecount_mp);
+            pMP->mReferencecount_canonicalmp++;
+        }
+        pMP->checker = true;
         mvpMapPoints[idx] = pMP;
     }
 
@@ -783,7 +849,6 @@ namespace ORB_SLAM3
         {
             unique_lock<mutex> lock(mMutexConnections);
             unique_lock<mutex> lock1(mMutexFeatures);
-
 
             for (auto it : mConnectedKeyFrameWeights)
             {

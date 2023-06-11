@@ -171,7 +171,7 @@ namespace ORB_SLAM3
 
         long long mReferencecount_canonicalmp;
         std::mutex mMutexReferencecount_mp;
-        
+        bool checker;
         // Variables used by the tracking
         float mTrackProjX;
         float mTrackProjY;
