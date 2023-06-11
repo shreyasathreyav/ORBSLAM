@@ -167,6 +167,11 @@ namespace ORB_SLAM3
         long int mnFirstFrame;
         int nObs;
 
+        // Infrastructure for reference counting
+
+        long long mReferencecount_canonicalmp;
+        std::mutex mMutexReferencecount_mp;
+        
         // Variables used by the tracking
         float mTrackProjX;
         float mTrackProjY;
