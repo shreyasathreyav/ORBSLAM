@@ -287,8 +287,8 @@ namespace ORB_SLAM3
             it.first->mReferencecount--;
         }
         mpMap->EraseMapPoint(this);
-        if ( mReferencecount_canonicalmp < 0)
-            cout << "Reference count check : " << this->mReferencecount_canonicalmp << endl;
+        // if ( mReferencecount_canonicalmp < 0)
+        //     cout << "Reference count check : " << this->mReferencecount_canonicalmp << endl;
     }
 
     MapPoint *MapPoint::GetReplaced()
