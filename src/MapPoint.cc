@@ -30,17 +30,16 @@ namespace ORB_SLAM3
     MapPoint::MapPoint() : mnFirstKFid(0), mnFirstFrame(0), nObs(0), mnTrackReferenceForFrame(0),
                            mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                            mnCorrectedReference(0), mnBAGlobalForKF(0), mnVisible(1), mnFound(1), mbBad(false),
-                           mpReplaced(static_cast<MapPoint *>(NULL)),checker(false), mReferencecount_canonicalmp(0)
+                           mpReplaced(static_cast<MapPoint *>(NULL)), checker(false), mReferencecount_canonicalmp(0)
     {
         mpReplaced = static_cast<MapPoint *>(NULL);
-     
     }
 
     MapPoint::MapPoint(const Eigen::Vector3f &Pos, KeyFrame *pRefKF, Map *pMap) : mnFirstKFid(pRefKF->mnId), mnFirstFrame(pRefKF->mnFrameId), nObs(0), mnTrackReferenceForFrame(0),
                                                                                   mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                                                                                   mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
                                                                                   mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
-                                                                                  mnOriginMapId(pMap->GetId()), checker(false),mReferencecount_canonicalmp(0)
+                                                                                  mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0)
     {
         SetWorldPos(Pos);
 
@@ -52,7 +51,6 @@ namespace ORB_SLAM3
         // MapPoints can be created from Tracking and Local Mapping. This mutex avoid conflicts with id.
         unique_lock<mutex> lock(mpMap->mMutexPointCreation);
         mnId = nNextId++;
-    
     }
 
     MapPoint::MapPoint(const double invDepth, cv::Point2f uv_init, KeyFrame *pRefKF, KeyFrame *pHostKF, Map *pMap) : mnFirstKFid(pRefKF->mnId), mnFirstFrame(pRefKF->mnFrameId), nObs(0), mnTrackReferenceForFrame(0),
@@ -72,7 +70,6 @@ namespace ORB_SLAM3
         // MapPoints can be created from Tracking and Local Mapping. This mutex avoid conflicts with id.
         unique_lock<mutex> lock(mpMap->mMutexPointCreation);
         mnId = nNextId++;
-     
     }
 
     MapPoint::MapPoint(const Eigen::Vector3f &Pos, Map *pMap, Frame *pFrame, const int &idxF) : mnFirstKFid(-1), mnFirstFrame(pFrame->mnId), nObs(0), mnTrackReferenceForFrame(0), mnLastFrameSeen(0),
@@ -80,7 +77,6 @@ namespace ORB_SLAM3
                                                                                                 mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(static_cast<KeyFrame *>(NULL)), mnVisible(1),
                                                                                                 mnFound(1), mbBad(false), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0)
     {
-     
 
         SetWorldPos(Pos);
 
@@ -253,13 +249,6 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock2(mMutexPos);
             mbBad = true;
             obs = mObservations;
-            // for (auto it : mObservations)
-            // {
-
-            //     unique_lock<mutex> lock(it.first->mMutexreferencecount);
-            //     it.first->mReferencecount_mob--;
-            //     it.first->mReferencecount--;
-            // }
             mObservations.clear();
         }
         for (map<KeyFrame *, tuple<int, int>>::iterator mit = obs.begin(), mend = obs.end(); mit != mend; mit++)
@@ -270,9 +259,19 @@ namespace ORB_SLAM3
             {
                 pKF->EraseMapPointMatch(leftIndex);
             }
+
             if (rightIndex != -1)
             {
                 pKF->EraseMapPointMatch(rightIndex);
+            }
+            for (auto it : pKF->mvpMapPoints)
+            {
+
+                if (it != NULL && it->mnId == this->mnId)
+                {
+
+                    cout << it->mnId << " " << it->mReferencecount_canonicalmp << endl;
+                }
             }
         }
         for (auto it : obs)
@@ -282,9 +281,16 @@ namespace ORB_SLAM3
             it.first->mReferencecount_mob--;
             it.first->mReferencecount--;
         }
+        static long long measure = 0;
         mpMap->EraseMapPoint(this);
-        // if ( mReferencecount_canonicalmp != 0)
-            cout << "Reference count check : " << this->mReferencecount_canonicalmp << endl;
+        // if (mReferencecount_canonicalmp != 0)
+        // {
+
+        //     measure++;
+        //     cout << "Number of not zeros : " << measure << endl;
+        //     cout << "MNID : " << this->mnId << " "
+        //          << "Reference count check : " << this->mReferencecount_canonicalmp << endl;
+        // }
     }
 
     MapPoint *MapPoint::GetReplaced()
