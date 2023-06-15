@@ -383,8 +383,7 @@ namespace ORB_SLAM3
             {
                 lit++;
                 borrar--;
-            }
-            delete pMP;
+            }  
         }
     }
 
