@@ -2716,18 +2716,7 @@ namespace ORB_SLAM3
                 MapPoint *pRep = pMP->GetReplaced();
                 if (pRep)
                 {
-                    // if (mLastFrame.mvpMapPoints[i])
-                    // {
-
-                    //     {
-                    //         unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                    //         mLastFrame.mvpMapPoints[i]->mReferencecount_canonicalmp--;
-                    //     }
-                    // }
-                    // {
-                    //     unique_lock<mutex> lock(pRep->mMutexReferencecount_mp);
-                    //     pRep->mReferencecount_canonicalmp++;
-                    // }
+                    
                     mLastFrame.mvpMapPoints[i] = pRep;
                 }
             }
@@ -2855,18 +2844,7 @@ namespace ORB_SLAM3
                 }
 
                 MapPoint *pNewMP = new MapPoint(x3D, mpAtlas->GetCurrentMap(), &mLastFrame, i);
-                // if (mLastFrame.mvpMapPoints[i])
-                // {
-
-                //     {
-                //         unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                //         mLastFrame.mvpMapPoints[i]->mReferencecount_canonicalmp--;
-                //     }
-                // }
-                // {
-                //     unique_lock<mutex> lock(pNewMP->mMutexReferencecount_mp);
-                //     pNewMP->mReferencecount_canonicalmp++;
-                // }
+        
                 mLastFrame.mvpMapPoints[i] = pNewMP;
 
                 mlpTemporalPoints.push_back(pNewMP);
