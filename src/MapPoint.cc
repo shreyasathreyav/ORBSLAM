@@ -264,13 +264,16 @@ namespace ORB_SLAM3
             {
                 pKF->EraseMapPointMatch(rightIndex);
             }
-            for (auto it : pKF->mvpMapPoints)
+        }
+        for (auto it : obs)
+        {
+            for (auto itx : it.first->mvpMapPoints)
             {
 
-                if (it != NULL && it->mnId == this->mnId)
+                if (itx != NULL && itx->mnId == this->mnId)
                 {
 
-                    cout << it->mnId << " " << it->mReferencecount_canonicalmp << endl;
+                    cout << itx->mnId << " " << itx->mReferencecount_canonicalmp << endl;
                 }
             }
         }
