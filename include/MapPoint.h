@@ -169,6 +169,11 @@ namespace ORB_SLAM3
         bool pass_d;
 
         // Infrastructure for reference counting
+        //msp
+        long long mReferencecount_msp;
+
+        //lastframe
+        long long mReferencecount_lastframe;
 
         long long mReferencecount_canonicalmp;
         std::mutex mMutexReferencecount_mp;

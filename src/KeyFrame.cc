@@ -841,6 +841,7 @@ namespace ORB_SLAM3
             if (mvpMapPoints[i])
             {
                 mvpMapPoints[i]->EraseObservation(this);
+                
             }
         }
 

@@ -81,6 +81,7 @@ public:
     KeyFrame* GetCurrKF();
 
     long long kf_passed;
+    long long mp_passed;
     long long leftover_deletion_count;
     set <KeyFrame *> SB_total_count;
     int totaldeletion;

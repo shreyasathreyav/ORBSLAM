@@ -274,6 +274,7 @@ protected:
     std::vector<KeyFrame*> mvpLocalKeyFrames;
     vector<KeyFrame*> mvpLocalKeyFrames_obs_tracker_updatelocalKF;
     std::vector<MapPoint*> mvpLocalMapPoints;
+    std::vector<MapPoint*> check_container;
     
     // System
     System* mpSystem;

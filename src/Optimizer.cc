@@ -49,8 +49,13 @@ namespace ORB_SLAM3
     void Optimizer::GlobalBundleAdjustemnt(Map *pMap, int nIterations, bool *pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
     {
         vector<KeyFrame *> vpKFs = pMap->GetAllKeyFrames();
-        vector<MapPoint *> vpMP = pMap->GetAllMapPoints();
+        vector<MapPoint *> vpMP = pMap->GetAllMapPoints(true);
         BundleAdjustment(vpKFs, vpMP, nIterations, pbStopFlag, nLoopKF, bRobust);
+        for(auto it :  vpMP){
+
+            unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+            it->mReferencecount_msp--;
+        }
     }
 
     void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<MapPoint *> &vpMP,
@@ -5784,6 +5789,12 @@ namespace ORB_SLAM3
             pMP->UpdateNormalAndDepth();
         }
         pMap->IncreaseChangeIndex();
+
+        // for(auto i: vpMPs)
+        // {
+        //     unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+        //     i->mReferencecount_msp--;
+        // }
     }
 
 } // namespace ORB_SLAM

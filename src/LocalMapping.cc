@@ -43,6 +43,7 @@ namespace ORB_SLAM3
         mNumKFCulling = 0;
 
         kf_passed = 0;
+        mp_passed = 0;
         leftover_deletion_count = 0;
         totaldeletion = 0;
         totaldeletion_mp = 0;
@@ -370,12 +371,22 @@ namespace ORB_SLAM3
             else if (pMP->GetFoundRatio() < 0.25f)
             {
                 pMP->SetBadFlag();
+                if (arr_mp.count(pMP) == 0)
+                {
+
+                    mp_passed++;
+                }
                 arr_mp.insert(pMP);
                 lit = mlpRecentAddedMapPoints.erase(lit);
             }
             else if (((int)nCurrentKFid - (int)pMP->mnFirstKFid) >= 2 && pMP->Observations() <= cnThObs)
             {
                 pMP->SetBadFlag();
+                if (arr_mp.count(pMP) == 0)
+                {
+
+                    mp_passed++;
+                }
                 arr_mp.insert(pMP);
                 lit = mlpRecentAddedMapPoints.erase(lit);
             }
@@ -394,22 +405,22 @@ namespace ORB_SLAM3
                 {
                     cout << "This is really bad " << endl;
                 }
-                if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->pass_d == false)
+                if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
                 {
                     totaldeletion_mp++;
                     (*it)->pass_d = true;
                     auto something = it;
-                    // it = arr_mp.erase(it);
-                    // delete *something;
+                    it = arr_mp.erase(it);
+                    delete *something;
                     // cout << (*something)->mnId << endl;
                 }
                 else
                     it++;
             }
             cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
-            float result = float(totaldeletion_mp) / float(arr_mp.size());
+            float result = float(totaldeletion_mp) / float(mp_passed);
             result = result * 100;
-            cout << "This is the size of the set : " << arr_mp.size() << endl;
+            cout << "This is the size of the set : " << mp_passed << endl;
             cout << "Percentage of deletion : " << result << endl;
         }
     }
@@ -767,6 +778,7 @@ namespace ORB_SLAM3
                 pMP->AddObservation(pKF2, idx2);
 
                 mpCurrentKeyFrame->AddMapPoint(pMP, idx1);
+
                 pKF2->AddMapPoint(pMP, idx2);
 
                 pMP->ComputeDistinctiveDescriptors();

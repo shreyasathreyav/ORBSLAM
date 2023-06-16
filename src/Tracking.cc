@@ -2304,6 +2304,22 @@ namespace ORB_SLAM3
             if (!mCurrentFrame.mpReferenceKF)
                 mCurrentFrame.mpReferenceKF = mpReferenceKF;
 
+            for (auto i : mCurrentFrame.mvpMapPoints)
+            {
+                if (i)
+                {
+                    unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                    i->mReferencecount_lastframe++;
+                }
+            }
+            for (auto i : mLastFrame.mvpMapPoints)
+            {
+                if (i)
+                {
+                    unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                    i->mReferencecount_lastframe--;
+                }
+            }
             mLastFrame = Frame(mCurrentFrame);
         }
 
@@ -2444,7 +2460,12 @@ namespace ORB_SLAM3
             // mnLastRelocFrameId = mCurrentFrame.mnId;
 
             mvpLocalKeyFrames.push_back(pKFini);
-            mvpLocalMapPoints = mpAtlas->GetAllMapPoints();
+            // for(auto it : mvpLocalKeyFrames)
+            mvpLocalMapPoints = mpAtlas->GetAllMapPoints(true);
+            // for(auto it : mvpLocalMapPoints){
+
+            //     unique_lock
+            // }
             mpReferenceKF = pKFini;
             mCurrentFrame.mpReferenceKF = pKFini;
 
@@ -2638,7 +2659,10 @@ namespace ORB_SLAM3
 
         mvpLocalKeyFrames.push_back(pKFcur);
         mvpLocalKeyFrames.push_back(pKFini);
-        mvpLocalMapPoints = mpAtlas->GetAllMapPoints();
+        {
+            
+        }
+        mvpLocalMapPoints = mpAtlas->GetAllMapPoints(true);
         mpReferenceKF = pKFcur;
         mCurrentFrame.mpReferenceKF = pKFcur;
 
@@ -2716,7 +2740,15 @@ namespace ORB_SLAM3
                 MapPoint *pRep = pMP->GetReplaced();
                 if (pRep)
                 {
-                    
+                    if (mLastFrame.mvpMapPoints[i])
+                    {
+                        unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                        mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                    }
+                    {
+                        unique_lock<mutex> lock(pRep->mMutexReferencecount_mp);
+                        pRep->mReferencecount_lastframe++;
+                    }
                     mLastFrame.mvpMapPoints[i] = pRep;
                 }
             }
@@ -2844,7 +2876,16 @@ namespace ORB_SLAM3
                 }
 
                 MapPoint *pNewMP = new MapPoint(x3D, mpAtlas->GetCurrentMap(), &mLastFrame, i);
-        
+
+                if (mLastFrame.mvpMapPoints[i])
+                {
+                    unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                    mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                }
+                {
+                    unique_lock<mutex> lock(pNewMP->mMutexReferencecount_mp);
+                    pNewMP->mReferencecount_lastframe++;
+                }
                 mLastFrame.mvpMapPoints[i] = pNewMP;
 
                 mlpTemporalPoints.push_back(pNewMP);
@@ -3435,6 +3476,13 @@ namespace ORB_SLAM3
 
     void Tracking::UpdateLocalPoints()
     {
+        for(auto it : check_container){
+
+            unique_lock(it->mMutexReferencecount_mp);
+            it->mReferencecount_msp--;
+        }
+
+        check_container.clear();
         mvpLocalMapPoints.clear();
 
         int count_pts = 0;
@@ -3455,7 +3503,12 @@ namespace ORB_SLAM3
                 if (!pMP->isBad())
                 {
                     count_pts++;
+                    {
+                        unique_lock<mutex> (pMP->mMutexReferencecount_mp);
+                        pMP->mReferencecount_msp++;
+                    }
                     mvpLocalMapPoints.push_back(pMP);
+                    check_container.push_back(pMP);
                     pMP->mnTrackReferenceForFrame = mCurrentFrame.mnId;
                 }
             }
@@ -3511,14 +3564,14 @@ namespace ORB_SLAM3
                     }
                     else
                     {
-                        // if (mLastFrame.mvpMapPoints[i])
-                        // {
+                        if (mLastFrame.mvpMapPoints[i])
+                        {
 
-                        //     {
-                        //         unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                        //         mLastFrame.mvpMapPoints[i]->mReferencecount_canonicalmp--;
-                        //     }
-                        // }
+                            {
+                                unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                                mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                            }
+                        }
 
                         // MODIFICATION
                         mLastFrame.mvpMapPoints[i] = NULL;

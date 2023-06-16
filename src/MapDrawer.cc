@@ -138,8 +138,10 @@ void MapDrawer::DrawMapPoints()
     if(!pActiveMap)
         return;
 
-    const vector<MapPoint*> &vpMPs = pActiveMap->GetAllMapPoints();
-    const vector<MapPoint*> &vpRefMPs = pActiveMap->GetReferenceMapPoints();
+    // const vector<MapPoint*> &vpMPs = pActiveMap->GetAllMapPoints();
+    const vector<MapPoint*> &vpMPs = pActiveMap->GetAllMapPoints(true);
+    const vector<MapPoint*> &vpRefMPs = pActiveMap->GetReferenceMapPoints(true);
+    // const vector<MapPoint*> &vpRefMPs = pActiveMap->GetReferenceMapPoints();
 
     set<MapPoint*> spRefMPs(vpRefMPs.begin(), vpRefMPs.end());
 
@@ -169,10 +171,19 @@ void MapDrawer::DrawMapPoints()
             continue;
         Eigen::Matrix<float,3,1> pos = (*sit)->GetWorldPos();
         glVertex3f(pos(0),pos(1),pos(2));
-
     }
 
     glEnd();
+    for(auto i: vpMPs)
+    {
+        unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+        i->mReferencecount_msp--;
+    }
+    for(auto i: vpRefMPs)
+    {
+        unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+        i->mReferencecount_msp--;
+    }
 }
 
 void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const bool bDrawInertialGraph, const bool bDrawOptLba)
