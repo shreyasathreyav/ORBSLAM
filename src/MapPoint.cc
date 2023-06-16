@@ -30,7 +30,7 @@ namespace ORB_SLAM3
     MapPoint::MapPoint() : mnFirstKFid(0), mnFirstFrame(0), nObs(0), mnTrackReferenceForFrame(0),
                            mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                            mnCorrectedReference(0), mnBAGlobalForKF(0), mnVisible(1), mnFound(1), mbBad(false),
-                           mpReplaced(static_cast<MapPoint *>(NULL)), checker(false), mReferencecount_canonicalmp(0)
+                           mpReplaced(static_cast<MapPoint *>(NULL)), checker(false), mReferencecount_canonicalmp(0), pass_d(false)
     {
         mpReplaced = static_cast<MapPoint *>(NULL);
     }
@@ -39,7 +39,7 @@ namespace ORB_SLAM3
                                                                                   mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                                                                                   mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
                                                                                   mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
-                                                                                  mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0)
+                                                                                  mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false)
     {
         SetWorldPos(Pos);
 
@@ -57,7 +57,7 @@ namespace ORB_SLAM3
                                                                                                                      mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                                                                                                                      mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
                                                                                                                      mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
-                                                                                                                     mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0)
+                                                                                                                     mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false)
     {
         mInvDepth = invDepth;
         mInitU = (double)uv_init.x;
@@ -75,7 +75,7 @@ namespace ORB_SLAM3
     MapPoint::MapPoint(const Eigen::Vector3f &Pos, Map *pMap, Frame *pFrame, const int &idxF) : mnFirstKFid(-1), mnFirstFrame(pFrame->mnId), nObs(0), mnTrackReferenceForFrame(0), mnLastFrameSeen(0),
                                                                                                 mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                                                                                                 mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(static_cast<KeyFrame *>(NULL)), mnVisible(1),
-                                                                                                mnFound(1), mbBad(false), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0)
+                                                                                                mnFound(1), mbBad(false), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false)
     {
 
         SetWorldPos(Pos);
@@ -265,18 +265,20 @@ namespace ORB_SLAM3
                 pKF->EraseMapPointMatch(rightIndex);
             }
         }
-        for (auto it : obs)
-        {
-            for (auto itx : it.first->mvpMapPoints)
-            {
 
-                if (itx != NULL && itx->mnId == this->mnId)
-                {
+        // for (auto it : obs)
+        // {
+        //     for (auto itx : it.first->mvpMapPoints)
+        //     {
 
-                    cout << itx->mnId << " " << itx->mReferencecount_canonicalmp << endl;
-                }
-            }
-        }
+        //         if (itx != NULL && itx->mnId == this->mnId)
+        //         {
+
+        //             cout << itx->mnId << " " << itx->mReferencecount_canonicalmp << endl;
+        //             mReferencecount_canonicalmp = 0;
+        //         }
+        //     }
+        // }
         for (auto it : obs)
         {
 
@@ -284,7 +286,7 @@ namespace ORB_SLAM3
             it.first->mReferencecount_mob--;
             it.first->mReferencecount--;
         }
-        static long long measure = 0;
+        // static long long measure = 0;
         mpMap->EraseMapPoint(this);
         // if (mReferencecount_canonicalmp != 0)
         // {
@@ -379,6 +381,26 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock1(mMutexFeatures, std::defer_lock);
         unique_lock<mutex> lock2(mMutexPos, std::defer_lock);
         lock(lock1, lock2);
+        if (this->mbBad)
+        {
+
+            // Go through all the observations
+            for (auto it : mObservations)
+            {
+                // Go through all the mappoints
+                for (auto itx : it.first->mvpMapPoints)
+                {
+
+                    if (itx != NULL && itx->mnId == this->mnId)
+                    {
+
+                        unique_lock<mutex> lock(itx->mMutexReferencecount_mp);
+                        itx->mReferencecount_canonicalmp--;
+                        itx = static_cast<MapPoint *>(NULL);
+                    }
+                }
+            }
+        }
 
         return mbBad;
     }

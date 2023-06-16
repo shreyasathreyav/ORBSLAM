@@ -84,6 +84,7 @@ public:
     long long leftover_deletion_count;
     set <KeyFrame *> SB_total_count;
     int totaldeletion;
+    int totaldeletion_mp;
     std::mutex mMutexImuInit;
 
     Eigen::MatrixXd mcovInertial;
@@ -101,7 +102,7 @@ public:
     int mnMatchesInliers;
     // vector<KeyFrame*> arr;
     set<KeyFrame*> arr;
-
+    set<MapPoint*> arr_mp;
     // For debugging (erase in normal mode)
     int mInitFr;
     int mIdxIteration;

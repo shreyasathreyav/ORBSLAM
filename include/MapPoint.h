@@ -166,6 +166,7 @@ namespace ORB_SLAM3
         long int mnFirstKFid;
         long int mnFirstFrame;
         int nObs;
+        bool pass_d;
 
         // Infrastructure for reference counting
 

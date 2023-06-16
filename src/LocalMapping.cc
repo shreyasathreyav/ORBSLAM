@@ -45,7 +45,7 @@ namespace ORB_SLAM3
         kf_passed = 0;
         leftover_deletion_count = 0;
         totaldeletion = 0;
-
+        totaldeletion_mp = 0;
 #ifdef REGISTER_TIMES
         nLBA_exec = 0;
         nLBA_abort = 0;
@@ -370,11 +370,13 @@ namespace ORB_SLAM3
             else if (pMP->GetFoundRatio() < 0.25f)
             {
                 pMP->SetBadFlag();
+                arr_mp.insert(pMP);
                 lit = mlpRecentAddedMapPoints.erase(lit);
             }
             else if (((int)nCurrentKFid - (int)pMP->mnFirstKFid) >= 2 && pMP->Observations() <= cnThObs)
             {
                 pMP->SetBadFlag();
+                arr_mp.insert(pMP);
                 lit = mlpRecentAddedMapPoints.erase(lit);
             }
             else if (((int)nCurrentKFid - (int)pMP->mnFirstKFid) >= 3)
@@ -383,7 +385,32 @@ namespace ORB_SLAM3
             {
                 lit++;
                 borrar--;
-            }  
+            }
+
+            for (auto it = arr_mp.begin(); it != arr_mp.end();)
+            {
+                // cout << "Canonical Count "<< (*it)->mReferencecount_canonical << endl;
+                if ((*it)->mReferencecount_canonicalmp < 0)
+                {
+                    cout << "This is really bad " << endl;
+                }
+                if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->pass_d == false)
+                {
+                    totaldeletion_mp++;
+                    (*it)->pass_d = true;
+                    auto something = it;
+                    // it = arr_mp.erase(it);
+                    // delete *something;
+                    // cout << (*something)->mnId << endl;
+                }
+                else
+                    it++;
+            }
+            cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
+            float result = float(totaldeletion_mp) / float(arr_mp.size());
+            result = result * 100;
+            cout << "This is the size of the set : " << arr_mp.size() << endl;
+            cout << "Percentage of deletion : " << result << endl;
         }
     }
 
