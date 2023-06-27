@@ -422,30 +422,30 @@ namespace ORB_SLAM3
             // result = result * 100;
             // cout << "This is the size of the set : " << mp_passed << endl;
             // cout << "Percentage of deletion : " << result << endl;
-            cout << "========================================================" << endl
-            << " MAP Points begingin" << endl
-            << "========================================================" << endl;
-            cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
-            cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
-            // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-            cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
+            // cout << "========================================================" << endl
+            // << " MAP Points begingin" << endl
+            // << "========================================================" << endl;
+            // cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
+            // cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
+            // // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+            // cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
 
-            if (mp_passed != 0)
-            {
+            // if (mp_passed != 0)
+            // {
 
-                float result = (float)totaldeletion_mp / (float)mp_passed;
+            //     float result = (float)totaldeletion_mp / (float)mp_passed;
 
-                cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+            //     cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-                result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
-                cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+            //     result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
+            //     cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
-                // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
-                // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
+            //     // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
+            //     // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
 
-                // result = (float)mp_passed / (float)mpCurrentKeyFrame->mnId;
-                // cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
-            }
+            //     // result = (float)mp_passed / (float)mpCurrentKeyFrame->mnId;
+            //     // cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+            // }
 
         }
     }
@@ -1303,7 +1303,7 @@ namespace ORB_SLAM3
             // cout << endl;
         }
         // cout << "# Number of keyframes in deletion set : " << arr.size() << endl;
-        cout << "############################################################################################################################" << endl;
+        // cout << "############################################################################################################################" << endl;
         // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
         for (auto it = arr.begin(); it != arr.end();)
         {
@@ -1319,28 +1319,28 @@ namespace ORB_SLAM3
             else
                 it++;
         }
-        cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
-        cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
-        cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-        cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
+        // cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
+        // cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
+        // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+        // cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
 
-        if (kf_passed != 0)
-        {
+        // if (kf_passed != 0)
+        // {
 
-            float result = (float)totaldeletion / (float)kf_passed;
+        //     float result = (float)totaldeletion / (float)kf_passed;
 
-            cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+        //     cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-            result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
-            cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+        //     result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
+        //     cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
-            result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
-            cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
+        //     result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
+        //     cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
 
-            result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
-            cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
-        }
-        cout << "############################################################################################################################" << endl;
+        //     result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
+        //     cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+        // }
+        // cout << "############################################################################################################################" << endl;
 
         // cout << endl;
         // cout << "KeyFrame Culling end" << endl;
