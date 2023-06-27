@@ -200,7 +200,7 @@ int main(int argc, char **argv)
         SLAM.SaveKeyFrameTrajectoryEuRoC("KeyFrameTrajectory.txt");
     }
 
-    return 0;
+    // return 0;
 }
 
 void LoadImages(const string &strImagePath, const string &strPathTimes,
