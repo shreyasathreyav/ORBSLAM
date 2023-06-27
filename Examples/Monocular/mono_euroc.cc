@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     // Stop all threads
     SLAM.Shutdown();
 
-    // return 0;
+    return 0;
     // Save camera trajectory
     if (bFileName)
     {

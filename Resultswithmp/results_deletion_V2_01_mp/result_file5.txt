@@ -1,0 +1,199 @@
+# Percentage of deletion (wrt kfs in map)                 : 95.240257263183594%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10745
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10987
+# Percentage of deletion                                  : 97.394142150878906%
+# Percentage of deletion (wrt kfs in map)                 : 95.248931884765625%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10745
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10987
+# Percentage of deletion                                  : 97.394142150878906%
+# Percentage of deletion (wrt kfs in map)                 : 95.248931884765625%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10745
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10987
+# Percentage of deletion                                  : 97.394142150878906%
+# Percentage of deletion (wrt kfs in map)                 : 95.248931884765625%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10745
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10987
+# Percentage of deletion                                  : 97.394142150878906%
+# Percentage of deletion (wrt kfs in map)                 : 95.248931884765625%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag : 10746
+# Total number of deleted MapPoint                       : 10465
+# Number of MapPoint within map                          : 10986
+# Percentage of deletion                                  : 97.38507080078125%
+# Percentage of deletion (wrt kfs in map)                 : 95.257598876953125%
+TRACK_REF_KF: Less than 15 matches!!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 127
+# Total number of deleted keyframes                       : 117
+# Current KeyFrame ID                                     : 377
+# Number of keyframes within map                          : 251
+# Percentage of deletion                                  : 92.125984191894531%
+# Percentage of deletion (wrt kfs in map)                 : 46.613548278808594%
+# Percentage of deletion (wrt kfs max mnid)               : 31.034481048583984%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 33.687000274658203%
+############################################################################################################################
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Fail to track local map!
+Creation of new map with id: 1
+Stored map with ID: 0
+Creation of new map with last KF id: 378
+Shutdown
+terminate called without an active exception

@@ -2592,7 +2592,7 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexFinish);
         cout << "LC: Finish requested" << endl;
         mbFinishRequested = true;
-        // std::terminate();
+        std::terminate();
     }
 
     bool LoopClosing::CheckFinish()
