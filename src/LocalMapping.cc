@@ -413,36 +413,33 @@ namespace ORB_SLAM3
 // {
 //     cout << "mReferencecount_msp " << endl;
 // }
-// #ifdef CASRF
-//                 {
-//                     if ((*it)->mReferencecount_canonicalmp_CAS == 0 && (*it)->mReferencecount_msp_CAS == 0 && (*it)->mReferencecount_lastframe_CAS == 0)
-//                     {
-//                         totaldeletion_mp++;
-//                         (*it)->pass_d = true;
-//                         auto something = it;
-//                         it = arr_mp.erase(it);
-//                         delete *something;
-//                         // cout << (*something)->mnId << endl;
-//                     }
-//                     else
-//                         it++;
-//                 }
-// #endif
-// #ifdef RF
-//                 {
-//                     if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
-//                     {
-//                         totaldeletion_mp++;
-//                         (*it)->pass_d = true;
-//                         auto something = it;
-//                         it = arr_mp.erase(it);
-//                         delete *something;
-//                         // cout << (*something)->mnId << endl;
-//                     }
-//                     else
-//                         it++;
-//                 }
-// #endif
+
+#ifdef CASRF
+                if ((*it)->mReferencecount_canonicalmp_CAS == 0 && (*it)->mReferencecount_msp_CAS == 0 && (*it)->mReferencecount_lastframe_CAS == 0)
+                {
+                    totaldeletion_mp++;
+                    (*it)->pass_d = true;
+                    auto something = it;
+                    it = arr_mp.erase(it);
+                    delete *something;
+                    // cout << (*something)->mnId << endl;
+                }
+                else
+                    it++;
+#endif
+#ifdef RF
+                if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
+                {
+                    totaldeletion_mp++;
+                    (*it)->pass_d = true;
+                    auto something = it;
+                    it = arr_mp.erase(it);
+                    delete *something;
+                    // cout << (*something)->mnId << endl;
+                }
+                else
+                    it++;
+#endif
             }
             cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
             float result = float(totaldeletion_mp) / float(mp_passed);
