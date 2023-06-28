@@ -703,6 +703,14 @@ namespace ORB_SLAM3
             }
             // Increment for pBestKF
             {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(pBestKF->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+            {
                 unique_lock<mutex>(pBestKF->mMutexreferencecount);
                 // pBestKF->mReferencecount_canonical++;
                 // pBestKF->mReferencecount_container++;
@@ -716,12 +724,25 @@ namespace ORB_SLAM3
             // Decrement for vpNeighs
             for (auto itr : vpNeighs)
             {
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
 
-                unique_lock<mutex>(itr->mMutexreferencecount);
-                // itr->mReferencecount_canonical--;
-                // itr->mReferencecount_container--;
-                itr->mReferencecount_ockf--;
-                itr->mReferencecount--;
+                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
+                {
+                    unique_lock<mutex>(itr->mMutexreferencecount);
+                    // itr->mReferencecount_canonical--;
+                    // itr->mReferencecount_container--;
+                    itr->mReferencecount_ockf--;
+                    itr->mReferencecount--;
+                }
+#endif
             }
         }
 
@@ -744,9 +765,17 @@ namespace ORB_SLAM3
                 {
                     // This is the increment that will make the reference count not zero
                     {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value + 1;
+
+                        } while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+                    {
                         unique_lock<mutex>(pKFi->mMutexreferencecount);
-                    //     pKFi->mReferencecount_canonical++;
-                    //     pKFi->mReferencecount++;
+                        //     pKFi->mReferencecount_canonical++;
+                        //     pKFi->mReferencecount++;
                         pKFi->mReferencecount_ockf++;
                         pKFi->mReferencecount++;
                     }
@@ -756,11 +785,19 @@ namespace ORB_SLAM3
                 {
                     // This is the increment that will make the reference count not zero
                     {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value + 1;
+
+                        } while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+                    {
                         unique_lock<mutex>(pKFi->mMutexreferencecount);
-                    //     pKFi->mReferencecount_canonical++;
+                        //     pKFi->mReferencecount_canonical++;
                         pKFi->mReferencecount++;
                         pKFi->mReferencecount_ockf++;
-                    //     pKFi->mReferencecount++;
+                        //     pKFi->mReferencecount++;
                     }
                     vpMergeCand.push_back(pKFi);
                 }
@@ -771,17 +808,27 @@ namespace ORB_SLAM3
         }
         for (auto itr : lAccScoreAndMatch)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
+                } while (!atomic_compare_exchange_strong(&(itr.second->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex>(itr.second->mMutexreferencecount);
                 // itr.second->mReferencecount_canonical--;
                 // itr.second->mReferencecount_container--;
                 itr.second->mReferencecount_ockf--;
                 itr.second->mReferencecount--;
-
                 // cout << "This is the canonical count" << itr.second->mnId << " " << itr.second->mReferencecount_canonical << endl;
                 // cout << "This is the ockf count" << itr.second->mnId << " " << itr.second->mReferencecount_ockf << endl;
             }
+#endif
         }
         // cout << "End of DetectNBestCandidates" << endl;
     }
@@ -854,7 +901,7 @@ namespace ORB_SLAM3
         for (list<pair<float, KeyFrame *>>::iterator it = lScoreAndMatch.begin(), itend = lScoreAndMatch.end(); it != itend; it++)
         {
             KeyFrame *pKFi = it->second;
-            //not called chill!!!
+            // not called chill!!!
             vector<KeyFrame *> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10);
 
             float bestScore = it->first;

@@ -314,6 +314,17 @@ namespace ORB_SLAM3
         // The following variables are accesed from only 1 thread or never change (no mutex needed).
     public:
         bool DeletionSafe;
+        
+        // CAS
+
+        std::atomic<int> mReferencecount_msp_CAS;
+
+        std::atomic<int> mReferencecount_canonical_CAS;
+        
+        std::atomic<int> mReferencecount_ockf_CAS;
+        
+        std::atomic<int> mReferencecount_mob_CAS;
+        
         // Test1
         long long mReferencecount_canonical;
         // Test2

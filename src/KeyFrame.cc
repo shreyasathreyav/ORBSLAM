@@ -37,7 +37,7 @@ namespace ORB_SLAM3
                            mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
                            mbToBeErased(false), mbBad(false), mHalfBaseline(0), mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0),
                            NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0),
-                           DeletionSafe(false)
+                           DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0)
 
     {
     }
@@ -59,7 +59,7 @@ namespace ORB_SLAM3
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
                                                                        mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0),
-                                                                       DeletionSafe(false)
+                                                                       DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0)
     {
         mnId = nNextId++;
 
@@ -79,7 +79,6 @@ namespace ORB_SLAM3
                     mGridRight[i][j] = F.mGridRight[i][j];
                 }
             }
-
         }
 
         if (!F.HasVelocity())
@@ -98,9 +97,11 @@ namespace ORB_SLAM3
 
         mnOriginMapId = pMap->GetId();
 
-        for(auto it : mvpMapPoints){
+        for (auto it : mvpMapPoints)
+        {
 
-            if(it != NULL){
+            if (it != NULL)
+            {
 
                 unique_lock<mutex> lock(it->mMutexReferencecount_mp);
                 it->mReferencecount_canonicalmp++;
@@ -211,6 +212,14 @@ namespace ORB_SLAM3
                     unique_lock<mutex> lock(pKF->mMutexreferencecount);
                     pKF->mReferencecount_canonical++;
                 }
+                // canonical #1
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value));
+
                 mConnectedKeyFrameWeights[pKF] = weight;
             }
 
@@ -251,18 +260,43 @@ namespace ORB_SLAM3
 
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount_ockf--;
-            i->mReferencecount--;
-        }
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
+            {
+
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount_ockf--;
+                i->mReferencecount--;
+            }
+        }
+#endif
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            i->mReferencecount_ockf++;
-            i->mReferencecount++;
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                i->mReferencecount_ockf++;
+                i->mReferencecount++;
+            }
         }
 
         mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
@@ -282,9 +316,20 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexConnections);
         for (auto itr : mvpOrderedConnectedKeyFrames)
         {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount++;
-            itr->mReferencecount_ockf++;
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+            {
+
+                unique_lock<mutex> lock(itr->mMutexreferencecount);
+                itr->mReferencecount++;
+                itr->mReferencecount_ockf++;
+            }
         }
         return mvpOrderedConnectedKeyFrames;
     }
@@ -351,9 +396,20 @@ namespace ORB_SLAM3
         {
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount++;
-                itr->mReferencecount_ockf++;
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
+
+                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+                {
+
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount++;
+                    itr->mReferencecount_ockf++;
+                }
             }
             return mvpOrderedConnectedKeyFrames;
         }
@@ -362,9 +418,20 @@ namespace ORB_SLAM3
             vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
             for (auto itr : arr)
             {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount++;
-                itr->mReferencecount_ockf++;
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
+
+                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+                {
+
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount++;
+                    itr->mReferencecount_ockf++;
+                }
             }
             return arr;
         }
@@ -391,9 +458,20 @@ namespace ORB_SLAM3
             vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
             for (auto itr : arr)
             {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount++;
-                itr->mReferencecount_ockf++;
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
+
+                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+                {
+
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount++;
+                    itr->mReferencecount_ockf++;
+                }
                 // itr->mReferencecount_canonical++;
             }
             return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
@@ -679,30 +757,70 @@ namespace ORB_SLAM3
 
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_canonical++;
+
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value));
             }
             unique_lock<mutex> lockCon(mMutexConnections);
             for (auto it : mConnectedKeyFrameWeights)
             {
+                {
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount_canonical--;
+                }
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-                unique_lock<mutex> lock(it.first->mMutexreferencecount);
-                it.first->mReferencecount_canonical--;
+                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value));
             }
             mConnectedKeyFrameWeights = KFcounter;
 
             for (auto i : mvpOrderedConnectedKeyFrames)
             {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount_ockf--;
-                i->mReferencecount--;
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
+                {
+
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i->mReferencecount_ockf--;
+                    i->mReferencecount--;
+                }
+#endif
             }
 
             mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
             for (auto i : mvpOrderedConnectedKeyFrames)
             {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                i->mReferencecount_ockf++;
-                i->mReferencecount++;
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
+
+                    } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+                {
+
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    i->mReferencecount_ockf++;
+                    i->mReferencecount++;
+                }
             }
 
             mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
@@ -841,7 +959,6 @@ namespace ORB_SLAM3
             if (mvpMapPoints[i])
             {
                 mvpMapPoints[i]->EraseObservation(this);
-                
             }
         }
 
@@ -851,16 +968,39 @@ namespace ORB_SLAM3
 
             for (auto it : mConnectedKeyFrameWeights)
             {
-                unique_lock<mutex> lock(it.first->mMutexreferencecount);
-                it.first->mReferencecount_canonical--;
+                {
+                    unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                    it.first->mReferencecount_canonical--;
+                }
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+                    } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value));
+                }
             }
             mConnectedKeyFrameWeights.clear();
 
             for (auto itr : mvpOrderedConnectedKeyFrames)
             {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount--;
-                itr->mReferencecount_ockf--;
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
+                {
+                    unique_lock<mutex> lock(itr->mMutexreferencecount);
+                    itr->mReferencecount--;
+                    itr->mReferencecount_ockf--;
+                }
+#endif
             }
 
             mvpOrderedConnectedKeyFrames.clear();
@@ -904,6 +1044,14 @@ namespace ORB_SLAM3
                                     pP = vpConnected[i];
                                     // // Increment for vpConnected[i]
                                     {
+                                        int old_value, new_value;
+                                        do
+                                        {
+                                            new_value = old_value + 1;
+
+                                        } while (!atomic_compare_exchange_strong(&(pP->mReferencecount_ockf_CAS), &old_value, new_value));
+                                    }
+                                    {
                                         unique_lock<mutex> lock(vpConnected[i]->mMutexreferencecount);
                                         // pP->mReferencecount_canonical++;
                                         // pP->mReferencecount_container++;
@@ -919,6 +1067,17 @@ namespace ORB_SLAM3
                     }
                     for (auto itr : vpConnected)
                     {
+#ifdef CASRF
+                        {
+                            int old_value, new_value;
+                            do
+                            {
+                                new_value = old_value - 1;
+
+                            } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                        }
+#endif
+#ifdef RF
                         {
                             unique_lock<mutex> lock(itr->mMutexreferencecount);
                             // itr->mReferencecount_canonical--;
@@ -929,6 +1088,7 @@ namespace ORB_SLAM3
                             // itr->mReferencecount_ockf--;
                             // itr->mReferencecount--;
                         }
+#endif
                     }
                 }
 
@@ -942,23 +1102,52 @@ namespace ORB_SLAM3
                 {
                     for (auto itr : pP_tracker)
                     {
-                        unique_lock<mutex> lock(itr->mMutexreferencecount);
-                        // itr->mReferencecount_canonical--;
-                        // itr->mReferencecount_container--;
-                        itr->mReferencecount--;
-                        itr->mReferencecount_ockf--;
-                        // cout << "KF => " <<itr->mnId << " "<< itr->mReferencecount_ockf << endl;
+#ifdef CASRF
+                        {
+                            int old_value, new_value;
+                            do
+                            {
+                                new_value = old_value - 1;
+
+                            } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                        }
+#endif
+#ifdef RF
+                        {
+                            unique_lock<mutex> lock(itr->mMutexreferencecount);
+                            // itr->mReferencecount_canonical--;
+                            // itr->mReferencecount_container--;
+                            itr->mReferencecount--;
+                            itr->mReferencecount_ockf--;
+                            // cout << "KF => " <<itr->mnId << " "<< itr->mReferencecount_ockf << endl;
+                        }
+#endif
                     }
                     break;
                 }
                 for (auto itr : pP_tracker)
                 {
-                    unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    // itr->mReferencecount_canonical--;
-                    // itr->mReferencecount_container--;
-                    itr->mReferencecount--;
-                    itr->mReferencecount_ockf--;
-                    // cout << "KF => "<<itr->mnId << " " << itr->mReferencecount_ockf << endl;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
+                    {
+
+                        unique_lock<mutex> lock(itr->mMutexreferencecount);
+                        // itr->mReferencecount_canonical--;
+                        // itr->mReferencecount_container--;
+                        itr->mReferencecount--;
+                        itr->mReferencecount_ockf--;
+                        // cout << "KF => "<<itr->mnId << " " << itr->mReferencecount_ockf << endl;
+                    }
+#endif
                 }
             }
 
@@ -1010,6 +1199,14 @@ namespace ORB_SLAM3
                     unique_lock<mutex> lock(pKF->mMutexreferencecount);
                     pKF->mReferencecount_canonical--;
                 }
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value));
+                }
                 bUpdate = true;
             }
         }
@@ -1017,11 +1214,23 @@ namespace ORB_SLAM3
         auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
         if (index != mvpOrderedConnectedKeyFrames.end())
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&((*index)->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock2((*index)->mMutexreferencecount);
                 (*index)->mReferencecount--;
                 (*index)->mReferencecount_ockf--;
             }
+#endif
             mvpOrderedConnectedKeyFrames.erase(index);
         }
 

@@ -67,6 +67,27 @@ namespace ORB_SLAM3
             mpKFlowerID = pKF;
         }
         mspKeyFrames.insert(pKF);
+
+        {
+            unique_lock<mutex> lock(pKF->mMutexreferencecount);
+            pKF->mReferencecount_container++;
+        }
+        // cout << "RF " << pKF->mReferencecount_container << endl;
+
+        // Do referece count
+
+        int old_value, new_value;
+        // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+        do
+        {
+            // old_value = pKF->mReferencecount_msp_CAS ;
+            new_value = old_value + 1;
+            // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+            // bool check =  atomic_compare_exchange_strong(ptr, old_value, new_value);
+
+        } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_msp_CAS), &old_value, new_value));
+        // cout << "CAS " << pKF->mReferencecount_msp_CAS << endl;
+
         if (pKF->mnId > mnMaxKFid)
         {
             mnMaxKFid = pKF->mnId;
@@ -116,7 +137,29 @@ namespace ORB_SLAM3
     void Map::EraseKeyFrame(KeyFrame *pKF)
     {
         unique_lock<mutex> lock(mMutexMap);
+
+        {
+            unique_lock<mutex> lock(pKF->mMutexreferencecount);
+            pKF->mReferencecount_container--;
+            // cout << "Reference counting value " << pKF->mReferencecount_container << endl;
+        }
+
+        int old_value, new_value;
+        // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+        do
+        {
+            // old_value = pKF->mReferencecount_msp_CAS ;
+            new_value = old_value - 1;
+            // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+            // bool check =  atomic_compare_exchange_strong(ptr, old_value, new_value);
+
+        } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_msp_CAS), &old_value, new_value));
+        // cout << "CAS " << pKF->mReferencecount_msp_CAS << endl;
+
         mspKeyFrames.erase(pKF);
+
+        // do reference count
+
         if (mspKeyFrames.size() > 0)
         {
             if (pKF->mnId == mpKFlowerID->mnId)

@@ -519,15 +519,43 @@ namespace ORB_SLAM3
 
                 for (auto i : vpLoopBowCand)
                 {
-                    unique_lock<mutex>(i->mMutexreferencecount);
-                    i->mReferencecount--;
-                    i->mReferencecount_ockf--;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
+                    {
+                        unique_lock<mutex>(i->mMutexreferencecount);
+                        i->mReferencecount--;
+                        i->mReferencecount_ockf--;
+                    }
+#endif
                 }
                 for (auto i : vpMergeBowCand)
                 {
-                    unique_lock<mutex>(i->mMutexreferencecount);
-                    i->mReferencecount--;
-                    i->mReferencecount_ockf--;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
+                    {
+                        unique_lock<mutex>(i->mMutexreferencecount);
+                        i->mReferencecount--;
+                        i->mReferencecount_ockf--;
+                    }
+#endif
                 }
             }
             return true;
@@ -539,15 +567,43 @@ namespace ORB_SLAM3
         {
             for (auto i : vpLoopBowCand)
             {
-                unique_lock<mutex>(i->mMutexreferencecount);
-                i->mReferencecount--;
-                i->mReferencecount_ockf--;
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
+                {
+                    unique_lock<mutex>(i->mMutexreferencecount);
+                    i->mReferencecount--;
+                    i->mReferencecount_ockf--;
+                }
+#endif
             }
             for (auto i : vpMergeBowCand)
             {
-                unique_lock<mutex>(i->mMutexreferencecount);
-                i->mReferencecount--;
-                i->mReferencecount_ockf--;
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
+                {
+                    unique_lock<mutex>(i->mMutexreferencecount);
+                    i->mReferencecount--;
+                    i->mReferencecount_ockf--;
+                }
+#endif
             }
         }
         return false;
@@ -668,13 +724,27 @@ namespace ORB_SLAM3
                 // std::cout << "Check BoW aborted because is close to the matched one " << std::endl;
                 for (auto i : rc_vpCovKFi)
                 {
-                    unique_lock<mutex> lock(i->mMutexreferencecount);
+#ifdef CASRF
                     {
-                        // i->mReferencecount_canonical--;
-                        // i->mReferencecount_container--;
-                        i->mReferencecount_ockf--;
-                        i->mReferencecount--;
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
                     }
+#endif
+#ifdef RF
+                    {
+                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                        {
+                            // i->mReferencecount_canonical--;
+                            // i->mReferencecount_container--;
+                            i->mReferencecount_ockf--;
+                            i->mReferencecount--;
+                        }
+                    }
+#endif
                 }
                 continue;
             }
@@ -906,26 +976,54 @@ namespace ORB_SLAM3
 
                                 for (auto i : vpCurrentCovKFs)
                                 {
-                                    unique_lock<mutex> lock(i->mMutexreferencecount);
+#ifdef CASRF
                                     {
-                                        // i->mReferencecount_canonical--;
-                                        // i->mReferencecount_container--;
-                                        i->mReferencecount_ockf--;
-                                        i->mReferencecount--;
+                                        int old_value, new_value;
+                                        do
+                                        {
+                                            new_value = old_value - 1;
+
+                                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
                                     }
+#endif
+#ifdef RF
+                                    {
+                                        unique_lock<mutex> lock(i->mMutexreferencecount);
+                                        {
+                                            // i->mReferencecount_canonical--;
+                                            // i->mReferencecount_container--;
+                                            i->mReferencecount_ockf--;
+                                            i->mReferencecount--;
+                                        }
+                                    }
+#endif
                                 }
                             }
                         }
                     }
                     for (auto i : rc1_vpCovKFi)
                     {
-                        unique_lock<mutex> lock(i->mMutexreferencecount);
+#ifdef CASRF
                         {
-                            // i->mReferencecount_canonical--;
-                            // i->mReferencecount_container--;
-                            i->mReferencecount_ockf--;
-                            i->mReferencecount--;
+                            int old_value, new_value;
+                            do
+                            {
+                                new_value = old_value - 1;
+
+                            } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
                         }
+#endif
+#ifdef RF
+                        {
+                            unique_lock<mutex> lock(i->mMutexreferencecount);
+                            {
+                                // i->mReferencecount_canonical--;
+                                // i->mReferencecount_container--;
+                                i->mReferencecount_ockf--;
+                                i->mReferencecount--;
+                            }
+                        }
+#endif
                     }
                 }
                 /*else
@@ -937,14 +1035,28 @@ namespace ORB_SLAM3
 
             for (auto i : rc_vpCovKFi)
             {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
+#ifdef CASRF
                 {
-                    // i->mReferencecount_canonical--;
-                    // i->mReferencecount_container--;
-                    i->mReferencecount_ockf--;
-                    i->mReferencecount--;
-                    // cout << "MNID" << i->mnId << " " << i->mReferencecount_ockf << endl;
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
                 }
+#endif
+#ifdef RF
+                {
+                    unique_lock<mutex> lock(i->mMutexreferencecount);
+                    {
+                        // i->mReferencecount_canonical--;
+                        // i->mReferencecount_container--;
+                        i->mReferencecount_ockf--;
+                        i->mReferencecount--;
+                        // cout << "MNID" << i->mnId << " " << i->mReferencecount_ockf << endl;
+                    }
+                }
+#endif
             }
         }
 

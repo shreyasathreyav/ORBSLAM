@@ -422,31 +422,30 @@ namespace ORB_SLAM3
             // result = result * 100;
             // cout << "This is the size of the set : " << mp_passed << endl;
             // cout << "Percentage of deletion : " << result << endl;
-            cout << "========================================================" << endl
-            << " MAP Points begingin" << endl
-            << "========================================================" << endl;
-            cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
-            cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
-            // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-            cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
+            // cout << "========================================================" << endl
+            // << " MAP Points begingin" << endl
+            // << "========================================================" << endl;
+            // cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
+            // cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
+            // // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+            // cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
 
-            if (mp_passed != 0)
-            {
+            // if (mp_passed != 0)
+            // {
 
-                float result = (float)totaldeletion_mp / (float)mp_passed;
+            //     float result = (float)totaldeletion_mp / (float)mp_passed;
 
-                cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+            //     cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-                result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
-                cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+            //     result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
+            //     cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
-                // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
-                // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
+            //     // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
+            //     // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
 
-                // result = (float)mp_passed / (float)mpCurrentKeyFrame->mnId;
-                // cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
-            }
-
+            //     // result = (float)mp_passed / (float)mpCurrentKeyFrame->mnId;
+            //     // cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+            // }
         }
     }
 
@@ -508,6 +507,14 @@ namespace ORB_SLAM3
         {
             if (i > 0 && CheckNewKeyFrames())
                 return;
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
 
             {
                 unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
@@ -530,6 +537,17 @@ namespace ORB_SLAM3
             {
                 if (baseline < pKF2->mb)
                 {
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
                     {
                         unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
                         // vpNeighKFs[i]->mReferencecount_canonical--;
@@ -537,6 +555,7 @@ namespace ORB_SLAM3
                         vpNeighKFs[i]->mReferencecount_ockf--;
                         vpNeighKFs[i]->mReferencecount--;
                     }
+#endif
                     continue;
                 }
             }
@@ -547,6 +566,17 @@ namespace ORB_SLAM3
 
                 if (ratioBaselineDepth < 0.01)
                 {
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
                     {
                         unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
                         // vpNeighKFs[i]->mReferencecount_canonical--;
@@ -554,6 +584,7 @@ namespace ORB_SLAM3
                         vpNeighKFs[i]->mReferencecount_ockf--;
                         vpNeighKFs[i]->mReferencecount--;
                     }
+#endif
                     continue;
                 }
             }
@@ -813,6 +844,17 @@ namespace ORB_SLAM3
                 mpAtlas->AddMapPoint(pMP);
                 mlpRecentAddedMapPoints.push_back(pMP);
             }
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
                 // vpNeighKFs[i]->mReferencecount_canonical--;
@@ -820,17 +862,31 @@ namespace ORB_SLAM3
                 vpNeighKFs[i]->mReferencecount_ockf--;
                 vpNeighKFs[i]->mReferencecount--;
             }
+#endif
         }
 
         for (auto itr : rc_vpNeighKFs)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-            unique_lock<mutex>(itr->mMutexreferencecount);
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            // cout << "Reference " << itr->mReferencecount_ockf <<endl;
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
+                } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
+            {
+                unique_lock<mutex>(itr->mMutexreferencecount);
+                // itr->mReferencecount_canonical--;
+                // itr->mReferencecount_container--;
+                // cout << "Reference " << itr->mReferencecount_ockf <<endl;
+                itr->mReferencecount_ockf--;
+                itr->mReferencecount--;
+            }
+#endif
         }
         // cout << "CreateNewMapPoints ends" << endl;
     }
@@ -876,21 +932,50 @@ namespace ORB_SLAM3
             {
                 for (auto itr : vpSecondNeighKFs)
                 {
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
+                    {
+
+                        unique_lock<mutex> lock(itr->mMutexreferencecount);
+                        // itr->mReferencecount_canonical--;
+                        // itr->mReferencecount_container--;
+                        itr->mReferencecount_ockf--;
+                        itr->mReferencecount--;
+                    }
+#endif
+                }
+                break;
+            }
+            for (auto itr : vpSecondNeighKFs)
+            {
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
+                {
                     unique_lock<mutex> lock(itr->mMutexreferencecount);
                     // itr->mReferencecount_canonical--;
                     // itr->mReferencecount_container--;
                     itr->mReferencecount_ockf--;
                     itr->mReferencecount--;
                 }
-                break;
-            }
-            for (auto itr : vpSecondNeighKFs)
-            {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                // itr->mReferencecount_canonical--;
-                // itr->mReferencecount_container--;
-                itr->mReferencecount_ockf--;
-                itr->mReferencecount--;
+#endif
             }
         }
 
@@ -971,313 +1056,178 @@ namespace ORB_SLAM3
         mpCurrentKeyFrame->UpdateConnections();
         for (auto itr : vpNeighKFs)
         {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
-            // cout << itr->mReferencecount <<endl;
+            {
+#ifdef CASRF
+                {int old_value, new_value;
+            do
+            {
+                new_value = old_value - 1;
+
+            } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
         }
-        // cout << "SearchInNeighbors ends" << endl;
+#endif
     }
-
-    void LocalMapping::RequestStop()
+#ifdef RF
     {
-        unique_lock<mutex> lock(mMutexStop);
-        mbStopRequested = true;
-        unique_lock<mutex> lock2(mMutexNewKFs);
-        mbAbortBA = true;
+
+        unique_lock<mutex> lock(itr->mMutexreferencecount);
+        // itr->mReferencecount_canonical--;
+        // itr->mReferencecount_container--;
+        itr->mReferencecount_ockf--;
+        itr->mReferencecount--;
+        // cout << itr->mReferencecount <<endl;
     }
+#endif
+}
+// cout << "SearchInNeighbors ends" << endl;
+}
 
-    bool LocalMapping::Stop()
+void LocalMapping::RequestStop()
+{
+    unique_lock<mutex> lock(mMutexStop);
+    mbStopRequested = true;
+    unique_lock<mutex> lock2(mMutexNewKFs);
+    mbAbortBA = true;
+}
+
+bool LocalMapping::Stop()
+{
+    unique_lock<mutex> lock(mMutexStop);
+    if (mbStopRequested && !mbNotStop)
     {
-        unique_lock<mutex> lock(mMutexStop);
-        if (mbStopRequested && !mbNotStop)
-        {
-            mbStopped = true;
-            cout << "Local Mapping STOP" << endl;
-            return true;
-        }
-
-        return false;
-    }
-
-    bool LocalMapping::isStopped()
-    {
-        unique_lock<mutex> lock(mMutexStop);
-        return mbStopped;
-    }
-
-    bool LocalMapping::stopRequested()
-    {
-        unique_lock<mutex> lock(mMutexStop);
-        return mbStopRequested;
-    }
-
-    void LocalMapping::Release()
-    {
-        unique_lock<mutex> lock(mMutexStop);
-        unique_lock<mutex> lock2(mMutexFinish);
-        if (mbFinished)
-            return;
-        mbStopped = false;
-        mbStopRequested = false;
-        for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
-            delete *lit;
-        mlNewKeyFrames.clear();
-
-        cout << "Local Mapping RELEASE" << endl;
-    }
-
-    bool LocalMapping::AcceptKeyFrames()
-    {
-        unique_lock<mutex> lock(mMutexAccept);
-        return mbAcceptKeyFrames;
-    }
-
-    void LocalMapping::SetAcceptKeyFrames(bool flag)
-    {
-        unique_lock<mutex> lock(mMutexAccept);
-        mbAcceptKeyFrames = flag;
-    }
-
-    bool LocalMapping::SetNotStop(bool flag)
-    {
-        unique_lock<mutex> lock(mMutexStop);
-
-        if (flag && mbStopped)
-            return false;
-
-        mbNotStop = flag;
-
+        mbStopped = true;
+        cout << "Local Mapping STOP" << endl;
         return true;
     }
 
-    void LocalMapping::InterruptBA()
-    {
-        mbAbortBA = true;
-    }
-    // DONE RC => mvpOrderedConnectedKeyFrames
-    void LocalMapping::KeyFrameCulling()
-    {
-        // Check redundant keyframes (only local keyframes)
-        // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
-        // in at least other 3 keyframes (in the same or finer scale)
-        // We only consider close stereo points
-        // cout << "KeyFrame Culling beginning" << endl;
-        const int Nd = 21;
-        mpCurrentKeyFrame->UpdateBestCovisibles();
-        vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
+    return false;
+}
 
-        float redundant_th;
-        if (!mbInertial)
-            redundant_th = 0.9;
-        else if (mbMonocular)
-            redundant_th = 0.9;
-        else
-            redundant_th = 0.5;
+bool LocalMapping::isStopped()
+{
+    unique_lock<mutex> lock(mMutexStop);
+    return mbStopped;
+}
 
-        const bool bInitImu = mpAtlas->isImuInitialized();
+bool LocalMapping::stopRequested()
+{
+    unique_lock<mutex> lock(mMutexStop);
+    return mbStopRequested;
+}
+
+void LocalMapping::Release()
+{
+    unique_lock<mutex> lock(mMutexStop);
+    unique_lock<mutex> lock2(mMutexFinish);
+    if (mbFinished)
+        return;
+    mbStopped = false;
+    mbStopRequested = false;
+    for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
+        delete *lit;
+    mlNewKeyFrames.clear();
+
+    cout << "Local Mapping RELEASE" << endl;
+}
+
+bool LocalMapping::AcceptKeyFrames()
+{
+    unique_lock<mutex> lock(mMutexAccept);
+    return mbAcceptKeyFrames;
+}
+
+void LocalMapping::SetAcceptKeyFrames(bool flag)
+{
+    unique_lock<mutex> lock(mMutexAccept);
+    mbAcceptKeyFrames = flag;
+}
+
+bool LocalMapping::SetNotStop(bool flag)
+{
+    unique_lock<mutex> lock(mMutexStop);
+
+    if (flag && mbStopped)
+        return false;
+
+    mbNotStop = flag;
+
+    return true;
+}
+
+void LocalMapping::InterruptBA()
+{
+    mbAbortBA = true;
+}
+// DONE RC => mvpOrderedConnectedKeyFrames
+void LocalMapping::KeyFrameCulling()
+{
+    // Check redundant keyframes (only local keyframes)
+    // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
+    // in at least other 3 keyframes (in the same or finer scale)
+    // We only consider close stereo points
+    // cout << "KeyFrame Culling beginning" << endl;
+    const int Nd = 21;
+    mpCurrentKeyFrame->UpdateBestCovisibles();
+    vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
+
+    float redundant_th;
+    if (!mbInertial)
+        redundant_th = 0.9;
+    else if (mbMonocular)
+        redundant_th = 0.9;
+    else
+        redundant_th = 0.5;
+
+    const bool bInitImu = mpAtlas->isImuInitialized();
+    int count = 0;
+
+    // Compoute last KF from optimizable window:
+    unsigned int last_ID;
+    if (mbInertial)
+    {
         int count = 0;
-
-        // Compoute last KF from optimizable window:
-        unsigned int last_ID;
-        if (mbInertial)
+        KeyFrame *aux_KF = mpCurrentKeyFrame;
+        while (count < Nd && aux_KF->mPrevKF)
         {
-            int count = 0;
-            KeyFrame *aux_KF = mpCurrentKeyFrame;
-            while (count < Nd && aux_KF->mPrevKF)
-            {
-                aux_KF = aux_KF->mPrevKF;
-                count++;
-            }
-            last_ID = aux_KF->mnId;
-        }
-
-        for (vector<KeyFrame *>::iterator vit = vpLocalKeyFrames.begin(), vend = vpLocalKeyFrames.end(); vit != vend; vit++)
-        {
+            aux_KF = aux_KF->mPrevKF;
             count++;
+        }
+        last_ID = aux_KF->mnId;
+    }
 
+    for (vector<KeyFrame *>::iterator vit = vpLocalKeyFrames.begin(), vend = vpLocalKeyFrames.end(); vit != vend; vit++)
+    {
+        count++;
+        {
+            int old_value, new_value;
+            do
             {
-                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                (*vit)->mReferencecount_ockf++;
-                (*vit)->mReferencecount++;
-                // (*vit)->mReferencecount_canonical++;
-                // (*vit)->mReferencecount_container++;
-            }
-            KeyFrame *pKF = *vit;
+                new_value = old_value + 1;
 
-            if ((pKF->mnId == pKF->GetMap()->GetInitKFid()) || pKF->isBad())
+            } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
+        }
+        {
+            unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+            (*vit)->mReferencecount_ockf++;
+            (*vit)->mReferencecount++;
+            // (*vit)->mReferencecount_canonical++;
+            // (*vit)->mReferencecount_container++;
+        }
+        KeyFrame *pKF = *vit;
+
+        if ((pKF->mnId == pKF->GetMap()->GetInitKFid()) || pKF->isBad())
+        {
+#ifdef CASRF
             {
+                int old_value, new_value;
+                do
                 {
-                    // /pkf
-                    unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                    (*vit)->mReferencecount_ockf--;
-                    (*vit)->mReferencecount--;
-                    // (*vit)->mReferencecount_canonical--;
-                    // (*vit)->mReferencecount_container--;
-                }
-                continue;
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
             }
-            const vector<MapPoint *> vpMapPoints = pKF->GetMapPointMatches();
-
-            int nObs = 3;
-            const int thObs = nObs;
-            int nRedundantObservations = 0;
-            int nMPs = 0;
-            for (size_t i = 0, iend = vpMapPoints.size(); i < iend; i++)
-            {
-                MapPoint *pMP = vpMapPoints[i];
-                if (pMP)
-                {
-                    if (!pMP->isBad())
-                    {
-                        if (!mbMonocular)
-                        {
-                            if (pKF->mvDepth[i] > pKF->mThDepth || pKF->mvDepth[i] < 0)
-                                continue;
-                        }
-
-                        nMPs++;
-                        if (pMP->Observations() > thObs)
-                        {
-                            const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
-                                                    : (i < pKF->NLeft) ? pKF->mvKeys[i].octave
-                                                                       : pKF->mvKeysRight[i].octave;
-                            const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
-                            int nObs = 0;
-                            for (map<KeyFrame *, tuple<int, int>>::const_iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
-                            {
-                                KeyFrame *pKFi = mit->first;
-                                if (pKFi == pKF)
-                                    continue;
-                                tuple<int, int> indexes = mit->second;
-                                int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
-                                int scaleLeveli = -1;
-                                if (pKFi->NLeft == -1)
-                                    scaleLeveli = pKFi->mvKeysUn[leftIndex].octave;
-                                else
-                                {
-                                    if (leftIndex != -1)
-                                    {
-                                        scaleLeveli = pKFi->mvKeys[leftIndex].octave;
-                                    }
-                                    if (rightIndex != -1)
-                                    {
-                                        int rightLevel = pKFi->mvKeysRight[rightIndex - pKFi->NLeft].octave;
-                                        scaleLeveli = (scaleLeveli == -1 || scaleLeveli > rightLevel) ? rightLevel
-                                                                                                      : scaleLeveli;
-                                    }
-                                }
-
-                                if (scaleLeveli <= scaleLevel + 1)
-                                {
-                                    nObs++;
-                                    if (nObs > thObs)
-                                        break;
-                                }
-                            }
-                            if (nObs > thObs)
-                            {
-                                nRedundantObservations++;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (nRedundantObservations > redundant_th * nMPs)
-            {
-                if (mbInertial)
-                {
-                    if (mpAtlas->KeyFramesInMap() <= Nd)
-                    {
-                        // /pkf
-                        unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                        (*vit)->mReferencecount_ockf--;
-                        (*vit)->mReferencecount--;
-                        // (*vit)->mReferencecount_canonical--;
-                        // (*vit)->mReferencecount_container--;
-                        continue;
-                    }
-
-                    if (pKF->mnId > (mpCurrentKeyFrame->mnId - 2))
-                    {
-                        // /pkf
-                        unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                        (*vit)->mReferencecount_ockf--;
-                        (*vit)->mReferencecount--;
-                        // (*vit)->mReferencecount_canonical--;
-                        // (*vit)->mReferencecount_container--;
-                        continue;
-                    }
-
-                    if (pKF->mPrevKF && pKF->mNextKF)
-                    {
-                        const float t = pKF->mNextKF->mTimeStamp - pKF->mPrevKF->mTimeStamp;
-
-                        if ((bInitImu && (pKF->mnId < last_ID) && t < 3.) || (t < 0.5))
-                        {
-                            pKF->mNextKF->mpImuPreintegrated->MergePrevious(pKF->mpImuPreintegrated);
-                            pKF->mNextKF->mPrevKF = pKF->mPrevKF;
-                            pKF->mPrevKF->mNextKF = pKF->mNextKF;
-                            pKF->mNextKF = NULL;
-                            pKF->mPrevKF = NULL;
-                            pKF->SetBadFlag();
-                            // arr.push_back(pKF);
-                            if (arr.count(pKF) == 0)
-                            {
-
-                                kf_passed++;
-                            }
-                            arr.insert(pKF);
-                            SB_total_count.insert(pKF);
-                        }
-                        else if (!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition() - pKF->mPrevKF->GetImuPosition()).norm() < 0.02) && (t < 3))
-                        {
-                            pKF->mNextKF->mpImuPreintegrated->MergePrevious(pKF->mpImuPreintegrated);
-                            pKF->mNextKF->mPrevKF = pKF->mPrevKF;
-                            pKF->mPrevKF->mNextKF = pKF->mNextKF;
-                            pKF->mNextKF = NULL;
-                            pKF->mPrevKF = NULL;
-                            pKF->SetBadFlag();
-                            if (arr.count(pKF) == 0)
-                            {
-
-                                kf_passed++;
-                            }
-                            // arr.push_back(pKF);
-                            arr.insert(pKF);
-                            SB_total_count.insert(pKF);
-                        }
-                    }
-                }
-                else
-                {
-                    pKF->SetBadFlag();
-                    // arr.push_back(pKF);
-                    if (arr.count(pKF) == 0)
-                    {
-
-                        kf_passed++;
-                    }
-                    arr.insert(pKF);
-                    SB_total_count.insert(pKF);
-                }
-            }
-            if ((count > 20 && mbAbortBA) || count > 100)
-            {
-                {
-                    // /pkf
-                    unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                    (*vit)->mReferencecount_ockf--;
-                    (*vit)->mReferencecount--;
-                    // (*vit)->mReferencecount_canonical--;
-                    // (*vit)->mReferencecount_container--;
-                }
-                break;
-            }
-
+#endif
+#ifdef RF
             {
                 // /pkf
                 unique_lock<mutex> lock((*vit)->mMutexreferencecount);
@@ -1286,533 +1236,770 @@ namespace ORB_SLAM3
                 // (*vit)->mReferencecount_canonical--;
                 // (*vit)->mReferencecount_container--;
             }
+#endif
+            continue;
         }
+        const vector<MapPoint *> vpMapPoints = pKF->GetMapPointMatches();
 
-        for (auto itr : vpLocalKeyFrames)
+        int nObs = 3;
+        const int thObs = nObs;
+        int nRedundantObservations = 0;
+        int nMPs = 0;
+        for (size_t i = 0, iend = vpMapPoints.size(); i < iend; i++)
         {
+            MapPoint *pMP = vpMapPoints[i];
+            if (pMP)
             {
-                // vpLocalKeyFrames
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount_ockf--;
-                itr->mReferencecount--;
-                // itr->mReferencecount_canonical--;
-                // itr->mReferencecount_container--;
+                if (!pMP->isBad())
+                {
+                    if (!mbMonocular)
+                    {
+                        if (pKF->mvDepth[i] > pKF->mThDepth || pKF->mvDepth[i] < 0)
+                            continue;
+                    }
 
-                // cout << "Reference count" << itr->mReferencecount_ockf << endl;
+                    nMPs++;
+                    if (pMP->Observations() > thObs)
+                    {
+                        const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
+                                                : (i < pKF->NLeft) ? pKF->mvKeys[i].octave
+                                                                   : pKF->mvKeysRight[i].octave;
+                        const map<KeyFrame *, tuple<int, int>> observations = pMP->GetObservations();
+                        int nObs = 0;
+                        for (map<KeyFrame *, tuple<int, int>>::const_iterator mit = observations.begin(), mend = observations.end(); mit != mend; mit++)
+                        {
+                            KeyFrame *pKFi = mit->first;
+                            if (pKFi == pKF)
+                                continue;
+                            tuple<int, int> indexes = mit->second;
+                            int leftIndex = get<0>(indexes), rightIndex = get<1>(indexes);
+                            int scaleLeveli = -1;
+                            if (pKFi->NLeft == -1)
+                                scaleLeveli = pKFi->mvKeysUn[leftIndex].octave;
+                            else
+                            {
+                                if (leftIndex != -1)
+                                {
+                                    scaleLeveli = pKFi->mvKeys[leftIndex].octave;
+                                }
+                                if (rightIndex != -1)
+                                {
+                                    int rightLevel = pKFi->mvKeysRight[rightIndex - pKFi->NLeft].octave;
+                                    scaleLeveli = (scaleLeveli == -1 || scaleLeveli > rightLevel) ? rightLevel
+                                                                                                  : scaleLeveli;
+                                }
+                            }
+
+                            if (scaleLeveli <= scaleLevel + 1)
+                            {
+                                nObs++;
+                                if (nObs > thObs)
+                                    break;
+                            }
+                        }
+                        if (nObs > thObs)
+                        {
+                            nRedundantObservations++;
+                        }
+                    }
+                }
             }
-            // cout << endl;
         }
-        // cout << "# Number of keyframes in deletion set : " << arr.size() << endl;
-        cout << "############################################################################################################################" << endl;
-        // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
-        for (auto it = arr.begin(); it != arr.end();)
+
+        if (nRedundantObservations > redundant_th * nMPs)
         {
-            // cout << "Canonical Count "<< (*it)->mReferencecount_canonical << endl;
-            if ((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_canonical == 0)
+            if (mbInertial)
             {
-                totaldeletion++;
-                auto something = it;
-                it = arr.erase(it);
-                delete *something;
-                // cout << (*something)->mnId << endl;
+                if (mpAtlas->KeyFramesInMap() <= Nd)
+                {
+// /pkf
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
+                    {
+                        unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                        (*vit)->mReferencecount_ockf--;
+                        (*vit)->mReferencecount--;
+                    }
+#endif
+                    // (*vit)->mReferencecount_canonical--;
+                    // (*vit)->mReferencecount_container--;
+                    continue;
+                }
+
+                if (pKF->mnId > (mpCurrentKeyFrame->mnId - 2))
+                {
+// /pkf
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
+#endif
+#ifdef RF
+                    {
+                        unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                        (*vit)->mReferencecount_ockf--;
+                        (*vit)->mReferencecount--;
+                    }
+#endif
+                    // (*vit)->mReferencecount_canonical--;
+                    // (*vit)->mReferencecount_container--;
+                    continue;
+                }
+
+                if (pKF->mPrevKF && pKF->mNextKF)
+                {
+                    const float t = pKF->mNextKF->mTimeStamp - pKF->mPrevKF->mTimeStamp;
+
+                    if ((bInitImu && (pKF->mnId < last_ID) && t < 3.) || (t < 0.5))
+                    {
+                        pKF->mNextKF->mpImuPreintegrated->MergePrevious(pKF->mpImuPreintegrated);
+                        pKF->mNextKF->mPrevKF = pKF->mPrevKF;
+                        pKF->mPrevKF->mNextKF = pKF->mNextKF;
+                        pKF->mNextKF = NULL;
+                        pKF->mPrevKF = NULL;
+                        pKF->SetBadFlag();
+                        // arr.push_back(pKF);
+                        if (arr.count(pKF) == 0)
+                        {
+
+                            kf_passed++;
+                        }
+                        arr.insert(pKF);
+                        SB_total_count.insert(pKF);
+                    }
+                    else if (!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition() - pKF->mPrevKF->GetImuPosition()).norm() < 0.02) && (t < 3))
+                    {
+                        pKF->mNextKF->mpImuPreintegrated->MergePrevious(pKF->mpImuPreintegrated);
+                        pKF->mNextKF->mPrevKF = pKF->mPrevKF;
+                        pKF->mPrevKF->mNextKF = pKF->mNextKF;
+                        pKF->mNextKF = NULL;
+                        pKF->mPrevKF = NULL;
+                        pKF->SetBadFlag();
+                        if (arr.count(pKF) == 0)
+                        {
+
+                            kf_passed++;
+                        }
+                        // arr.push_back(pKF);
+                        arr.insert(pKF);
+                        SB_total_count.insert(pKF);
+                    }
+                }
             }
             else
-                it++;
-        }
-        cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
-        cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
-        cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-        cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
+            {
+                pKF->SetBadFlag();
+                // arr.push_back(pKF);
+                if (arr.count(pKF) == 0)
+                {
 
-        if (kf_passed != 0)
+                    kf_passed++;
+                }
+                arr.insert(pKF);
+                SB_total_count.insert(pKF);
+            }
+        }
+        if ((count > 20 && mbAbortBA) || count > 100)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-            float result = (float)totaldeletion / (float)kf_passed;
-
-            cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
-
-            result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
-            cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
-
-            result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
-            cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
-
-            result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
-            cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+                } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
+            {
+                // /pkf
+                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                (*vit)->mReferencecount_ockf--;
+                (*vit)->mReferencecount--;
+                // (*vit)->mReferencecount_canonical--;
+                // (*vit)->mReferencecount_container--;
+            }
+#endif
+            break;
         }
-        cout << "############################################################################################################################" << endl;
 
+        {
+// /pkf
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
+            {
+
+                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                (*vit)->mReferencecount_ockf--;
+                (*vit)->mReferencecount--;
+            }
+#endif
+            // (*vit)->mReferencecount_canonical--;
+            // (*vit)->mReferencecount_container--;
+        }
+    }
+
+    for (auto itr : vpLocalKeyFrames)
+    {
+#ifdef CASRF
+        {
+            int old_value, new_value;
+            do
+            {
+                new_value = old_value - 1;
+
+            } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+        }
+#endif
+#ifdef RF
+        {
+            // vpLocalKeyFrames
+            unique_lock<mutex> lock(itr->mMutexreferencecount);
+            itr->mReferencecount_ockf--;
+            itr->mReferencecount--;
+            // itr->mReferencecount_canonical--;
+            // itr->mReferencecount_container--;
+            // cout << "Reference count" << itr->mReferencecount_ockf << endl;
+        }
+#endif
         // cout << endl;
-        // cout << "KeyFrame Culling end" << endl;
     }
+    // cout << "# Number of keyframes in deletion set : " << arr.size() << endl;
+    // cout << "############################################################################################################################" << endl;
+    // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
+    for (auto it = arr.begin(); it != arr.end();)
+    {
+        // if ((*it)->mReferencecount_canonical != (*it)->mReferencecount_canonical_CAS)
+        //     cout << "Canonical Count " << (*it)->mReferencecount_ockf << "AND CAS " << (*it)->mReferencecount_ockf_CAS << endl;
+        if ((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_canonical == 0)
+        {
+            totaldeletion++;
+            auto something = it;
+            it = arr.erase(it);
+            delete *something;
+            // cout << (*something)->mnId << endl;
+        }
+        else
+            it++;
+    }
+    // cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
+    // cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;
+    // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+    // cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
 
-    void LocalMapping::RequestReset()
+    // if (kf_passed != 0)
+    // {
+
+    //     float result = (float)totaldeletion / (float)kf_passed;
+
+    //     cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+
+    //     result = (float)totaldeletion / (float)mpAtlas->KeyFramesInMap();
+    //     cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+
+    //     result = (float)totaldeletion / (float)mpCurrentKeyFrame->mnId;
+    //     cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
+
+    //     result = (float)kf_passed / (float)mpCurrentKeyFrame->mnId;
+    //     cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+    // }
+    // cout << "############################################################################################################################" << endl;
+
+    // cout << endl;
+    // cout << "KeyFrame Culling end" << endl;
+}
+
+void LocalMapping::RequestReset()
+{
+    {
+        unique_lock<mutex> lock(mMutexReset);
+        cout << "LM: Map reset recieved" << endl;
+        mbResetRequested = true;
+    }
+    cout << "LM: Map reset, waiting..." << endl;
+
+    while (1)
     {
         {
-            unique_lock<mutex> lock(mMutexReset);
-            cout << "LM: Map reset recieved" << endl;
-            mbResetRequested = true;
+            unique_lock<mutex> lock2(mMutexReset);
+            if (!mbResetRequested)
+                break;
         }
-        cout << "LM: Map reset, waiting..." << endl;
+        usleep(3000);
+    }
+    cout << "LM: Map reset, Done!!!" << endl;
+}
 
-        while (1)
+void LocalMapping::RequestResetActiveMap(Map *pMap)
+{
+    {
+        unique_lock<mutex> lock(mMutexReset);
+        cout << "LM: Active map reset recieved" << endl;
+        mbResetRequestedActiveMap = true;
+        mpMapToReset = pMap;
+    }
+    cout << "LM: Active map reset, waiting..." << endl;
+
+    while (1)
+    {
         {
-            {
-                unique_lock<mutex> lock2(mMutexReset);
-                if (!mbResetRequested)
-                    break;
-            }
-            usleep(3000);
+            unique_lock<mutex> lock2(mMutexReset);
+            if (!mbResetRequestedActiveMap)
+                break;
         }
-        cout << "LM: Map reset, Done!!!" << endl;
+        usleep(3000);
     }
+    cout << "LM: Active map reset, Done!!!" << endl;
+}
 
-    void LocalMapping::RequestResetActiveMap(Map *pMap)
+void LocalMapping::ResetIfRequested()
+{
+    bool executed_reset = false;
     {
-        {
-            unique_lock<mutex> lock(mMutexReset);
-            cout << "LM: Active map reset recieved" << endl;
-            mbResetRequestedActiveMap = true;
-            mpMapToReset = pMap;
-        }
-        cout << "LM: Active map reset, waiting..." << endl;
-
-        while (1)
-        {
-            {
-                unique_lock<mutex> lock2(mMutexReset);
-                if (!mbResetRequestedActiveMap)
-                    break;
-            }
-            usleep(3000);
-        }
-        cout << "LM: Active map reset, Done!!!" << endl;
-    }
-
-    void LocalMapping::ResetIfRequested()
-    {
-        bool executed_reset = false;
-        {
-            unique_lock<mutex> lock(mMutexReset);
-            if (mbResetRequested)
-            {
-                executed_reset = true;
-
-                cout << "LM: Reseting Atlas in Local Mapping..." << endl;
-                mlNewKeyFrames.clear();
-                mlpRecentAddedMapPoints.clear();
-                mbResetRequested = false;
-                mbResetRequestedActiveMap = false;
-
-                // Inertial parameters
-                mTinit = 0.f;
-                mbNotBA2 = true;
-                mbNotBA1 = true;
-                mbBadImu = false;
-
-                mIdxInit = 0;
-
-                cout << "LM: End reseting Local Mapping..." << endl;
-            }
-
-            if (mbResetRequestedActiveMap)
-            {
-                executed_reset = true;
-                cout << "LM: Reseting current map in Local Mapping..." << endl;
-                mlNewKeyFrames.clear();
-                mlpRecentAddedMapPoints.clear();
-
-                // Inertial parameters
-                mTinit = 0.f;
-                mbNotBA2 = true;
-                mbNotBA1 = true;
-                mbBadImu = false;
-
-                mbResetRequested = false;
-                mbResetRequestedActiveMap = false;
-                cout << "LM: End reseting Local Mapping..." << endl;
-            }
-        }
-        if (executed_reset)
-            cout << "LM: Reset free the mutex" << endl;
-    }
-
-    void LocalMapping::RequestFinish()
-    {
-        unique_lock<mutex> lock(mMutexFinish);
-        mbFinishRequested = true;
-        std::terminate();
-    }
-
-    bool LocalMapping::CheckFinish()
-    {
-        unique_lock<mutex> lock(mMutexFinish);
-        return mbFinishRequested;
-    }
-
-    void LocalMapping::SetFinish()
-    {
-        unique_lock<mutex> lock(mMutexFinish);
-        mbFinished = true;
-        unique_lock<mutex> lock2(mMutexStop);
-        mbStopped = true;
-    }
-
-    bool LocalMapping::isFinished()
-    {
-        unique_lock<mutex> lock(mMutexFinish);
-        return mbFinished;
-    }
-
-    void LocalMapping::InitializeIMU(float priorG, float priorA, bool bFIBA)
-    {
+        unique_lock<mutex> lock(mMutexReset);
         if (mbResetRequested)
-            return;
-
-        float minTime;
-        int nMinKF;
-        if (mbMonocular)
         {
-            minTime = 2.0;
-            nMinKF = 10;
-        }
-        else
-        {
-            minTime = 1.0;
-            nMinKF = 10;
+            executed_reset = true;
+
+            cout << "LM: Reseting Atlas in Local Mapping..." << endl;
+            mlNewKeyFrames.clear();
+            mlpRecentAddedMapPoints.clear();
+            mbResetRequested = false;
+            mbResetRequestedActiveMap = false;
+
+            // Inertial parameters
+            mTinit = 0.f;
+            mbNotBA2 = true;
+            mbNotBA1 = true;
+            mbBadImu = false;
+
+            mIdxInit = 0;
+
+            cout << "LM: End reseting Local Mapping..." << endl;
         }
 
-        if (mpAtlas->KeyFramesInMap() < nMinKF)
-            return;
-
-        // Retrieve all keyframe in temporal order
-        list<KeyFrame *> lpKF;
-        KeyFrame *pKF = mpCurrentKeyFrame;
-        while (pKF->mPrevKF)
+        if (mbResetRequestedActiveMap)
         {
-            lpKF.push_front(pKF);
-            pKF = pKF->mPrevKF;
+            executed_reset = true;
+            cout << "LM: Reseting current map in Local Mapping..." << endl;
+            mlNewKeyFrames.clear();
+            mlpRecentAddedMapPoints.clear();
+
+            // Inertial parameters
+            mTinit = 0.f;
+            mbNotBA2 = true;
+            mbNotBA1 = true;
+            mbBadImu = false;
+
+            mbResetRequested = false;
+            mbResetRequestedActiveMap = false;
+            cout << "LM: End reseting Local Mapping..." << endl;
         }
+    }
+    if (executed_reset)
+        cout << "LM: Reset free the mutex" << endl;
+}
+
+void LocalMapping::RequestFinish()
+{
+    unique_lock<mutex> lock(mMutexFinish);
+    mbFinishRequested = true;
+    // std::terminate();
+}
+
+bool LocalMapping::CheckFinish()
+{
+    unique_lock<mutex> lock(mMutexFinish);
+    return mbFinishRequested;
+}
+
+void LocalMapping::SetFinish()
+{
+    unique_lock<mutex> lock(mMutexFinish);
+    mbFinished = true;
+    unique_lock<mutex> lock2(mMutexStop);
+    mbStopped = true;
+}
+
+bool LocalMapping::isFinished()
+{
+    unique_lock<mutex> lock(mMutexFinish);
+    return mbFinished;
+}
+
+void LocalMapping::InitializeIMU(float priorG, float priorA, bool bFIBA)
+{
+    if (mbResetRequested)
+        return;
+
+    float minTime;
+    int nMinKF;
+    if (mbMonocular)
+    {
+        minTime = 2.0;
+        nMinKF = 10;
+    }
+    else
+    {
+        minTime = 1.0;
+        nMinKF = 10;
+    }
+
+    if (mpAtlas->KeyFramesInMap() < nMinKF)
+        return;
+
+    // Retrieve all keyframe in temporal order
+    list<KeyFrame *> lpKF;
+    KeyFrame *pKF = mpCurrentKeyFrame;
+    while (pKF->mPrevKF)
+    {
         lpKF.push_front(pKF);
-        vector<KeyFrame *> vpKF(lpKF.begin(), lpKF.end());
+        pKF = pKF->mPrevKF;
+    }
+    lpKF.push_front(pKF);
+    vector<KeyFrame *> vpKF(lpKF.begin(), lpKF.end());
 
-        if (vpKF.size() < nMinKF)
-            return;
+    if (vpKF.size() < nMinKF)
+        return;
 
-        mFirstTs = vpKF.front()->mTimeStamp;
-        if (mpCurrentKeyFrame->mTimeStamp - mFirstTs < minTime)
-            return;
+    mFirstTs = vpKF.front()->mTimeStamp;
+    if (mpCurrentKeyFrame->mTimeStamp - mFirstTs < minTime)
+        return;
 
-        bInitializing = true;
+    bInitializing = true;
 
-        while (CheckNewKeyFrames())
+    while (CheckNewKeyFrames())
+    {
+        ProcessNewKeyFrame();
+        vpKF.push_back(mpCurrentKeyFrame);
+        lpKF.push_back(mpCurrentKeyFrame);
+    }
+
+    const int N = vpKF.size();
+    IMU::Bias b(0, 0, 0, 0, 0, 0);
+
+    // Compute and KF velocities mRwg estimation
+    if (!mpCurrentKeyFrame->GetMap()->isImuInitialized())
+    {
+        Eigen::Matrix3f Rwg;
+        Eigen::Vector3f dirG;
+        dirG.setZero();
+        for (vector<KeyFrame *>::iterator itKF = vpKF.begin(); itKF != vpKF.end(); itKF++)
         {
-            ProcessNewKeyFrame();
-            vpKF.push_back(mpCurrentKeyFrame);
-            lpKF.push_back(mpCurrentKeyFrame);
-        }
-
-        const int N = vpKF.size();
-        IMU::Bias b(0, 0, 0, 0, 0, 0);
-
-        // Compute and KF velocities mRwg estimation
-        if (!mpCurrentKeyFrame->GetMap()->isImuInitialized())
-        {
-            Eigen::Matrix3f Rwg;
-            Eigen::Vector3f dirG;
-            dirG.setZero();
-            for (vector<KeyFrame *>::iterator itKF = vpKF.begin(); itKF != vpKF.end(); itKF++)
-            {
-                if (!(*itKF)->mpImuPreintegrated)
-                    continue;
-                if (!(*itKF)->mPrevKF)
-                    continue;
-
-                dirG -= (*itKF)->mPrevKF->GetImuRotation() * (*itKF)->mpImuPreintegrated->GetUpdatedDeltaVelocity();
-                Eigen::Vector3f _vel = ((*itKF)->GetImuPosition() - (*itKF)->mPrevKF->GetImuPosition()) / (*itKF)->mpImuPreintegrated->dT;
-                (*itKF)->SetVelocity(_vel);
-                (*itKF)->mPrevKF->SetVelocity(_vel);
-            }
-
-            dirG = dirG / dirG.norm();
-            Eigen::Vector3f gI(0.0f, 0.0f, -1.0f);
-            Eigen::Vector3f v = gI.cross(dirG);
-            const float nv = v.norm();
-            const float cosg = gI.dot(dirG);
-            const float ang = acos(cosg);
-            Eigen::Vector3f vzg = v * ang / nv;
-            Rwg = Sophus::SO3f::exp(vzg).matrix();
-            mRwg = Rwg.cast<double>();
-            mTinit = mpCurrentKeyFrame->mTimeStamp - mFirstTs;
-        }
-        else
-        {
-            mRwg = Eigen::Matrix3d::Identity();
-            mbg = mpCurrentKeyFrame->GetGyroBias().cast<double>();
-            mba = mpCurrentKeyFrame->GetAccBias().cast<double>();
-        }
-
-        mScale = 1.0;
-
-        mInitTime = mpTracker->mLastFrame.mTimeStamp - vpKF.front()->mTimeStamp;
-
-        std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
-        Optimizer::InertialOptimization(mpAtlas->GetCurrentMap(), mRwg, mScale, mbg, mba, mbMonocular, infoInertial, false, false, priorG, priorA);
-
-        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-
-        if (mScale < 1e-1)
-        {
-            cout << "scale too small" << endl;
-            bInitializing = false;
-            return;
-        }
-
-        // Before this line we are not changing the map
-        {
-            unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
-            if ((fabs(mScale - 1.f) > 0.00001) || !mbMonocular)
-            {
-                Sophus::SE3f Twg(mRwg.cast<float>().transpose(), Eigen::Vector3f::Zero());
-                mpAtlas->GetCurrentMap()->ApplyScaledRotation(Twg, mScale, true);
-                mpTracker->UpdateFrameIMU(mScale, vpKF[0]->GetImuBias(), mpCurrentKeyFrame);
-            }
-
-            // Check if initialization OK
-            if (!mpAtlas->isImuInitialized())
-                for (int i = 0; i < N; i++)
-                {
-                    KeyFrame *pKF2 = vpKF[i];
-                    pKF2->bImu = true;
-                }
-        }
-
-        mpTracker->UpdateFrameIMU(1.0, vpKF[0]->GetImuBias(), mpCurrentKeyFrame);
-        if (!mpAtlas->isImuInitialized())
-        {
-            mpAtlas->SetImuInitialized();
-            mpTracker->t0IMU = mpTracker->mCurrentFrame.mTimeStamp;
-            mpCurrentKeyFrame->bImu = true;
-        }
-
-        std::chrono::steady_clock::time_point t4 = std::chrono::steady_clock::now();
-        if (bFIBA)
-        {
-            if (priorA != 0.f)
-                Optimizer::FullInertialBA(mpAtlas->GetCurrentMap(), 100, false, mpCurrentKeyFrame->mnId, NULL, true, priorG, priorA);
-            else
-                Optimizer::FullInertialBA(mpAtlas->GetCurrentMap(), 100, false, mpCurrentKeyFrame->mnId, NULL, false);
-        }
-
-        std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
-
-        Verbose::PrintMess("Global Bundle Adjustment finished\nUpdating map ...", Verbose::VERBOSITY_NORMAL);
-
-        // Get Map Mutex
-        unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
-
-        unsigned long GBAid = mpCurrentKeyFrame->mnId;
-
-        // Process keyframes in the queue
-        while (CheckNewKeyFrames())
-        {
-            ProcessNewKeyFrame();
-            vpKF.push_back(mpCurrentKeyFrame);
-            lpKF.push_back(mpCurrentKeyFrame);
-        }
-
-        // Correct keyframes starting at map first keyframe
-        list<KeyFrame *> lpKFtoCheck(mpAtlas->GetCurrentMap()->mvpKeyFrameOrigins.begin(), mpAtlas->GetCurrentMap()->mvpKeyFrameOrigins.end());
-
-        while (!lpKFtoCheck.empty())
-        {
-            KeyFrame *pKF = lpKFtoCheck.front();
-            const set<KeyFrame *> sChilds = pKF->GetChilds();
-            Sophus::SE3f Twc = pKF->GetPoseInverse();
-            for (set<KeyFrame *>::const_iterator sit = sChilds.begin(); sit != sChilds.end(); sit++)
-            {
-                KeyFrame *pChild = *sit;
-                if (!pChild || pChild->isBad())
-                    continue;
-
-                if (pChild->mnBAGlobalForKF != GBAid)
-                {
-                    Sophus::SE3f Tchildc = pChild->GetPose() * Twc;
-                    pChild->mTcwGBA = Tchildc * pKF->mTcwGBA;
-
-                    Sophus::SO3f Rcor = pChild->mTcwGBA.so3().inverse() * pChild->GetPose().so3();
-                    if (pChild->isVelocitySet())
-                    {
-                        pChild->mVwbGBA = Rcor * pChild->GetVelocity();
-                    }
-                    else
-                    {
-                        Verbose::PrintMess("Child velocity empty!! ", Verbose::VERBOSITY_NORMAL);
-                    }
-
-                    pChild->mBiasGBA = pChild->GetImuBias();
-                    pChild->mnBAGlobalForKF = GBAid;
-                }
-                lpKFtoCheck.push_back(pChild);
-            }
-
-            pKF->mTcwBefGBA = pKF->GetPose();
-            pKF->SetPose(pKF->mTcwGBA);
-
-            if (pKF->bImu)
-            {
-                pKF->mVwbBefGBA = pKF->GetVelocity();
-                pKF->SetVelocity(pKF->mVwbGBA);
-                pKF->SetNewBias(pKF->mBiasGBA);
-            }
-            else
-            {
-                cout << "KF " << pKF->mnId << " not set to inertial!! \n";
-            }
-
-            lpKFtoCheck.pop_front();
-        }
-
-        // Correct MapPoints
-        const vector<MapPoint *> vpMPs = mpAtlas->GetCurrentMap()->GetAllMapPoints();
-
-        for (size_t i = 0; i < vpMPs.size(); i++)
-        {
-            MapPoint *pMP = vpMPs[i];
-
-            if (pMP->isBad())
+            if (!(*itKF)->mpImuPreintegrated)
+                continue;
+            if (!(*itKF)->mPrevKF)
                 continue;
 
-            if (pMP->mnBAGlobalForKF == GBAid)
-            {
-                // If optimized by Global BA, just update
-                pMP->SetWorldPos(pMP->mPosGBA);
-            }
-            else
-            {
-                // Update according to the correction of its reference keyframe
-                KeyFrame *pRefKF = pMP->GetReferenceKeyFrame();
-
-                if (pRefKF->mnBAGlobalForKF != GBAid)
-                    continue;
-
-                // Map to non-corrected camera
-                Eigen::Vector3f Xc = pRefKF->mTcwBefGBA * pMP->GetWorldPos();
-
-                // Backproject using corrected camera
-                pMP->SetWorldPos(pRefKF->GetPoseInverse() * Xc);
-            }
+            dirG -= (*itKF)->mPrevKF->GetImuRotation() * (*itKF)->mpImuPreintegrated->GetUpdatedDeltaVelocity();
+            Eigen::Vector3f _vel = ((*itKF)->GetImuPosition() - (*itKF)->mPrevKF->GetImuPosition()) / (*itKF)->mpImuPreintegrated->dT;
+            (*itKF)->SetVelocity(_vel);
+            (*itKF)->mPrevKF->SetVelocity(_vel);
         }
 
-        Verbose::PrintMess("Map updated!", Verbose::VERBOSITY_NORMAL);
-
-        mnKFs = vpKF.size();
-        mIdxInit++;
-
-        for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
-        {
-            (*lit)->SetBadFlag();
-            delete *lit;
-        }
-        mlNewKeyFrames.clear();
-
-        mpTracker->mState = Tracking::OK;
-        bInitializing = false;
-
-        mpCurrentKeyFrame->GetMap()->IncreaseChangeIndex();
-
-        return;
+        dirG = dirG / dirG.norm();
+        Eigen::Vector3f gI(0.0f, 0.0f, -1.0f);
+        Eigen::Vector3f v = gI.cross(dirG);
+        const float nv = v.norm();
+        const float cosg = gI.dot(dirG);
+        const float ang = acos(cosg);
+        Eigen::Vector3f vzg = v * ang / nv;
+        Rwg = Sophus::SO3f::exp(vzg).matrix();
+        mRwg = Rwg.cast<double>();
+        mTinit = mpCurrentKeyFrame->mTimeStamp - mFirstTs;
     }
-
-    void LocalMapping::ScaleRefinement()
+    else
     {
-        // Minimum number of keyframes to compute a solution
-        // Minimum time (seconds) between first and last keyframe to compute a solution. Make the difference between monocular and stereo
-        // unique_lock<mutex> lock0(mMutexImuInit);
-        if (mbResetRequested)
-            return;
-
-        // Retrieve all keyframes in temporal order
-        list<KeyFrame *> lpKF;
-        KeyFrame *pKF = mpCurrentKeyFrame;
-        while (pKF->mPrevKF)
-        {
-            lpKF.push_front(pKF);
-            pKF = pKF->mPrevKF;
-        }
-        lpKF.push_front(pKF);
-        vector<KeyFrame *> vpKF(lpKF.begin(), lpKF.end());
-
-        while (CheckNewKeyFrames())
-        {
-            ProcessNewKeyFrame();
-            vpKF.push_back(mpCurrentKeyFrame);
-            lpKF.push_back(mpCurrentKeyFrame);
-        }
-
-        const int N = vpKF.size();
-
         mRwg = Eigen::Matrix3d::Identity();
-        mScale = 1.0;
+        mbg = mpCurrentKeyFrame->GetGyroBias().cast<double>();
+        mba = mpCurrentKeyFrame->GetAccBias().cast<double>();
+    }
 
-        std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
-        Optimizer::InertialOptimization(mpAtlas->GetCurrentMap(), mRwg, mScale);
-        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+    mScale = 1.0;
 
-        if (mScale < 1e-1) // 1e-1
-        {
-            cout << "scale too small" << endl;
-            bInitializing = false;
-            return;
-        }
+    mInitTime = mpTracker->mLastFrame.mTimeStamp - vpKF.front()->mTimeStamp;
 
-        Sophus::SO3d so3wg(mRwg);
-        // Before this line we are not changing the map
-        unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
-        std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-        if ((fabs(mScale - 1.f) > 0.002) || !mbMonocular)
-        {
-            Sophus::SE3f Tgw(mRwg.cast<float>().transpose(), Eigen::Vector3f::Zero());
-            mpAtlas->GetCurrentMap()->ApplyScaledRotation(Tgw, mScale, true);
-            mpTracker->UpdateFrameIMU(mScale, mpCurrentKeyFrame->GetImuBias(), mpCurrentKeyFrame);
-        }
-        std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
+    Optimizer::InertialOptimization(mpAtlas->GetCurrentMap(), mRwg, mScale, mbg, mba, mbMonocular, infoInertial, false, false, priorG, priorA);
 
-        for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
-        {
-            (*lit)->SetBadFlag();
-            // arr.push_back((*lit));
-            delete *lit;
-        }
-        mlNewKeyFrames.clear();
+    std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
-        double t_inertial_only = std::chrono::duration_cast<std::chrono::duration<double>>(t1 - t0).count();
-
-        // To perform pose-inertial opt w.r.t. last keyframe
-        mpCurrentKeyFrame->GetMap()->IncreaseChangeIndex();
-
+    if (mScale < 1e-1)
+    {
+        cout << "scale too small" << endl;
+        bInitializing = false;
         return;
     }
 
-    bool LocalMapping::IsInitializing()
+    // Before this line we are not changing the map
     {
-        return bInitializing;
+        unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
+        if ((fabs(mScale - 1.f) > 0.00001) || !mbMonocular)
+        {
+            Sophus::SE3f Twg(mRwg.cast<float>().transpose(), Eigen::Vector3f::Zero());
+            mpAtlas->GetCurrentMap()->ApplyScaledRotation(Twg, mScale, true);
+            mpTracker->UpdateFrameIMU(mScale, vpKF[0]->GetImuBias(), mpCurrentKeyFrame);
+        }
+
+        // Check if initialization OK
+        if (!mpAtlas->isImuInitialized())
+            for (int i = 0; i < N; i++)
+            {
+                KeyFrame *pKF2 = vpKF[i];
+                pKF2->bImu = true;
+            }
     }
 
-    double LocalMapping::GetCurrKFTime()
+    mpTracker->UpdateFrameIMU(1.0, vpKF[0]->GetImuBias(), mpCurrentKeyFrame);
+    if (!mpAtlas->isImuInitialized())
     {
+        mpAtlas->SetImuInitialized();
+        mpTracker->t0IMU = mpTracker->mCurrentFrame.mTimeStamp;
+        mpCurrentKeyFrame->bImu = true;
+    }
 
-        if (mpCurrentKeyFrame)
+    std::chrono::steady_clock::time_point t4 = std::chrono::steady_clock::now();
+    if (bFIBA)
+    {
+        if (priorA != 0.f)
+            Optimizer::FullInertialBA(mpAtlas->GetCurrentMap(), 100, false, mpCurrentKeyFrame->mnId, NULL, true, priorG, priorA);
+        else
+            Optimizer::FullInertialBA(mpAtlas->GetCurrentMap(), 100, false, mpCurrentKeyFrame->mnId, NULL, false);
+    }
+
+    std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
+
+    Verbose::PrintMess("Global Bundle Adjustment finished\nUpdating map ...", Verbose::VERBOSITY_NORMAL);
+
+    // Get Map Mutex
+    unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
+
+    unsigned long GBAid = mpCurrentKeyFrame->mnId;
+
+    // Process keyframes in the queue
+    while (CheckNewKeyFrames())
+    {
+        ProcessNewKeyFrame();
+        vpKF.push_back(mpCurrentKeyFrame);
+        lpKF.push_back(mpCurrentKeyFrame);
+    }
+
+    // Correct keyframes starting at map first keyframe
+    list<KeyFrame *> lpKFtoCheck(mpAtlas->GetCurrentMap()->mvpKeyFrameOrigins.begin(), mpAtlas->GetCurrentMap()->mvpKeyFrameOrigins.end());
+
+    while (!lpKFtoCheck.empty())
+    {
+        KeyFrame *pKF = lpKFtoCheck.front();
+        const set<KeyFrame *> sChilds = pKF->GetChilds();
+        Sophus::SE3f Twc = pKF->GetPoseInverse();
+        for (set<KeyFrame *>::const_iterator sit = sChilds.begin(); sit != sChilds.end(); sit++)
         {
-            return mpCurrentKeyFrame->mTimeStamp;
+            KeyFrame *pChild = *sit;
+            if (!pChild || pChild->isBad())
+                continue;
+
+            if (pChild->mnBAGlobalForKF != GBAid)
+            {
+                Sophus::SE3f Tchildc = pChild->GetPose() * Twc;
+                pChild->mTcwGBA = Tchildc * pKF->mTcwGBA;
+
+                Sophus::SO3f Rcor = pChild->mTcwGBA.so3().inverse() * pChild->GetPose().so3();
+                if (pChild->isVelocitySet())
+                {
+                    pChild->mVwbGBA = Rcor * pChild->GetVelocity();
+                }
+                else
+                {
+                    Verbose::PrintMess("Child velocity empty!! ", Verbose::VERBOSITY_NORMAL);
+                }
+
+                pChild->mBiasGBA = pChild->GetImuBias();
+                pChild->mnBAGlobalForKF = GBAid;
+            }
+            lpKFtoCheck.push_back(pChild);
+        }
+
+        pKF->mTcwBefGBA = pKF->GetPose();
+        pKF->SetPose(pKF->mTcwGBA);
+
+        if (pKF->bImu)
+        {
+            pKF->mVwbBefGBA = pKF->GetVelocity();
+            pKF->SetVelocity(pKF->mVwbGBA);
+            pKF->SetNewBias(pKF->mBiasGBA);
         }
         else
-            return 0.0;
+        {
+            cout << "KF " << pKF->mnId << " not set to inertial!! \n";
+        }
+
+        lpKFtoCheck.pop_front();
     }
 
-    KeyFrame *LocalMapping::GetCurrKF()
+    // Correct MapPoints
+    const vector<MapPoint *> vpMPs = mpAtlas->GetCurrentMap()->GetAllMapPoints();
+
+    for (size_t i = 0; i < vpMPs.size(); i++)
     {
-        return mpCurrentKeyFrame;
+        MapPoint *pMP = vpMPs[i];
+
+        if (pMP->isBad())
+            continue;
+
+        if (pMP->mnBAGlobalForKF == GBAid)
+        {
+            // If optimized by Global BA, just update
+            pMP->SetWorldPos(pMP->mPosGBA);
+        }
+        else
+        {
+            // Update according to the correction of its reference keyframe
+            KeyFrame *pRefKF = pMP->GetReferenceKeyFrame();
+
+            if (pRefKF->mnBAGlobalForKF != GBAid)
+                continue;
+
+            // Map to non-corrected camera
+            Eigen::Vector3f Xc = pRefKF->mTcwBefGBA * pMP->GetWorldPos();
+
+            // Backproject using corrected camera
+            pMP->SetWorldPos(pRefKF->GetPoseInverse() * Xc);
+        }
     }
+
+    Verbose::PrintMess("Map updated!", Verbose::VERBOSITY_NORMAL);
+
+    mnKFs = vpKF.size();
+    mIdxInit++;
+
+    for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
+    {
+        (*lit)->SetBadFlag();
+        delete *lit;
+    }
+    mlNewKeyFrames.clear();
+
+    mpTracker->mState = Tracking::OK;
+    bInitializing = false;
+
+    mpCurrentKeyFrame->GetMap()->IncreaseChangeIndex();
+
+    return;
+}
+
+void LocalMapping::ScaleRefinement()
+{
+    // Minimum number of keyframes to compute a solution
+    // Minimum time (seconds) between first and last keyframe to compute a solution. Make the difference between monocular and stereo
+    // unique_lock<mutex> lock0(mMutexImuInit);
+    if (mbResetRequested)
+        return;
+
+    // Retrieve all keyframes in temporal order
+    list<KeyFrame *> lpKF;
+    KeyFrame *pKF = mpCurrentKeyFrame;
+    while (pKF->mPrevKF)
+    {
+        lpKF.push_front(pKF);
+        pKF = pKF->mPrevKF;
+    }
+    lpKF.push_front(pKF);
+    vector<KeyFrame *> vpKF(lpKF.begin(), lpKF.end());
+
+    while (CheckNewKeyFrames())
+    {
+        ProcessNewKeyFrame();
+        vpKF.push_back(mpCurrentKeyFrame);
+        lpKF.push_back(mpCurrentKeyFrame);
+    }
+
+    const int N = vpKF.size();
+
+    mRwg = Eigen::Matrix3d::Identity();
+    mScale = 1.0;
+
+    std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
+    Optimizer::InertialOptimization(mpAtlas->GetCurrentMap(), mRwg, mScale);
+    std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+
+    if (mScale < 1e-1) // 1e-1
+    {
+        cout << "scale too small" << endl;
+        bInitializing = false;
+        return;
+    }
+
+    Sophus::SO3d so3wg(mRwg);
+    // Before this line we are not changing the map
+    unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
+    std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+    if ((fabs(mScale - 1.f) > 0.002) || !mbMonocular)
+    {
+        Sophus::SE3f Tgw(mRwg.cast<float>().transpose(), Eigen::Vector3f::Zero());
+        mpAtlas->GetCurrentMap()->ApplyScaledRotation(Tgw, mScale, true);
+        mpTracker->UpdateFrameIMU(mScale, mpCurrentKeyFrame->GetImuBias(), mpCurrentKeyFrame);
+    }
+    std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
+
+    for (list<KeyFrame *>::iterator lit = mlNewKeyFrames.begin(), lend = mlNewKeyFrames.end(); lit != lend; lit++)
+    {
+        (*lit)->SetBadFlag();
+        // arr.push_back((*lit));
+        delete *lit;
+    }
+    mlNewKeyFrames.clear();
+
+    double t_inertial_only = std::chrono::duration_cast<std::chrono::duration<double>>(t1 - t0).count();
+
+    // To perform pose-inertial opt w.r.t. last keyframe
+    mpCurrentKeyFrame->GetMap()->IncreaseChangeIndex();
+
+    return;
+}
+
+bool LocalMapping::IsInitializing()
+{
+    return bInitializing;
+}
+
+double LocalMapping::GetCurrKFTime()
+{
+
+    if (mpCurrentKeyFrame)
+    {
+        return mpCurrentKeyFrame->mTimeStamp;
+    }
+    else
+        return 0.0;
+}
+
+KeyFrame *LocalMapping::GetCurrKF()
+{
+    return mpCurrentKeyFrame;
+}
 
 } // namespace ORB_SLAM

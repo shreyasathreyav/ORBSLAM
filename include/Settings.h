@@ -19,6 +19,9 @@
 #ifndef ORB_SLAM3_SETTINGS_H
 #define ORB_SLAM3_SETTINGS_H
 
+#define CASRF
+#define RF
+
 
 // Flag to activate the measurement of time in each process (track,localmap, place recognition).
 //#define REGISTER_TIMES
