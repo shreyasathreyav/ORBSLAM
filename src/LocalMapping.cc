@@ -515,6 +515,8 @@ namespace ORB_SLAM3
         {
             if (i > 0 && CheckNewKeyFrames())
                 return;
+
+            #ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -523,7 +525,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
             }
-
+            #endif
+            #ifdef RF
             {
                 unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
                 // vpNeighKFs[i]->mReferencecount_canonical++;
@@ -531,7 +534,7 @@ namespace ORB_SLAM3
                 vpNeighKFs[i]->mReferencecount_ockf++;
                 vpNeighKFs[i]->mReferencecount++;
             }
-
+            #endif
             KeyFrame *pKF2 = vpNeighKFs[i];
 
             GeometricCamera *pCamera1 = mpCurrentKeyFrame->mpCamera, *pCamera2 = pKF2->mpCamera;
@@ -1206,6 +1209,7 @@ void LocalMapping::KeyFrameCulling()
     for (vector<KeyFrame *>::iterator vit = vpLocalKeyFrames.begin(), vend = vpLocalKeyFrames.end(); vit != vend; vit++)
     {
         count++;
+        #ifdef CASRF
         {
             int old_value, new_value;
             do
@@ -1214,6 +1218,8 @@ void LocalMapping::KeyFrameCulling()
 
             } while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value));
         }
+        #endif
+        #ifdef RF
         {
             unique_lock<mutex> lock((*vit)->mMutexreferencecount);
             (*vit)->mReferencecount_ockf++;
@@ -1221,6 +1227,7 @@ void LocalMapping::KeyFrameCulling()
             // (*vit)->mReferencecount_canonical++;
             // (*vit)->mReferencecount_container++;
         }
+        #endif
         KeyFrame *pKF = *vit;
 
         if ((pKF->mnId == pKF->GetMap()->GetInitKFid()) || pKF->isBad())

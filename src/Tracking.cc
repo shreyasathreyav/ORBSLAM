@@ -3787,6 +3787,7 @@ namespace ORB_SLAM3
                 {
                     if (pNeighKF->mnTrackReferenceForFrame != mCurrentFrame.mnId)
                     {
+                        #ifdef CASRF
                         {
                             int old_value, new_value;
                             do
@@ -3795,12 +3796,15 @@ namespace ORB_SLAM3
 
                             } while (!atomic_compare_exchange_strong(&(pNeighKF->mReferencecount_ockf_CAS), &old_value, new_value));
                         }
+                        #endif
+                        #ifdef RF
                         {
                             unique_lock<mutex> lock(pNeighKF->mMutexreferencecount);
                             // pNeighKF->mReferencecount_canonical++;
                             pNeighKF->mReferencecount_ockf++;
                             pNeighKF->mReferencecount++;
                         }
+                        #endif
 
                         mvpLocalKeyFrames.push_back(pNeighKF);
 
