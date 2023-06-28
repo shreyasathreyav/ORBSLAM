@@ -1548,20 +1548,20 @@ namespace ORB_SLAM3
                     it++;
             }
 #endif
-// #ifdef RF
-//             {
-//                 if ((*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_canonical == 0)
-//                 {
-//                     totaldeletion++;
-//                     auto something = it;
-//                     it = arr.erase(it);
-//                     delete *something;
-//                     // cout << (*something)->mnId << endl;
-//                 }
-//                 else
-//                     it++;
-//             }
-// #endif
+#ifdef RF
+            {
+                if ((*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_canonical == 0)
+                {
+                    totaldeletion++;
+                    auto something = it;
+                    it = arr.erase(it);
+                    delete *something;
+                    // cout << (*something)->mnId << endl;
+                }
+                else
+                    it++;
+            }
+#endif
         }
         // cout << "# Total number of keyframes to have passed the SetBadFlag : " << kf_passed << endl;
         // cout << "# Total number of deleted keyframes                       : " << totaldeletion << endl;

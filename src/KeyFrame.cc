@@ -295,8 +295,8 @@ namespace ORB_SLAM3
                 i->mReferencecount_ockf--;
                 i->mReferencecount--;
             }
-        }
 #endif
+        }
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
         for (auto i : mvpOrderedConnectedKeyFrames)
