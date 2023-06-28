@@ -413,36 +413,36 @@ namespace ORB_SLAM3
 // {
 //     cout << "mReferencecount_msp " << endl;
 // }
-#ifdef CASRF
-                {
-                    if ((*it)->mReferencecount_canonicalmp_CAS == 0 && (*it)->mReferencecount_msp_CAS == 0 && (*it)->mReferencecount_lastframe_CAS == 0)
-                    {
-                        totaldeletion_mp++;
-                        (*it)->pass_d = true;
-                        auto something = it;
-                        it = arr_mp.erase(it);
-                        delete *something;
-                        // cout << (*something)->mnId << endl;
-                    }
-                    else
-                        it++;
-                }
-#endif
-#ifdef RF
-                {
-                    if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
-                    {
-                        totaldeletion_mp++;
-                        (*it)->pass_d = true;
-                        auto something = it;
-                        it = arr_mp.erase(it);
-                        delete *something;
-                        // cout << (*something)->mnId << endl;
-                    }
-                    else
-                        it++;
-                }
-#endif
+// #ifdef CASRF
+//                 {
+//                     if ((*it)->mReferencecount_canonicalmp_CAS == 0 && (*it)->mReferencecount_msp_CAS == 0 && (*it)->mReferencecount_lastframe_CAS == 0)
+//                     {
+//                         totaldeletion_mp++;
+//                         (*it)->pass_d = true;
+//                         auto something = it;
+//                         it = arr_mp.erase(it);
+//                         delete *something;
+//                         // cout << (*something)->mnId << endl;
+//                     }
+//                     else
+//                         it++;
+//                 }
+// #endif
+// #ifdef RF
+//                 {
+//                     if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
+//                     {
+//                         totaldeletion_mp++;
+//                         (*it)->pass_d = true;
+//                         auto something = it;
+//                         it = arr_mp.erase(it);
+//                         delete *something;
+//                         // cout << (*something)->mnId << endl;
+//                     }
+//                     else
+//                         it++;
+//                 }
+// #endif
             }
             cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
             float result = float(totaldeletion_mp) / float(mp_passed);
@@ -1534,20 +1534,20 @@ namespace ORB_SLAM3
 //     cout << "ockf " << (*it)->mReferencecount_ockf << "AND CAS " << (*it)->mReferencecount_ockf_CAS << endl;
 // if ((*it)->mReferencecount_mob != (*it)->mReferencecount_mob_CAS)
 //     cout << "mob " << (*it)->mReferencecount_mob << "AND CAS " << (*it)->mReferencecount_mob_CAS << endl;
-#ifdef CASRF
-            {
-                if ((*it)->mReferencecount_mob_CAS == 0 && (*it)->mReferencecount_ockf_CAS == 0 && (*it)->mReferencecount_canonical_CAS == 0)
-                {
-                    totaldeletion++;
-                    auto something = it;
-                    it = arr.erase(it);
-                    delete *something;
-                    // cout << (*something)->mnId << endl;
-                }
-                else
-                    it++;
-            }
-#endif
+// #ifdef CASRF
+//             {
+//                 if ((*it)->mReferencecount_mob_CAS == 0 && (*it)->mReferencecount_ockf_CAS == 0 && (*it)->mReferencecount_canonical_CAS == 0)
+//                 {
+//                     totaldeletion++;
+//                     auto something = it;
+//                     it = arr.erase(it);
+//                     delete *something;
+//                     // cout << (*something)->mnId << endl;
+//                 }
+//                 else
+//                     it++;
+//             }
+// #endif
 // #ifdef RF
 //             {
 //                 if ((*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_canonical == 0)
