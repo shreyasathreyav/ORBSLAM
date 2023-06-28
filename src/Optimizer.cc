@@ -63,11 +63,13 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
 
                 unique_lock<mutex> lock(it->mMutexReferencecount_mp);
                 it->mReferencecount_msp--;
             }
+#endif
         }
     }
 
@@ -1163,6 +1165,7 @@ namespace ORB_SLAM3
 
         for (int i = 0, iend = vNeighKFs.size(); i < iend; i++)
         {
+#ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -1171,6 +1174,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&(vNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
             }
+#endif
+#ifdef RF
             {
                 // pKFi++
                 unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
@@ -1179,7 +1184,7 @@ namespace ORB_SLAM3
                 // vNeighKFs[i]->mReferencecount_canonical++;
                 // vNeighKFs[i]->mReferencecount_container++;
             }
-
+#endif
             // count = 2
 
             KeyFrame *pKFi = vNeighKFs[i];
@@ -1187,6 +1192,7 @@ namespace ORB_SLAM3
             pKFi->mnBALocalForKF = pKF->mnId;
             if (!pKFi->isBad() && pKFi->GetMap() == pCurrentMap)
             {
+#ifdef CASRF
                 {
                     int old_value, new_value;
                     do
@@ -1195,6 +1201,8 @@ namespace ORB_SLAM3
 
                     } while (!atomic_compare_exchange_strong(&(vNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value));
                 }
+#endif
+#ifdef RF
                 {
                     unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
                     vNeighKFs[i]->mReferencecount_ockf++;
@@ -1202,6 +1210,7 @@ namespace ORB_SLAM3
                     // vNeighKFs[i]->mReferencecount_canonical++;
                     // vNeighKFs[i]->mReferencecount_container++;
                 }
+#endif
 
                 // count = 3
 
@@ -1236,6 +1245,7 @@ namespace ORB_SLAM3
         set<MapPoint *> sNumObsMP;
         for (list<KeyFrame *>::iterator lit = lLocalKeyFrames.begin(), lend = lLocalKeyFrames.end(); lit != lend; lit++)
         {
+#ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -1244,6 +1254,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&((*lit)->mReferencecount_ockf_CAS), &old_value, new_value));
             }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
                 (*lit)->mReferencecount_ockf++;
@@ -1251,6 +1263,7 @@ namespace ORB_SLAM3
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
+#endif
             KeyFrame *pKFi = *lit;
             if (pKFi->mnId == pMap->GetInitKFid())
             {
@@ -1397,6 +1410,7 @@ namespace ORB_SLAM3
         // Set Local KeyFrame vertices
         for (list<KeyFrame *>::iterator lit = lLocalKeyFrames.begin(), lend = lLocalKeyFrames.end(); lit != lend; lit++)
         {
+#ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -1405,6 +1419,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&((*lit)->mReferencecount_ockf_CAS), &old_value, new_value));
             }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
                 (*lit)->mReferencecount_ockf++;
@@ -1412,6 +1428,7 @@ namespace ORB_SLAM3
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
+#endif
 
             KeyFrame *pKFi = *lit;
 
@@ -1421,7 +1438,8 @@ namespace ORB_SLAM3
             vSE3->setEstimate(g2o::SE3Quat(Tcw.unit_quaternion().cast<double>(), Tcw.translation().cast<double>()));
             vSE3->setId(pKFi->mnId);
             vSE3->setFixed(pKFi->mnId == pMap->GetInitKFid());
-            // Increment for optimizer
+// Increment for optimizer
+#ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -1430,6 +1448,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&((pKFi)->mReferencecount_ockf_CAS), &old_value, new_value));
             }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(pKFi->mMutexreferencecount);
                 (pKFi)->mReferencecount_ockf++;
@@ -1437,6 +1457,7 @@ namespace ORB_SLAM3
                 // (pKFi)->mReferencecount_canonical++;
                 // (pKFi)->mReferencecount_container++;
             }
+#endif
 
             optimizer_tracker.push_back(pKFi);
 
@@ -1796,6 +1817,7 @@ namespace ORB_SLAM3
         // Keyframes
         for (list<KeyFrame *>::iterator lit = lLocalKeyFrames.begin(), lend = lLocalKeyFrames.end(); lit != lend; lit++)
         {
+#ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -1804,6 +1826,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&((*lit)->mReferencecount_ockf_CAS), &old_value, new_value));
             }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock((*lit)->mMutexreferencecount);
                 (*lit)->mReferencecount_ockf++;
@@ -1811,6 +1835,7 @@ namespace ORB_SLAM3
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
+#endif
 
             KeyFrame *pKFi = *lit;
 

@@ -2318,10 +2318,12 @@ namespace ORB_SLAM3
                         } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
                     }
 #endif
+#ifdef RF
                     {
                         unique_lock<mutex> lock(i->mMutexReferencecount_mp);
                         i->mReferencecount_lastframe++;
                     }
+#endif
                 }
             }
             for (auto i : mLastFrame.mvpMapPoints)
@@ -2338,10 +2340,12 @@ namespace ORB_SLAM3
                         } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
                     }
 #endif
+#ifdef RF
                     {
                         unique_lock<mutex> lock(i->mMutexReferencecount_mp);
                         i->mReferencecount_lastframe--;
                     }
+#endif
                 }
             }
             mLastFrame = Frame(mCurrentFrame);
@@ -2775,10 +2779,12 @@ namespace ORB_SLAM3
                             } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
                         }
 #endif
+#ifdef RF
                         {
                             unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
                             mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
                         }
+#endif
                     }
 #ifdef CASRF
                     {
@@ -2790,10 +2796,12 @@ namespace ORB_SLAM3
                         } while (!atomic_compare_exchange_strong(&(pRep->mReferencecount_lastframe_CAS), &old_value, new_value));
                     }
 #endif
+#ifdef RF
                     {
                         unique_lock<mutex> lock(pRep->mMutexReferencecount_mp);
                         pRep->mReferencecount_lastframe++;
                     }
+#endif
                     mLastFrame.mvpMapPoints[i] = pRep;
                 }
             }
@@ -2934,11 +2942,13 @@ namespace ORB_SLAM3
                         } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
                     }
 #endif
+#ifdef RF
                     {
 
                         unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
                         mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
                     }
+#endif
                 }
 #ifdef CASRF
                 {
@@ -2950,10 +2960,12 @@ namespace ORB_SLAM3
                     } while (!atomic_compare_exchange_strong(&(pNewMP->mReferencecount_lastframe_CAS), &old_value, new_value));
                 }
 #endif
+#ifdef RF
                 {
                     unique_lock<mutex> lock(pNewMP->mMutexReferencecount_mp);
                     pNewMP->mReferencecount_lastframe++;
                 }
+#endif
                 mLastFrame.mvpMapPoints[i] = pNewMP;
 
                 mlpTemporalPoints.push_back(pNewMP);
@@ -3556,10 +3568,12 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
                 unique_lock(it->mMutexReferencecount_mp);
                 it->mReferencecount_msp--;
             }
+#endif
         }
 
         check_container.clear();
@@ -3593,10 +3607,12 @@ namespace ORB_SLAM3
                         } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
                     }
 #endif
+#ifdef RF
                     {
                         unique_lock<mutex>(pMP->mMutexReferencecount_mp);
                         pMP->mReferencecount_msp++;
                     }
+#endif
                     mvpLocalMapPoints.push_back(pMP);
                     check_container.push_back(pMP);
                     pMP->mnTrackReferenceForFrame = mCurrentFrame.mnId;
@@ -3666,10 +3682,12 @@ namespace ORB_SLAM3
                                 } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
                             }
 #endif
+#ifdef RF
                             {
                                 unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
                                 mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
                             }
+#endif
                         }
 
                         // MODIFICATION
@@ -3694,6 +3712,7 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 // i->mReferencecount_canonical--;
@@ -3701,6 +3720,7 @@ namespace ORB_SLAM3
                 // if (i->mReferencecount_canonical == 0)
                 // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
             }
+#endif
         }
         mvpLocalKeyFrames_obs_tracker_updatelocalKF.clear();
 
@@ -3787,6 +3807,7 @@ namespace ORB_SLAM3
                 {
                     if (pNeighKF->mnTrackReferenceForFrame != mCurrentFrame.mnId)
                     {
+#ifdef CASRF
                         {
                             int old_value, new_value;
                             do
@@ -3795,12 +3816,15 @@ namespace ORB_SLAM3
 
                             } while (!atomic_compare_exchange_strong(&(pNeighKF->mReferencecount_ockf_CAS), &old_value, new_value));
                         }
+#endif
+#ifdef RF
                         {
                             unique_lock<mutex> lock(pNeighKF->mMutexreferencecount);
                             // pNeighKF->mReferencecount_canonical++;
                             pNeighKF->mReferencecount_ockf++;
                             pNeighKF->mReferencecount++;
                         }
+#endif
 
                         mvpLocalKeyFrames.push_back(pNeighKF);
 

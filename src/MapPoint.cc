@@ -267,6 +267,7 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_mob_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
 
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
@@ -274,6 +275,7 @@ namespace ORB_SLAM3
                 // it.first->mReferencecount++;
                 // it.first->mReferencecount_canonical++;
             }
+#endif
         }
         return mObservations;
     }
@@ -333,11 +335,13 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_mob_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_mob--;
                 it.first->mReferencecount--;
             }
+#endif
         }
         // static long long measure = 0;
         mpMap->EraseMapPoint(this);
@@ -428,12 +432,14 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_mob_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
 
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_mob--;
                 it.first->mReferencecount--;
             }
+#endif
         }
         pMP->IncreaseFound(nfound);
         pMP->IncreaseVisible(nvisible);
@@ -466,15 +472,17 @@ namespace ORB_SLAM3
                             {
                                 new_value = old_value - 1;
 
-                            } while (!atomic_compare_exchange_strong(&(itx->mReferencecount_canonicalmp_CAS), &old_value, new_value));        
+                            } while (!atomic_compare_exchange_strong(&(itx->mReferencecount_canonicalmp_CAS), &old_value, new_value));
                             itx = static_cast<MapPoint *>(NULL);
                         }
 #endif
+#ifdef RF
                         {
                             unique_lock<mutex> lock(itx->mMutexReferencecount_mp);
                             itx->mReferencecount_canonicalmp--;
                             itx = static_cast<MapPoint *>(NULL);
                         }
+#endif
                     }
                 }
             }

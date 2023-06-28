@@ -187,11 +187,13 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
 
                 unique_lock<mutex> lock(i->mMutexReferencecount_mp);
                 i->mReferencecount_msp--;
             }
+#endif
         }
         for (auto i : vpRefMPs)
         {
@@ -205,10 +207,12 @@ namespace ORB_SLAM3
                 } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
             }
 #endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(i->mMutexReferencecount_mp);
                 i->mReferencecount_msp--;
             }
+#endif
         }
     }
 

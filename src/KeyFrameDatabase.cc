@@ -701,7 +701,8 @@ namespace ORB_SLAM3
                     bestScore = pKF2->mPlaceRecognitionScore;
                 }
             }
-            // Increment for pBestKF
+// Increment for pBestKF
+#ifdef CASRF
             {
                 int old_value, new_value;
                 do
@@ -710,6 +711,8 @@ namespace ORB_SLAM3
 
                 } while (!atomic_compare_exchange_strong(&(pBestKF->mReferencecount_ockf_CAS), &old_value, new_value));
             }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex>(pBestKF->mMutexreferencecount);
                 // pBestKF->mReferencecount_canonical++;
@@ -717,6 +720,7 @@ namespace ORB_SLAM3
                 pBestKF->mReferencecount_ockf++;
                 pBestKF->mReferencecount++;
             }
+#endif
             lAccScoreAndMatch.push_back(make_pair(accScore, pBestKF));
             if (accScore > bestAccScore)
                 bestAccScore = accScore;
@@ -763,7 +767,8 @@ namespace ORB_SLAM3
             {
                 if (pKF->GetMap() == pKFi->GetMap() && vpLoopCand.size() < nNumCandidates)
                 {
-                    // This is the increment that will make the reference count not zero
+// This is the increment that will make the reference count not zero
+#ifdef CASRF
                     {
                         int old_value, new_value;
                         do
@@ -772,6 +777,8 @@ namespace ORB_SLAM3
 
                         } while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value));
                     }
+#endif
+#ifdef RF
                     {
                         unique_lock<mutex>(pKFi->mMutexreferencecount);
                         //     pKFi->mReferencecount_canonical++;
@@ -779,11 +786,13 @@ namespace ORB_SLAM3
                         pKFi->mReferencecount_ockf++;
                         pKFi->mReferencecount++;
                     }
+#endif
                     vpLoopCand.push_back(pKFi);
                 }
                 else if (pKF->GetMap() != pKFi->GetMap() && vpMergeCand.size() < nNumCandidates && !pKFi->GetMap()->IsBad())
                 {
-                    // This is the increment that will make the reference count not zero
+// This is the increment that will make the reference count not zero
+#ifdef CASRF
                     {
                         int old_value, new_value;
                         do
@@ -792,6 +801,8 @@ namespace ORB_SLAM3
 
                         } while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value));
                     }
+#endif
+#ifdef RF
                     {
                         unique_lock<mutex>(pKFi->mMutexreferencecount);
                         //     pKFi->mReferencecount_canonical++;
@@ -799,6 +810,7 @@ namespace ORB_SLAM3
                         pKFi->mReferencecount_ockf++;
                         //     pKFi->mReferencecount++;
                     }
+#endif
                     vpMergeCand.push_back(pKFi);
                 }
                 spAlreadyAddedKF.insert(pKFi);
