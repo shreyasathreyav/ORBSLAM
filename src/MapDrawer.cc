@@ -177,13 +177,38 @@ namespace ORB_SLAM3
         glEnd();
         for (auto i : vpMPs)
         {
-            unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-            i->mReferencecount_msp--;
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+
+                unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                i->mReferencecount_msp--;
+            }
         }
         for (auto i : vpRefMPs)
         {
-            unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-            i->mReferencecount_msp--;
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+                unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                i->mReferencecount_msp--;
+            }
         }
     }
 
@@ -343,7 +368,6 @@ namespace ORB_SLAM3
                     // cout << i->mReferencecount_canonical << endl;
                 }
             }
-
 
             glEnd();
         }

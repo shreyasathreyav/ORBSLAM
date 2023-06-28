@@ -37,7 +37,7 @@ namespace ORB_SLAM3
                            mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
                            mbToBeErased(false), mbBad(false), mHalfBaseline(0), mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0),
                            NLeft(0), NRight(0), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0),
-                           DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0)
+                           DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
 
     {
     }
@@ -59,7 +59,7 @@ namespace ORB_SLAM3
                                                                        mpCamera(F.mpCamera), mpCamera2(F.mpCamera2),
                                                                        mvLeftToRightMatch(F.mvLeftToRightMatch), mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()),
                                                                        mvKeysRight(F.mvKeysRight), NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0), mReferencecount_mob(0),
-                                                                       DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0)
+                                                                       DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
     {
         mnId = nNextId++;
 
@@ -102,9 +102,20 @@ namespace ORB_SLAM3
 
             if (it != NULL)
             {
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
 
-                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-                it->mReferencecount_canonicalmp++;
+                    } while (!atomic_compare_exchange_strong(&(it->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                }
+#endif
+                {
+                    unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                    it->mReferencecount_canonicalmp++;
+                }
             }
         }
     }
@@ -534,21 +545,55 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexFeatures);
         if (mvpMapPoints[idx] != NULL)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
+                } while (!atomic_compare_exchange_strong(&(this->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(this->mMutexreferencecount);
                 this->mReferencecount_mob--;
                 this->mReferencecount--;
             }
+#endif
 
-            // This is a decrement for mappoints
+// This is a decrement for mappoints
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(mvpMapPoints[idx]->mMutexReferencecount_mp);
                 mvpMapPoints[idx]->mReferencecount_canonicalmp--;
             }
+#endif
             mvpMapPoints[idx]->mObservations.erase(this);
         }
         // This is reference counting for mappoints - increment
+
+#ifdef CASRF
+        {
+            int old_value, new_value;
+            do
+            {
+                new_value = old_value + 1;
+
+            } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+        }
+#endif
         {
             unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
             pMP->mReferencecount_canonicalmp++;
@@ -561,9 +606,17 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFeatures);
         {
-
+#ifdef CASRF
             {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
+                } while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+            }
+#endif
+            {
                 unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
                 mvpMapPoints[idx]->mReferencecount_canonicalmp--;
             }
@@ -581,6 +634,16 @@ namespace ORB_SLAM3
         {
 
             {
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(mvpMapPoints[leftIndex]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                }
+#endif
                 {
                     unique_lock<mutex> lock1(mvpMapPoints[leftIndex]->mMutexReferencecount_mp);
                     mvpMapPoints[leftIndex]->mReferencecount_canonicalmp--;
@@ -591,6 +654,16 @@ namespace ORB_SLAM3
         if (rightIndex != -1)
         {
             {
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(mvpMapPoints[rightIndex]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                }
+#endif
                 {
 
                     unique_lock<mutex> lock1(mvpMapPoints[rightIndex]->mMutexReferencecount_mp);
@@ -606,12 +679,31 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexFeatures);
 
         // Decrement for idx
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
 
+                    } while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                }
+#endif
         {
             unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
             mvpMapPoints[idx]->mReferencecount_canonicalmp--;
         }
-        // Increment for pMP
+// Increment for pMP
+#ifdef CASRF
+        {
+            int old_value, new_value;
+            do
+            {
+                new_value = old_value + 1;
+
+            } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+        }
+#endif
         {
             unique_lock<mutex> lock1(pMP->mMutexReferencecount_mp);
             pMP->mReferencecount_canonicalmp++;

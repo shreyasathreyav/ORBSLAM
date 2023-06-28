@@ -169,14 +169,24 @@ namespace ORB_SLAM3
         bool pass_d;
 
         // Infrastructure for reference counting
-        //msp
+        // msp
         long long mReferencecount_msp;
 
-        //lastframe
+        // lastframe
         long long mReferencecount_lastframe;
 
         long long mReferencecount_canonicalmp;
+
         std::mutex mMutexReferencecount_mp;
+
+        // CAS RF
+
+        std::atomic<int> mReferencecount_msp_CAS;
+
+        std::atomic<int> mReferencecount_lastframe_CAS;
+
+        std::atomic<int> mReferencecount_canonicalmp_CAS;
+
         bool checker;
         // Variables used by the tracking
         float mTrackProjX;

@@ -53,9 +53,21 @@ namespace ORB_SLAM3
         BundleAdjustment(vpKFs, vpMP, nIterations, pbStopFlag, nLoopKF, bRobust);
         for (auto it : vpMP)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-            unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-            it->mReferencecount_msp--;
+                } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+
+                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                it->mReferencecount_msp--;
+            }
         }
     }
 

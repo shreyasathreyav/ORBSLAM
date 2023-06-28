@@ -401,11 +401,19 @@ namespace ORB_SLAM3
             for (auto it = arr_mp.begin(); it != arr_mp.end();)
             {
                 // cout << "Canonical Count "<< (*it)->mReferencecount_canonical << endl;
-                if ((*it)->mReferencecount_canonicalmp < 0)
-                {
-                    cout << "This is really bad " << endl;
-                }
-                if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
+                // if ((*it)->mReferencecount_canonicalmp != (*it)->mReferencecount_canonicalmp_CAS)
+                // {
+                //     cout << "mReferencecount_canonicalmp " << endl;
+                // }
+                // if ((*it)->mReferencecount_lastframe != (*it)->mReferencecount_lastframe_CAS)
+                // {
+                //     cout << "mReferencecount_lastframe " << endl;
+                // }
+                // if ((*it)->mReferencecount_msp != (*it)->mReferencecount_msp_CAS)
+                // {
+                //     cout << "mReferencecount_msp " << endl;
+                // }
+                if ((*it)->mReferencecount_canonicalmp_CAS == 0 && (*it)->mReferencecount_msp_CAS == 0 && (*it)->mReferencecount_lastframe_CAS == 0)
                 {
                     totaldeletion_mp++;
                     (*it)->pass_d = true;
@@ -417,35 +425,35 @@ namespace ORB_SLAM3
                 else
                     it++;
             }
-            // cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
-            // float result = float(totaldeletion_mp) / float(mp_passed);
-            // result = result * 100;
-            // cout << "This is the size of the set : " << mp_passed << endl;
-            // cout << "Percentage of deletion : " << result << endl;
-            // cout << "========================================================" << endl
-            // << " MAP Points begingin" << endl
-            // << "========================================================" << endl;
-            // cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
-            // cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
-            // // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-            // cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
+            cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
+            float result = float(totaldeletion_mp) / float(mp_passed);
+            result = result * 100;
+            cout << "This is the size of the set : " << mp_passed << endl;
+            cout << "Percentage of deletion : " << result << endl;
+            cout << "========================================================" << endl
+            << " MAP Points begingin" << endl
+            << "========================================================" << endl;
+            cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
+            cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
+            // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+            cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
 
-            // if (mp_passed != 0)
-            // {
+            if (mp_passed != 0)
+            {
 
-            //     float result = (float)totaldeletion_mp / (float)mp_passed;
+                float result = (float)totaldeletion_mp / (float)mp_passed;
 
-            //     cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+                cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-            //     result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
-            //     cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+                result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
+                cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
-            //     // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
-            //     // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
+                // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
+                // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
 
-            //     // result = (float)mp_passed / (float)mpCurrentKeyFrame->mnId;
-            //     // cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
-            // }
+                // result = (float)mp_passed / (float)mpCurrentKeyFrame->mnId;
+                // cout << "# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : " << result * 100 << "%" << endl;
+            }
         }
     }
 
@@ -1493,9 +1501,14 @@ void LocalMapping::KeyFrameCulling()
     // vector<KeyFrame *> cont_del(arr.begin(), arr.end());
     for (auto it = arr.begin(); it != arr.end();)
     {
-        // if ((*it)->mReferencecount_canonical != (*it)->mReferencecount_canonical_CAS)
-        //     cout << "Canonical Count " << (*it)->mReferencecount_ockf << "AND CAS " << (*it)->mReferencecount_ockf_CAS << endl;
-        if ((*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_canonical == 0)
+        // cout << "Hello";
+        // if ((*it)->mReferencecount_canonical_CAS != (*it)->mReferencecount_canonical)
+        //     cout << "Canonical Count " << (*it)->mReferencecount_canonical << "AND CAS " << (*it)->mReferencecount_canonical_CAS << endl;
+        // if ((*it)->mReferencecount_ockf != (*it)->mReferencecount_ockf_CAS)
+        //     cout << "ockf " << (*it)->mReferencecount_ockf << "AND CAS " << (*it)->mReferencecount_ockf_CAS << endl;
+        // if ((*it)->mReferencecount_mob != (*it)->mReferencecount_mob_CAS)
+        //     cout << "mob " << (*it)->mReferencecount_mob << "AND CAS " << (*it)->mReferencecount_mob_CAS << endl;
+        if ((*it)->mReferencecount_mob_CAS == 0 && (*it)->mReferencecount_ockf_CAS == 0 && (*it)->mReferencecount_canonical_CAS == 0)
         {
             totaldeletion++;
             auto something = it;

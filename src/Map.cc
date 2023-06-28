@@ -101,6 +101,16 @@ namespace ORB_SLAM3
     void Map::AddMapPoint(MapPoint *pMP)
     {
         unique_lock<mutex> lock(mMutexMap);
+#ifdef CASRF
+        {
+            int old_value, new_value;
+            do
+            {
+                new_value = old_value + 1;
+
+            } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
+        }
+#endif
         {
             unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
             pMP->mReferencecount_msp++;
@@ -123,6 +133,16 @@ namespace ORB_SLAM3
     void Map::EraseMapPoint(MapPoint *pMP)
     {
         unique_lock<mutex> lock(mMutexMap);
+#ifdef CASRF
+        {
+            int old_value, new_value;
+            do
+            {
+                new_value = old_value - 1;
+
+            } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
+        }
+#endif
         {
             unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
             pMP->mReferencecount_msp--;
@@ -184,16 +204,39 @@ namespace ORB_SLAM3
 
         for (auto it : vpMPs)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
 
-            unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-            it->mReferencecount_msp++;
+                } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+
+                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                it->mReferencecount_msp++;
+            }
         }
 
         for (auto it : mvpReferenceMapPoints)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-            unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-            it->mReferencecount_msp--;
+                } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                it->mReferencecount_msp--;
+            }
         }
         mvpReferenceMapPoints = vpMPs;
     }
@@ -234,8 +277,21 @@ namespace ORB_SLAM3
         {
             for (auto i : mspMapPoints)
             {
-                unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-                i->mReferencecount_msp++;
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
+
+                    } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
+                }
+#endif
+                {
+
+                    unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+                    i->mReferencecount_msp++;
+                }
             }
         }
         return vector<MapPoint *>(mspMapPoints.begin(), mspMapPoints.end());
@@ -263,8 +319,21 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexMap);
         for (auto i : mvpReferenceMapPoints)
         {
-            unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-            i->mReferencecount_msp++;
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+
+                unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+                i->mReferencecount_msp++;
+            }
         }
         return mvpReferenceMapPoints;
     }

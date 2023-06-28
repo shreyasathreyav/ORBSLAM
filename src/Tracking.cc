@@ -2308,16 +2308,40 @@ namespace ORB_SLAM3
             {
                 if (i)
                 {
-                    unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-                    i->mReferencecount_lastframe++;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value + 1;
+
+                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
+                    }
+#endif
+                    {
+                        unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                        i->mReferencecount_lastframe++;
+                    }
                 }
             }
             for (auto i : mLastFrame.mvpMapPoints)
             {
                 if (i)
                 {
-                    unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-                    i->mReferencecount_lastframe--;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
+                    }
+#endif
+                    {
+                        unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                        i->mReferencecount_lastframe--;
+                    }
                 }
             }
             mLastFrame = Frame(mCurrentFrame);
@@ -2741,9 +2765,31 @@ namespace ORB_SLAM3
                 {
                     if (mLastFrame.mvpMapPoints[i])
                     {
-                        unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                        mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+#ifdef CASRF
+                        {
+                            int old_value, new_value;
+                            do
+                            {
+                                new_value = old_value - 1;
+
+                            } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
+                        }
+#endif
+                        {
+                            unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                            mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                        }
                     }
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value + 1;
+
+                        } while (!atomic_compare_exchange_strong(&(pRep->mReferencecount_lastframe_CAS), &old_value, new_value));
+                    }
+#endif
                     {
                         unique_lock<mutex> lock(pRep->mMutexReferencecount_mp);
                         pRep->mReferencecount_lastframe++;
@@ -2878,9 +2924,32 @@ namespace ORB_SLAM3
 
                 if (mLastFrame.mvpMapPoints[i])
                 {
-                    unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                    mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value - 1;
+
+                        } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
+                    }
+#endif
+                    {
+
+                        unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                        mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                    }
                 }
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value + 1;
+
+                    } while (!atomic_compare_exchange_strong(&(pNewMP->mReferencecount_lastframe_CAS), &old_value, new_value));
+                }
+#endif
                 {
                     unique_lock<mutex> lock(pNewMP->mMutexReferencecount_mp);
                     pNewMP->mReferencecount_lastframe++;
@@ -3477,9 +3546,20 @@ namespace ORB_SLAM3
     {
         for (auto it : check_container)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-            unique_lock(it->mMutexReferencecount_mp);
-            it->mReferencecount_msp--;
+                } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+            }
+#endif
+            {
+                unique_lock(it->mMutexReferencecount_mp);
+                it->mReferencecount_msp--;
+            }
         }
 
         check_container.clear();
@@ -3503,6 +3583,16 @@ namespace ORB_SLAM3
                 if (!pMP->isBad())
                 {
                     count_pts++;
+#ifdef CASRF
+                    {
+                        int old_value, new_value;
+                        do
+                        {
+                            new_value = old_value + 1;
+
+                        } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
+                    }
+#endif
                     {
                         unique_lock<mutex>(pMP->mMutexReferencecount_mp);
                         pMP->mReferencecount_msp++;
@@ -3566,7 +3656,16 @@ namespace ORB_SLAM3
                     {
                         if (mLastFrame.mvpMapPoints[i])
                         {
+#ifdef CASRF
+                            {
+                                int old_value, new_value;
+                                do
+                                {
+                                    new_value = old_value - 1;
 
+                                } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
+                            }
+#endif
                             {
                                 unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
                                 mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
@@ -3585,6 +3684,16 @@ namespace ORB_SLAM3
 
         for (auto i : mvpLocalKeyFrames_obs_tracker_updatelocalKF)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
             {
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 // i->mReferencecount_canonical--;
@@ -3639,10 +3748,22 @@ namespace ORB_SLAM3
             }
 
             mvpLocalKeyFrames.push_back(pKF);
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(pKF->mMutexreferencecount);
                 pKF->mReferencecount_mob++;
             }
+#endif
             mvpLocalKeyFrames_obs_tracker_updatelocalKF.push_back(pKF);
             pKF->mnTrackReferenceForFrame = mCurrentFrame.mnId;
         }
@@ -3789,11 +3910,25 @@ namespace ORB_SLAM3
         }
         for (auto i : arr)
         {
-            unique_lock<mutex> lock(i->mMutexreferencecount);
-            // i->mReferencecount_canonical--;
-            i->mReferencecount_mob--;
-            // if(i->mReferencecount_canonical != 0)
-            // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
+            {
+                unique_lock<mutex> lock(i->mMutexreferencecount);
+                // i->mReferencecount_canonical--;
+                i->mReferencecount_mob--;
+                // if(i->mReferencecount_canonical != 0)
+                // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
+            }
+#endif
         }
     }
 

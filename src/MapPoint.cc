@@ -30,7 +30,8 @@ namespace ORB_SLAM3
     MapPoint::MapPoint() : mnFirstKFid(0), mnFirstFrame(0), nObs(0), mnTrackReferenceForFrame(0),
                            mnLastFrameSeen(0), mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                            mnCorrectedReference(0), mnBAGlobalForKF(0), mnVisible(1), mnFound(1), mbBad(false),
-                           mpReplaced(static_cast<MapPoint *>(NULL)), checker(false), mReferencecount_canonicalmp(0), pass_d(false), mReferencecount_msp(0), mReferencecount_lastframe(0)
+                           mpReplaced(static_cast<MapPoint *>(NULL)), checker(false), mReferencecount_canonicalmp(0), pass_d(false), mReferencecount_msp(0), mReferencecount_lastframe(0),
+                           mReferencecount_msp_CAS(0), mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
     {
         mpReplaced = static_cast<MapPoint *>(NULL);
     }
@@ -40,7 +41,8 @@ namespace ORB_SLAM3
                                                                                   mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
                                                                                   mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
                                                                                   mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false),
-                                                                                  mReferencecount_msp(0), mReferencecount_lastframe(0)
+                                                                                  mReferencecount_msp(0), mReferencecount_lastframe(0),
+                                                                                  mReferencecount_msp_CAS(0), mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
     {
         SetWorldPos(Pos);
 
@@ -59,7 +61,8 @@ namespace ORB_SLAM3
                                                                                                                      mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(pRefKF), mnVisible(1), mnFound(1), mbBad(false),
                                                                                                                      mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
                                                                                                                      mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false),
-                                                                                                                      mReferencecount_msp(0), mReferencecount_lastframe(0)
+                                                                                                                     mReferencecount_msp(0), mReferencecount_lastframe(0),
+                                                                                                                     mReferencecount_msp_CAS(0), mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
     {
         mInvDepth = invDepth;
         mInitU = (double)uv_init.x;
@@ -78,7 +81,7 @@ namespace ORB_SLAM3
                                                                                                 mnBALocalForKF(0), mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0),
                                                                                                 mnCorrectedReference(0), mnBAGlobalForKF(0), mpRefKF(static_cast<KeyFrame *>(NULL)), mnVisible(1),
                                                                                                 mnFound(1), mbBad(false), mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false),
-                                                                                                mReferencecount_msp(0), mReferencecount_lastframe(0)
+                                                                                                mReferencecount_msp(0), mReferencecount_lastframe(0), mReferencecount_msp_CAS(0), mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
     {
 
         SetWorldPos(Pos);
@@ -154,11 +157,23 @@ namespace ORB_SLAM3
         else
         {
             indexes = tuple<int, int>(-1, -1);
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
+
+                } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+#ifdef RF
             {
                 unique_lock<mutex> lock(pKF->mMutexreferencecount);
                 pKF->mReferencecount_mob++;
                 pKF->mReferencecount++;
             }
+#endif
         }
 
         if (pKF->NLeft != -1 && idx >= pKF->NLeft)
@@ -201,11 +216,23 @@ namespace ORB_SLAM3
                 }
 
                 mObservations.erase(pKF);
+#ifdef CASRF
+                {
+                    int old_value, new_value;
+                    do
+                    {
+                        new_value = old_value - 1;
+
+                    } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_mob_CAS), &old_value, new_value));
+                }
+#endif
+#ifdef RF
                 {
                     unique_lock<mutex> lock(pKF->mMutexreferencecount);
                     pKF->mReferencecount_mob--;
                     pKF->mReferencecount--;
                 }
+#endif
                 if (mpRefKF == pKF)
                     mpRefKF = mObservations.begin()->first;
 
@@ -230,11 +257,23 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexFeatures);
         for (auto it : mObservations)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value + 1;
 
-            unique_lock<mutex> lock(it.first->mMutexreferencecount);
-            it.first->mReferencecount_mob++;
-            // it.first->mReferencecount++;
-            // it.first->mReferencecount_canonical++;
+                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+            {
+
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount_mob++;
+                // it.first->mReferencecount++;
+                // it.first->mReferencecount_canonical++;
+            }
         }
         return mObservations;
     }
@@ -284,10 +323,21 @@ namespace ORB_SLAM3
         // }
         for (auto it : obs)
         {
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
 
-            unique_lock<mutex> lock(it.first->mMutexreferencecount);
-            it.first->mReferencecount_mob--;
-            it.first->mReferencecount--;
+                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+            {
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount_mob--;
+                it.first->mReferencecount--;
+            }
         }
         // static long long measure = 0;
         mpMap->EraseMapPoint(this);
@@ -368,9 +418,22 @@ namespace ORB_SLAM3
         }
         for (auto it : obs)
         {
-            unique_lock<mutex> lock(it.first->mMutexreferencecount);
-            it.first->mReferencecount_mob--;
-            it.first->mReferencecount--;
+#ifdef CASRF
+            {
+                int old_value, new_value;
+                do
+                {
+                    new_value = old_value - 1;
+
+                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_mob_CAS), &old_value, new_value));
+            }
+#endif
+            {
+
+                unique_lock<mutex> lock(it.first->mMutexreferencecount);
+                it.first->mReferencecount_mob--;
+                it.first->mReferencecount--;
+            }
         }
         pMP->IncreaseFound(nfound);
         pMP->IncreaseVisible(nvisible);
@@ -396,10 +459,22 @@ namespace ORB_SLAM3
 
                     if (itx != NULL && itx->mnId == this->mnId)
                     {
+#ifdef CASRF
+                        {
+                            int old_value, new_value;
+                            do
+                            {
+                                new_value = old_value - 1;
 
-                        unique_lock<mutex> lock(itx->mMutexReferencecount_mp);
-                        itx->mReferencecount_canonicalmp--;
-                        itx = static_cast<MapPoint *>(NULL);
+                            } while (!atomic_compare_exchange_strong(&(itx->mReferencecount_canonicalmp_CAS), &old_value, new_value));        
+                            itx = static_cast<MapPoint *>(NULL);
+                        }
+#endif
+                        {
+                            unique_lock<mutex> lock(itx->mMutexReferencecount_mp);
+                            itx->mReferencecount_canonicalmp--;
+                            itx = static_cast<MapPoint *>(NULL);
+                        }
                     }
                 }
             }
