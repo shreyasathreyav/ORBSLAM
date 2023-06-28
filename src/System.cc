@@ -520,12 +520,16 @@ void System::Shutdown()
         mbShutDown = true;
     }
 
+#ifdef REGISTER_TIMES
+    mpTracker->PrintTimeStats();
+#endif
+
     cout << "Shutdown" << endl;
 
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
 
-    // return;
+    return;
     /*if(mpViewer)
     {
         mpViewer->RequestFinish();
@@ -556,10 +560,6 @@ void System::Shutdown()
 
     /*if(mpViewer)
         pangolin::BindToContext("ORB-SLAM2: Map Viewer");*/
-
-#ifdef REGISTER_TIMES
-    mpTracker->PrintTimeStats();
-#endif
 
 
 }
