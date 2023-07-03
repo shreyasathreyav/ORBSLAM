@@ -107,6 +107,9 @@ public:
 
     bool mbWriteStats;
 
+    set<KeyFrame*> arr;
+    set<MapPoint*> arr_mp;
+
     // not consider far points (clouds)
     bool mbFarPoints;
     float mThFarPoints;

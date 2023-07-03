@@ -1,0 +1,135 @@
+num_seq = 1
+file name: dataset-MH01_mono
+Loading images for sequence 0...LOADED!
+
+-------
+
+ORB-SLAM3 Copyright (C) 2017-2020 Carlos Campos, Richard Elvira, Juan J. Gómez, José M.M. Montiel and Juan D. Tardós, University of Zaragoza.
+ORB-SLAM2 Copyright (C) 2014-2016 Raúl Mur-Artal, José M.M. Montiel and Juan D. Tardós, University of Zaragoza.
+This program comes with ABSOLUTELY NO WARRANTY;
+This is free software, and you are welcome to redistribute it
+under certain conditions. See LICENSE.txt.
+
+Input sensor was set to: Monocular
+Loading settings from ../Examples/Monocular/EuRoC.yaml
+Camera1.k3 optional parameter does not exist...
+	-Loaded camera 1
+	-Loaded image info
+	-Loaded ORB settings
+Viewer.imageViewScale optional parameter does not exist...
+	-Loaded viewer settings
+System.LoadAtlasFromFile optional parameter does not exist...
+System.SaveAtlasToFile optional parameter does not exist...
+	-Loaded Atlas settings
+System.thFarPoints optional parameter does not exist...
+	-Loaded misc parameters
+----------------------------------
+SLAM settings: 
+	-Camera 1 parameters (Pinhole): [ 458.65399169921875 457.29598999023438 367.21499633789062 248.375 ]
+	-Camera 1 distortion parameters: [  -0.28340810537338257 0.073959067463874817 0.00019359000725671649 1.7618711353861727e-05 ]
+	-Original image size: [ 752 , 480 ]
+	-Current image size: [ 600 , 350 ]
+	-Camera 1 parameters after resize: [  365.94735717773438 333.44500732421875 292.99069213867188 181.10678100585938 ]
+	-Sequence FPS: 20
+	-Features per image: 1000
+	-ORB scale factor: 1.2000000476837158
+	-ORB number of scales: 8
+	-Initial FAST threshold: 20
+	-Min FAST threshold: 7
+
+
+Loading ORB Vocabulary. This could take a while...
+Vocabulary loaded!
+
+Initialization of Atlas from scratch 
+Creation of new map with id: 0
+Creation of new map with last KF id: 0
+Seq. Name: 
+There are 1 cameras in the atlas
+Camera 0 is pinhole
+Gtk-Message: 14:36:33.295: Failed to load module "atk-bridge"
+Gtk-Message: 14:36:33.307: Failed to load module "canberra-gtk-module"
+Starting the Viewer
+First KF:0; Map init KF:0
+New Map created with 270 points
+Shutdown
+
+ TIME STATS in ms (mean$\pm$std)
+OpenCV version: 4.7.0
+---------------------------
+Tracking
+
+ORB Extraction: 11.892$\pm$2.5804
+Pose Prediction: 2.2664$\pm$0.77122
+LM Track: 6.0951$\pm$2.457
+New KF decision: 0.060852$\pm$0.13571
+Total Tracking: 22.175$\pm$4.5491
+
+
+
+Local Mapping
+
+KF Insertion: 6.6005$\pm$3.0287
+MP Culling: 0.080133$\pm$0.041422
+MP Creation: 34.047$\pm$12.28
+LBA: 264.55$\pm$242.56
+KF Culling: 27.629$\pm$16.809
+Total Local Mapping: 331.59$\pm$261.15
+---------------------------
+
+LBA complexity (mean$\pm$std)
+LBA Edges: 28836$\pm$19326
+LBA KF optimized: 48.448$\pm$30.78
+LBA KF fixed: 70.398$\pm$58.744
+LBA MP: -nan$\pm$-nan
+
+LBA executions: 420
+LBA aborts: 15
+---------------------------
+
+Map complexity
+KFs in map: 294
+MPs in map: 11659
+---------------------------
+
+Place Recognition (mean$\pm$std)
+Database Query: 0.55787$\pm$0.34753
+SE3 estimation: 3.0506$\pm$4.5142
+Total Place Recognition: 3.6701$\pm$4.7437
+
+
+Loop Closing (mean$\pm$std)
+Loop Fusion: -nan$\pm$-nan
+Essential Graph: -nan$\pm$-nan
+Total Loop Closing: -nan$\pm$-nan
+
+Num exec: 0
+Number of KFs: -nan$\pm$-nan
+
+Map Merging (mean$\pm$std)
+Merge Maps: -nan$\pm$-nan
+Welding BA: -nan$\pm$-nan
+Optimization Ess.: -nan$\pm$-nan
+Total Map Merging: -nan$\pm$-nan
+
+Num exec: 0
+Number of KFs: -nan$\pm$-nan
+Number of MPs: -nan$\pm$-nan
+
+Full GBA (mean$\pm$std)
+GBA: -nan$\pm$-nan
+Map Update: -nan$\pm$-nan
+Total Full GBA: -nan$\pm$-nan
+
+Num exec: 0
+Num abort: 0
+Number of KFs: -nan$\pm$-nan
+Number of MPs: -nan$\pm$-nan
+
+Saving trajectory to f_dataset-MH01_mono.txt ...
+There are 1 maps in the atlas
+  Map 0 has 294 KFs
+
+End of saving trajectory to f_dataset-MH01_mono.txt ...
+
+Saving keyframe trajectory to kf_dataset-MH01_mono.txt ...

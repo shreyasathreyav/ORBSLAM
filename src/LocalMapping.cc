@@ -367,11 +367,13 @@ void LocalMapping::MapPointCulling()
         else if(pMP->GetFoundRatio()<0.25f)
         {
             pMP->SetBadFlag();
+            arr_mp.insert(pMP);
             lit = mlpRecentAddedMapPoints.erase(lit);
         }
         else if(((int)nCurrentKFid-(int)pMP->mnFirstKFid)>=2 && pMP->Observations()<=cnThObs)
         {
             pMP->SetBadFlag();
+            arr_mp.insert(pMP);
             lit = mlpRecentAddedMapPoints.erase(lit);
         }
         else if(((int)nCurrentKFid-(int)pMP->mnFirstKFid)>=3)
@@ -382,6 +384,11 @@ void LocalMapping::MapPointCulling()
             borrar--;
         }
     }
+        cout << "========================================================" << endl
+        << " MAP Points begingin" << endl
+        << "========================================================" << endl;
+        cout << "# Total number of MapPoint to have passed the SetBadFlag  " << arr_mp.size() << endl;
+        cout << "# Number of MapPoint within map                           " << mpAtlas->MapPointsInMap() << endl;
 }
 
 
@@ -1029,6 +1036,7 @@ void LocalMapping::KeyFrameCulling()
                         pKF->mNextKF = NULL;
                         pKF->mPrevKF = NULL;
                         pKF->SetBadFlag();
+                        arr.insert(pKF);
                     }
                     else if(!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && ((pKF->GetImuPosition()-pKF->mPrevKF->GetImuPosition()).norm()<0.02) && (t<3))
                     {
@@ -1038,12 +1046,14 @@ void LocalMapping::KeyFrameCulling()
                         pKF->mNextKF = NULL;
                         pKF->mPrevKF = NULL;
                         pKF->SetBadFlag();
+                        arr.insert(pKF);
                     }
                 }
             }
             else
             {
                 pKF->SetBadFlag();
+                arr.insert(pKF);
             }
         }
         if((count > 20 && mbAbortBA) || count>100)
@@ -1051,6 +1061,12 @@ void LocalMapping::KeyFrameCulling()
             break;
         }
     }
+
+    cout << "############################################################################################################################" << endl;
+    cout << "# Total number of keyframes to have passed the SetBadFlag : " << arr.size() << endl;
+    cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+    cout << "# Number of keyframes within map                          : " << mpAtlas->KeyFramesInMap() << endl;
+    cout << "############################################################################################################################" << endl; 
 }
 
 void LocalMapping::RequestReset()

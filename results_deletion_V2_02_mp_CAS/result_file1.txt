@@ -1,0 +1,1999 @@
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13043
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11356
+# Percentage of deletion                                   95.468833923339844%
+# Percentage of deletion (wrt kfs in map)                  109.65129089355469%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13043
+Percentage of deletion : 95.468833923339844
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13043
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11356
+# Percentage of deletion                                   95.468833923339844%
+# Percentage of deletion (wrt kfs in map)                  109.65129089355469%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13044
+Percentage of deletion : 95.461517333984375
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13044
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11355
+# Percentage of deletion                                   95.461517333984375%
+# Percentage of deletion (wrt kfs in map)                  109.66094970703125%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13044
+Percentage of deletion : 95.461517333984375
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13044
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11355
+# Percentage of deletion                                   95.461517333984375%
+# Percentage of deletion (wrt kfs in map)                  109.66094970703125%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13044
+Percentage of deletion : 95.461517333984375
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13044
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11355
+# Percentage of deletion                                   95.461517333984375%
+# Percentage of deletion (wrt kfs in map)                  109.66094970703125%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13045
+Percentage of deletion : 95.454200744628906
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13045
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11354
+# Percentage of deletion                                   95.454200744628906%
+# Percentage of deletion (wrt kfs in map)                  109.67060089111328%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13046
+Percentage of deletion : 95.446876525878906
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13046
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11353
+# Percentage of deletion                                   95.446876525878906%
+# Percentage of deletion (wrt kfs in map)                  109.68025970458984%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13046
+Percentage of deletion : 95.446876525878906
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13046
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11353
+# Percentage of deletion                                   95.446876525878906%
+# Percentage of deletion (wrt kfs in map)                  109.68025970458984%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13047
+Percentage of deletion : 95.439567565917969
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13047
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11352
+# Percentage of deletion                                   95.439567565917969%
+# Percentage of deletion (wrt kfs in map)                  109.68992614746094%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13048
+Percentage of deletion : 95.4322509765625
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13048
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11351
+# Percentage of deletion                                   95.4322509765625%
+# Percentage of deletion (wrt kfs in map)                  109.6995849609375%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13049
+Percentage of deletion : 95.424942016601562
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13049
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11350
+# Percentage of deletion                                   95.424942016601562%
+# Percentage of deletion (wrt kfs in map)                  109.70925140380859%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13050
+Percentage of deletion : 95.417625427246094
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13050
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11349
+# Percentage of deletion                                   95.417625427246094%
+# Percentage of deletion (wrt kfs in map)                  109.71891784667969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13051
+Percentage of deletion : 95.410308837890625
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13051
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11348
+# Percentage of deletion                                   95.410308837890625%
+# Percentage of deletion (wrt kfs in map)                  109.72858428955078%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13052
+Percentage of deletion : 95.402999877929688
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13052
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11347
+# Percentage of deletion                                   95.402999877929688%
+# Percentage of deletion (wrt kfs in map)                  109.73825073242188%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13052
+Percentage of deletion : 95.402999877929688
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13052
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11347
+# Percentage of deletion                                   95.402999877929688%
+# Percentage of deletion (wrt kfs in map)                  109.73825073242188%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13052
+Percentage of deletion : 95.402999877929688
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13052
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11347
+# Percentage of deletion                                   95.402999877929688%
+# Percentage of deletion (wrt kfs in map)                  109.73825073242188%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13053
+Percentage of deletion : 95.395698547363281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13053
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11346
+# Percentage of deletion                                   95.395698547363281%
+# Percentage of deletion (wrt kfs in map)                  109.74793243408203%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13054
+Percentage of deletion : 95.388389587402344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13054
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11345
+# Percentage of deletion                                   95.388389587402344%
+# Percentage of deletion (wrt kfs in map)                  109.75759887695312%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13054
+Percentage of deletion : 95.388389587402344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13054
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11345
+# Percentage of deletion                                   95.388389587402344%
+# Percentage of deletion (wrt kfs in map)                  109.75759887695312%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13054
+Percentage of deletion : 95.388389587402344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13054
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11345
+# Percentage of deletion                                   95.388389587402344%
+# Percentage of deletion (wrt kfs in map)                  109.75759887695312%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13055
+Percentage of deletion : 95.381080627441406
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13055
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11344
+# Percentage of deletion                                   95.381080627441406%
+# Percentage of deletion (wrt kfs in map)                  109.76728057861328%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13055
+Percentage of deletion : 95.381080627441406
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13055
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11344
+# Percentage of deletion                                   95.381080627441406%
+# Percentage of deletion (wrt kfs in map)                  109.76728057861328%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13055
+Percentage of deletion : 95.381080627441406
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13055
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11344
+# Percentage of deletion                                   95.381080627441406%
+# Percentage of deletion (wrt kfs in map)                  109.76728057861328%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13055
+Percentage of deletion : 95.381080627441406
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13055
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11344
+# Percentage of deletion                                   95.381080627441406%
+# Percentage of deletion (wrt kfs in map)                  109.76728057861328%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13056
+Percentage of deletion : 95.373771667480469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13056
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.373771667480469%
+# Percentage of deletion (wrt kfs in map)                  109.77694702148438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13056
+Percentage of deletion : 95.373771667480469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13056
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.373771667480469%
+# Percentage of deletion (wrt kfs in map)                  109.77694702148438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13056
+Percentage of deletion : 95.373771667480469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13056
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.373771667480469%
+# Percentage of deletion (wrt kfs in map)                  109.77694702148438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13056
+Percentage of deletion : 95.373771667480469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13056
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.373771667480469%
+# Percentage of deletion (wrt kfs in map)                  109.77694702148438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13057
+Percentage of deletion : 95.366470336914062
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13057
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.366470336914062%
+# Percentage of deletion (wrt kfs in map)                  109.78662872314453%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13058
+Percentage of deletion : 95.359161376953125
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13058
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.359161376953125%
+# Percentage of deletion (wrt kfs in map)                  109.79631042480469%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13059
+Percentage of deletion : 95.351860046386719
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13059
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11340
+# Percentage of deletion                                   95.351860046386719%
+# Percentage of deletion (wrt kfs in map)                  109.80599975585938%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13059
+Percentage of deletion : 95.351860046386719
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13059
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11340
+# Percentage of deletion                                   95.351860046386719%
+# Percentage of deletion (wrt kfs in map)                  109.80599975585938%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13060
+Percentage of deletion : 95.344558715820312
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13060
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.344558715820312%
+# Percentage of deletion (wrt kfs in map)                  109.81568145751953%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13060
+Percentage of deletion : 95.344558715820312
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13060
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.344558715820312%
+# Percentage of deletion (wrt kfs in map)                  109.81568145751953%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13061
+Percentage of deletion : 95.337265014648438
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13061
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.337265014648438%
+# Percentage of deletion (wrt kfs in map)                  109.82536315917969%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13062
+Percentage of deletion : 95.329963684082031
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.329963684082031%
+# Percentage of deletion (wrt kfs in map)                  109.83505249023438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13062
+Percentage of deletion : 95.329963684082031
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.329963684082031%
+# Percentage of deletion (wrt kfs in map)                  109.83505249023438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13062
+Percentage of deletion : 95.329963684082031
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.329963684082031%
+# Percentage of deletion (wrt kfs in map)                  109.83505249023438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13062
+Percentage of deletion : 95.329963684082031
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.329963684082031%
+# Percentage of deletion (wrt kfs in map)                  109.83505249023438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13062
+Percentage of deletion : 95.329963684082031
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.329963684082031%
+# Percentage of deletion (wrt kfs in map)                  109.83505249023438%
+These are the total number of mappoints that become zero : 12452
+This is the size of the set : 13062
+Percentage of deletion : 95.329963684082031
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12452
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.329963684082031%
+# Percentage of deletion (wrt kfs in map)                  109.83505249023438%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 86
+# Total number of deleted keyframes                       : 49
+# Current KeyFrame ID                                     : 369
+# Number of keyframes within map                          : 284
+# Percentage of deletion                                  : 56.976741790771484%
+# Percentage of deletion (wrt kfs in map)                 : 17.253520965576172%
+# Percentage of deletion (wrt kfs max mnid)               : 13.279132843017578%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.306232452392578%
+############################################################################################################################
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13062
+Percentage of deletion : 95.483085632324219
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13062
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11343
+# Percentage of deletion                                   95.483085632324219%
+# Percentage of deletion (wrt kfs in map)                  109.95326995849609%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13063
+Percentage of deletion : 95.47576904296875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13063
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11342
+# Percentage of deletion                                   95.47576904296875%
+# Percentage of deletion (wrt kfs in map)                  109.96296691894531%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13064
+Percentage of deletion : 95.468460083007812
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13064
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11341
+# Percentage of deletion                                   95.468460083007812%
+# Percentage of deletion (wrt kfs in map)                  109.97267150878906%
+These are the total number of mappoints that become zero : 12472
+This is the size of the set : 13065
+Percentage of deletion : 95.461151123046875
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12472
+# Number of MapPoint within map                           11340
+# Percentage of deletion                                   95.461151123046875%
+# Percentage of deletion (wrt kfs in map)                  109.98236083984375%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 86
+# Total number of deleted keyframes                       : 49
+# Current KeyFrame ID                                     : 370
+# Number of keyframes within map                          : 285
+# Percentage of deletion                                  : 56.976741790771484%
+# Percentage of deletion (wrt kfs in map)                 : 17.192981719970703%
+# Percentage of deletion (wrt kfs max mnid)               : 13.243243217468262%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.243242263793945%
+############################################################################################################################
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13065
+Percentage of deletion : 95.484123229980469
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13065
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11339
+# Percentage of deletion                                   95.484123229980469%
+# Percentage of deletion (wrt kfs in map)                  110.01851654052734%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13066
+Percentage of deletion : 95.476814270019531
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13066
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.476814270019531%
+# Percentage of deletion (wrt kfs in map)                  110.02822113037109%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13066
+Percentage of deletion : 95.476814270019531
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13066
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11338
+# Percentage of deletion                                   95.476814270019531%
+# Percentage of deletion (wrt kfs in map)                  110.02822113037109%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+These are the total number of mappoints that become zero : 12475
+This is the size of the set : 13067
+Percentage of deletion : 95.469505310058594
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12475
+# Number of MapPoint within map                           11337
+# Percentage of deletion                                   95.469505310058594%
+# Percentage of deletion (wrt kfs in map)                  110.03793334960938%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 86
+# Total number of deleted keyframes                       : 49
+# Current KeyFrame ID                                     : 371
+# Number of keyframes within map                          : 286
+# Percentage of deletion                                  : 56.976741790771484%
+# Percentage of deletion (wrt kfs in map)                 : 17.132867813110352%
+# Percentage of deletion (wrt kfs max mnid)               : 13.207547187805176%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.180593490600586%
+############################################################################################################################
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 86
+# Total number of deleted keyframes                       : 49
+# Current KeyFrame ID                                     : 372
+# Number of keyframes within map                          : 287
+# Percentage of deletion                                  : 56.976741790771484%
+# Percentage of deletion (wrt kfs in map)                 : 17.073171615600586%
+# Percentage of deletion (wrt kfs max mnid)               : 13.172042846679688%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.118280410766602%
+############################################################################################################################
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 87
+# Total number of deleted keyframes                       : 50
+# Current KeyFrame ID                                     : 373
+# Number of keyframes within map                          : 287
+# Percentage of deletion                                  : 57.471263885498047%
+# Percentage of deletion (wrt kfs in map)                 : 17.421604156494141%
+# Percentage of deletion (wrt kfs max mnid)               : 13.404825210571289%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.324398040771484%
+############################################################################################################################
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13067
+Percentage of deletion : 95.484809875488281
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13067
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.484809875488281%
+# Percentage of deletion (wrt kfs in map)                  110.07498168945312%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+These are the total number of mappoints that become zero : 12477
+This is the size of the set : 13068
+Percentage of deletion : 95.477500915527344
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12477
+# Number of MapPoint within map                           11334
+# Percentage of deletion                                   95.477500915527344%
+# Percentage of deletion (wrt kfs in map)                  110.08470153808594%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 88
+# Total number of deleted keyframes                       : 51
+# Current KeyFrame ID                                     : 374
+# Number of keyframes within map                          : 287
+# Percentage of deletion                                  : 57.954544067382812%
+# Percentage of deletion (wrt kfs in map)                 : 17.770034790039062%
+# Percentage of deletion (wrt kfs max mnid)               : 13.636363983154297%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.529411315917969%
+############################################################################################################################
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+These are the total number of mappoints that become zero : 12478
+This is the size of the set : 13068
+Percentage of deletion : 95.485153198242188
+========================================================
+ MAP Points begingin
+========================================================
+# Total number of MapPoint to have passed the SetBadFlag  13068
+# Total number of deleted MapPoint                        12478
+# Number of MapPoint within map                           11335
+# Percentage of deletion                                   95.485153198242188%
+# Percentage of deletion (wrt kfs in map)                  110.08380889892578%
+############################################################################################################################
+# Total number of keyframes to have passed the SetBadFlag : 89
+# Total number of deleted keyframes                       : 52
+# Current KeyFrame ID                                     : 375
+# Number of keyframes within map                          : 287
+# Percentage of deletion                                  : 58.426963806152344%
+# Percentage of deletion (wrt kfs in map)                 : 18.118467330932617%
+# Percentage of deletion (wrt kfs max mnid)               : 13.866665840148926%
+# Percentage of kfs passed SetBadFlag (wrt kfs max mnid)  : 23.733333587646484%
+############################################################################################################################
+
+ TIME STATS in ms (mean$\pm$std)
+OpenCV version: 4.7.0
+---------------------------
+Tracking
+
+ORB Extraction: 10.465$\pm$2.5056
+Pose Prediction: 2.122$\pm$1.0664
+LM Track: 5.5$\pm$2.6749
+New KF decision: 0.056098$\pm$0.13881
+Total Tracking: 19.954$\pm$4.3807
+
+
+
+Local Mapping
+
+KF Insertion: 5.5689$\pm$2.5877
+MP Culling: 11.847$\pm$8.5553
+MP Creation: 23.961$\pm$13.062
+LBA: 191.45$\pm$198.31
+KF Culling: 21.259$\pm$18.981
+Total Local Mapping: 251.37$\pm$223.63
+---------------------------
+
+LBA complexity (mean$\pm$std)
+LBA Edges: 21956$\pm$16470
+LBA KF optimized: 38.423$\pm$29.73
+LBA KF fixed: 68.245$\pm$68.534
+LBA MP: -nan$\pm$-nan
+
+LBA executions: 371
+LBA aborts: 4
+---------------------------
+
+Map complexity
+KFs in map: 287
+MPs in map: 11336
+---------------------------
+
+Place Recognition (mean$\pm$std)
+Database Query: 0.55234$\pm$0.34993
+SE3 estimation: 4.0466$\pm$4.3839
+Total Place Recognition: 4.4833$\pm$4.6042
+
+
+Loop Closing (mean$\pm$std)
+Loop Fusion: 36.732$\pm$0
+Essential Graph: 117.56$\pm$0
+Total Loop Closing: 155.98$\pm$0
+
+Num exec: 1
+Number of KFs: -nan$\pm$-nan
+
+Map Merging (mean$\pm$std)
+Merge Maps: 132.04$\pm$0
+Welding BA: 217.75$\pm$0
+Optimization Ess.: 11.734$\pm$0
+Total Map Merging: 409.41$\pm$0
+
+Num exec: 1
+Number of KFs: 52$\pm$0
+Number of MPs: 3764$\pm$0
+
+Full GBA (mean$\pm$std)
+GBA: 986.32$\pm$0
+Map Update: 4.9643$\pm$0
+Total Full GBA: 991.29$\pm$0
+
+Num exec: 1
+Num abort: 0
+Number of KFs: 133$\pm$0
+Number of MPs: 6300$\pm$0
+Shutdown
+terminate called without an active exception
