@@ -13,6 +13,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -194,18 +200,27 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 add_executable(mono_tum
         Examples/Monocular/mono_tum.cc)
 target_link_libraries(mono_tum ${PROJECT_NAME})
+set_target_properties(mono_tum PROPERTIES COMPILE_FLAGS "-pg" LINK_FLAGS "-pg")
 
 add_executable(mono_kitti
         Examples/Monocular/mono_kitti.cc)
 target_link_libraries(mono_kitti ${PROJECT_NAME})
+set_target_properties(mono_kitti PROPERTIES COMPILE_FLAGS "-pg" LINK_FLAGS "-pg")
+
 
 add_executable(mono_euroc
-        Examples/Monocular/mono_euroc.cc)
+        Examples/Monocular/mono_euroc.cc  /home/shreyas/Downloads/thesis/ORB_SLAM3/src/LocalMapping.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
+set_target_properties(mono_euroc PROPERTIES COMPILE_FLAGS "-pg" LINK_FLAGS "-pg")
+
 
 add_executable(mono_tum_vi
         Examples/Monocular/mono_tum_vi.cc)
-target_link_libraries(mono_tum_vi ${PROJECT_NAME})
+
+        target_link_libraries(mono_tum_vi ${PROJECT_NAME})
+
+        set_target_properties(mono_tum_vi PROPERTIES COMPILE_FLAGS "-pg" LINK_FLAGS "-pg")
+
 
 if(realsense2_FOUND)
     add_executable(mono_realsense_t265
@@ -223,10 +238,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular-Iner
 add_executable(mono_inertial_euroc
         Examples/Monocular-Inertial/mono_inertial_euroc.cc)
 target_link_libraries(mono_inertial_euroc ${PROJECT_NAME})
+set_target_properties(mono_inertial_euroc PROPERTIES COMPILE_FLAGS "-pg" LINK_FLAGS "-pg")
+
 
 add_executable(mono_inertial_tum_vi
         Examples/Monocular-Inertial/mono_inertial_tum_vi.cc)
 target_link_libraries(mono_inertial_tum_vi ${PROJECT_NAME})
+set_target_properties(mono_inertial_tum_vi PROPERTIES COMPILE_FLAGS "-pg" LINK_FLAGS "-pg")
+
 
 if(realsense2_FOUND)
     add_executable(mono_inertial_realsense_t265

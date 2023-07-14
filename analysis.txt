@@ -1,0 +1,281 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 60.13      0.92     0.92      432     2.13     3.10  ORB_SLAM3::LocalMapping::KeyFrameCulling()
+ 27.45      1.34     0.42 32607735     0.00     0.00  pangolin::HandlerScroll::~HandlerScroll()
+  5.88      1.43     0.09                             _init
+  2.61      1.47     0.04      432     0.09     0.09  ORB_SLAM3::LocalMapping::SearchInNeighbors()
+  1.31      1.49     0.02                             Eigen::Matrix<Eigen::ScalarBinaryOpTraits<float, Eigen::Matrix<float, 3, 1, 0, 3, 1>::Scalar, Eigen::internal::scalar_product_op<float, Eigen::Matrix<float, 3, 1, 0, 3, 1>::Scalar> >::ReturnType, 3, 1, 0, 3, 1> Sophus::SO3Base<Sophus::SO3<float, 0> >::operator*<Eigen::Matrix<float, 3, 1, 0, 3, 1>, void>(Eigen::MatrixBase<Eigen::Matrix<float, 3, 1, 0, 3, 1> > const&) const
+  0.65      1.50     0.01      433     0.02     0.02  ORB_SLAM3::LocalMapping::MapPointCulling()
+  0.65      1.51     0.01      433     0.02     0.02  ORB_SLAM3::LocalMapping::CreateNewMapPoints()
+  0.65      1.52     0.01        1    10.00    10.00  std::_Vector_base<float, std::allocator<float> >::~_Vector_base()
+  0.65      1.53     0.01                             ORB_SLAM3::LocalMapping::stopRequested()
+  0.00      1.53     0.00    28851     0.00     0.00  ORB_SLAM3::LocalMapping::CheckNewKeyFrames()
+  0.00      1.53     0.00    16702     0.00     0.00  ORB_SLAM3::LocalMapping::ResetIfRequested()
+  0.00      1.53     0.00    16270     0.00     0.00  ORB_SLAM3::LocalMapping::Stop()
+  0.00      1.53     0.00    12114     0.00     0.00  Sophus::SE3Base<Sophus::SE3<float, 0> >::matrix3x4() const
+  0.00      1.53     0.00     2982     0.00     0.00  void std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> >::_M_realloc_insert<ORB_SLAM3::KeyFrame* const&>(__gnu_cxx::__normal_iterator<ORB_SLAM3::KeyFrame**, std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> > >, ORB_SLAM3::KeyFrame* const&)
+  0.00      1.53     0.00      433     0.00     0.00  ORB_SLAM3::LocalMapping::ProcessNewKeyFrame()
+  0.00      1.53     0.00        5     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >(char const*, std::allocator<char> const&)
+  0.00      1.53     0.00        2     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, char const*)
+  0.00      1.53     0.00        2     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)
+  0.00      1.53     0.00        1     0.00     0.00  LoadImages(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::vector<double, std::allocator<double> >&)
+  0.00      1.53     0.00        1     0.00     0.00  void Eigen::internal::quaternionbase_assign_impl<Eigen::Matrix<float, 3, 3, 0, 3, 3>, 3, 3>::run<Eigen::Quaternion<float, 0> >(Eigen::QuaternionBase<Eigen::Quaternion<float, 0> >&, Eigen::Matrix<float, 3, 3, 0, 3, 3> const&)
+  0.00      1.53     0.00        1     0.00     0.00  ORB_SLAM3::System::~System()
+  0.00      1.53     0.00        1     0.00     0.00  std::_Vector_base<int, std::allocator<int> >::~_Vector_base()
+  0.00      1.53     0.00        1     0.00     0.00  std::vector<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >::~vector()
+  0.00      1.53     0.00        1     0.00     0.00  std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_default_append(unsigned long)
+  0.00      1.53     0.00        1     0.00     0.00  std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector()
+  0.00      1.53     0.00        1     0.00     0.00  std::vector<int, std::allocator<int> >::_M_default_append(unsigned long)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2022 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 0.65% of 1.53 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     91.5    0.00    1.40                 ORB_SLAM3::LocalMapping::Run() [1]
+                0.92    0.42     432/432         ORB_SLAM3::LocalMapping::KeyFrameCulling() [2]
+                0.04    0.00     432/432         ORB_SLAM3::LocalMapping::SearchInNeighbors() [5]
+                0.01    0.00     433/433         ORB_SLAM3::LocalMapping::MapPointCulling() [8]
+                0.01    0.00     433/433         ORB_SLAM3::LocalMapping::CreateNewMapPoints() [9]
+                0.00    0.00   17566/28851       ORB_SLAM3::LocalMapping::CheckNewKeyFrames() [18]
+                0.00    0.00   16702/16702       ORB_SLAM3::LocalMapping::ResetIfRequested() [19]
+                0.00    0.00   16270/16270       ORB_SLAM3::LocalMapping::Stop() [20]
+                0.00    0.00     433/433         ORB_SLAM3::LocalMapping::ProcessNewKeyFrame() [23]
+-----------------------------------------------
+                0.92    0.42     432/432         ORB_SLAM3::LocalMapping::Run() [1]
+[2]     87.6    0.92    0.42     432         ORB_SLAM3::LocalMapping::KeyFrameCulling() [2]
+                0.42    0.00 32607735/32607735     pangolin::HandlerScroll::~HandlerScroll() [3]
+-----------------------------------------------
+                                1771             pangolin::HandlerScroll::~HandlerScroll() [3]
+                0.42    0.00 32607735/32607735     ORB_SLAM3::LocalMapping::KeyFrameCulling() [2]
+[3]     27.5    0.42    0.00 32607735+1771    pangolin::HandlerScroll::~HandlerScroll() [3]
+                                1771             pangolin::HandlerScroll::~HandlerScroll() [3]
+-----------------------------------------------
+                                                 <spontaneous>
+[4]      5.9    0.09    0.00                 _init [4]
+-----------------------------------------------
+                0.04    0.00     432/432         ORB_SLAM3::LocalMapping::Run() [1]
+[5]      2.6    0.04    0.00     432         ORB_SLAM3::LocalMapping::SearchInNeighbors() [5]
+                0.00    0.00    2982/2982        void std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> >::_M_realloc_insert<ORB_SLAM3::KeyFrame* const&>(__gnu_cxx::__normal_iterator<ORB_SLAM3::KeyFrame**, std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> > >, ORB_SLAM3::KeyFrame* const&) [22]
+-----------------------------------------------
+                                                 <spontaneous>
+[6]      1.3    0.02    0.00                 Eigen::Matrix<Eigen::ScalarBinaryOpTraits<float, Eigen::Matrix<float, 3, 1, 0, 3, 1>::Scalar, Eigen::internal::scalar_product_op<float, Eigen::Matrix<float, 3, 1, 0, 3, 1>::Scalar> >::ReturnType, 3, 1, 0, 3, 1> Sophus::SO3Base<Sophus::SO3<float, 0> >::operator*<Eigen::Matrix<float, 3, 1, 0, 3, 1>, void>(Eigen::MatrixBase<Eigen::Matrix<float, 3, 1, 0, 3, 1> > const&) const [6]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]      0.7    0.00    0.01                 main [7]
+                0.01    0.00       1/1           std::_Vector_base<float, std::allocator<float> >::~_Vector_base() [10]
+                0.00    0.00       5/5           std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >(char const*, std::allocator<char> const&) [24]
+                0.00    0.00       2/2           std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&) [26]
+                0.00    0.00       2/2           std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, char const*) [25]
+                0.00    0.00       1/1           std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_default_append(unsigned long) [32]
+                0.00    0.00       1/1           std::vector<int, std::allocator<int> >::_M_default_append(unsigned long) [34]
+                0.00    0.00       1/1           LoadImages(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::vector<double, std::allocator<double> >&) [27]
+                0.00    0.00       1/1           ORB_SLAM3::System::~System() [29]
+                0.00    0.00       1/1           std::_Vector_base<int, std::allocator<int> >::~_Vector_base() [30]
+                0.00    0.00       1/1           std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector() [33]
+                0.00    0.00       1/1           std::vector<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >::~vector() [31]
+-----------------------------------------------
+                0.01    0.00     433/433         ORB_SLAM3::LocalMapping::Run() [1]
+[8]      0.7    0.01    0.00     433         ORB_SLAM3::LocalMapping::MapPointCulling() [8]
+-----------------------------------------------
+                0.01    0.00     433/433         ORB_SLAM3::LocalMapping::Run() [1]
+[9]      0.7    0.01    0.00     433         ORB_SLAM3::LocalMapping::CreateNewMapPoints() [9]
+                0.00    0.00   12114/12114       Sophus::SE3Base<Sophus::SE3<float, 0> >::matrix3x4() const [21]
+                0.00    0.00   11285/28851       ORB_SLAM3::LocalMapping::CheckNewKeyFrames() [18]
+-----------------------------------------------
+                0.01    0.00       1/1           main [7]
+[10]     0.7    0.01    0.00       1         std::_Vector_base<float, std::allocator<float> >::~_Vector_base() [10]
+-----------------------------------------------
+                                                 <spontaneous>
+[11]     0.7    0.01    0.00                 ORB_SLAM3::LocalMapping::stopRequested() [11]
+-----------------------------------------------
+                0.00    0.00   11285/28851       ORB_SLAM3::LocalMapping::CreateNewMapPoints() [9]
+                0.00    0.00   17566/28851       ORB_SLAM3::LocalMapping::Run() [1]
+[18]     0.0    0.00    0.00   28851         ORB_SLAM3::LocalMapping::CheckNewKeyFrames() [18]
+-----------------------------------------------
+                0.00    0.00   16702/16702       ORB_SLAM3::LocalMapping::Run() [1]
+[19]     0.0    0.00    0.00   16702         ORB_SLAM3::LocalMapping::ResetIfRequested() [19]
+-----------------------------------------------
+                0.00    0.00   16270/16270       ORB_SLAM3::LocalMapping::Run() [1]
+[20]     0.0    0.00    0.00   16270         ORB_SLAM3::LocalMapping::Stop() [20]
+-----------------------------------------------
+                0.00    0.00   12114/12114       ORB_SLAM3::LocalMapping::CreateNewMapPoints() [9]
+[21]     0.0    0.00    0.00   12114         Sophus::SE3Base<Sophus::SE3<float, 0> >::matrix3x4() const [21]
+-----------------------------------------------
+                0.00    0.00    2982/2982        ORB_SLAM3::LocalMapping::SearchInNeighbors() [5]
+[22]     0.0    0.00    0.00    2982         void std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> >::_M_realloc_insert<ORB_SLAM3::KeyFrame* const&>(__gnu_cxx::__normal_iterator<ORB_SLAM3::KeyFrame**, std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> > >, ORB_SLAM3::KeyFrame* const&) [22]
+-----------------------------------------------
+                0.00    0.00     433/433         ORB_SLAM3::LocalMapping::Run() [1]
+[23]     0.0    0.00    0.00     433         ORB_SLAM3::LocalMapping::ProcessNewKeyFrame() [23]
+-----------------------------------------------
+                0.00    0.00       5/5           main [7]
+[24]     0.0    0.00    0.00       5         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >(char const*, std::allocator<char> const&) [24]
+-----------------------------------------------
+                0.00    0.00       2/2           main [7]
+[25]     0.0    0.00    0.00       2         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, char const*) [25]
+-----------------------------------------------
+                0.00    0.00       2/2           main [7]
+[26]     0.0    0.00    0.00       2         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&) [26]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[27]     0.0    0.00    0.00       1         LoadImages(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::vector<double, std::allocator<double> >&) [27]
+-----------------------------------------------
+                0.00    0.00       1/1           Sophus::SO3<float, 0>::SO3(Eigen::Matrix<float, 3, 3, 0, 3, 3> const&) [44]
+[28]     0.0    0.00    0.00       1         void Eigen::internal::quaternionbase_assign_impl<Eigen::Matrix<float, 3, 3, 0, 3, 3>, 3, 3>::run<Eigen::Quaternion<float, 0> >(Eigen::QuaternionBase<Eigen::Quaternion<float, 0> >&, Eigen::Matrix<float, 3, 3, 0, 3, 3> const&) [28]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[29]     0.0    0.00    0.00       1         ORB_SLAM3::System::~System() [29]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[30]     0.0    0.00    0.00       1         std::_Vector_base<int, std::allocator<int> >::~_Vector_base() [30]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[31]     0.0    0.00    0.00       1         std::vector<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >::~vector() [31]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[32]     0.0    0.00    0.00       1         std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_default_append(unsigned long) [32]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[33]     0.0    0.00    0.00       1         std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector() [33]
+-----------------------------------------------
+                0.00    0.00       1/1           main [7]
+[34]     0.0    0.00    0.00       1         std::vector<int, std::allocator<int> >::_M_default_append(unsigned long) [34]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2022 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [27] LoadImages(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::vector<double, std::allocator<double> >&) [9] ORB_SLAM3::LocalMapping::CreateNewMapPoints() [31] std::vector<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >::~vector()
+  [28] void Eigen::internal::quaternionbase_assign_impl<Eigen::Matrix<float, 3, 3, 0, 3, 3>, 3, 3>::run<Eigen::Quaternion<float, 0> >(Eigen::QuaternionBase<Eigen::Quaternion<float, 0> >&, Eigen::Matrix<float, 3, 3, 0, 3, 3> const&) [23] ORB_SLAM3::LocalMapping::ProcessNewKeyFrame() [32] std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_default_append(unsigned long)
+   [3] pangolin::HandlerScroll::~HandlerScroll() [20] ORB_SLAM3::LocalMapping::Stop() [33] std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector()
+  [11] ORB_SLAM3::LocalMapping::stopRequested() [29] ORB_SLAM3::System::~System() [34] std::vector<int, std::allocator<int> >::_M_default_append(unsigned long)
+   [2] ORB_SLAM3::LocalMapping::KeyFrameCulling() [21] Sophus::SE3Base<Sophus::SE3<float, 0> >::matrix3x4() const [24] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >(char const*, std::allocator<char> const&)
+   [8] ORB_SLAM3::LocalMapping::MapPointCulling() [6] Eigen::Matrix<Eigen::ScalarBinaryOpTraits<float, Eigen::Matrix<float, 3, 1, 0, 3, 1>::Scalar, Eigen::internal::scalar_product_op<float, Eigen::Matrix<float, 3, 1, 0, 3, 1>::Scalar> >::ReturnType, 3, 1, 0, 3, 1> Sophus::SO3Base<Sophus::SO3<float, 0> >::operator*<Eigen::Matrix<float, 3, 1, 0, 3, 1>, void>(Eigen::MatrixBase<Eigen::Matrix<float, 3, 1, 0, 3, 1> > const&) const [25] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, char const*)
+  [19] ORB_SLAM3::LocalMapping::ResetIfRequested() [10] std::_Vector_base<float, std::allocator<float> >::~_Vector_base() [26] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)
+  [18] ORB_SLAM3::LocalMapping::CheckNewKeyFrames() [30] std::_Vector_base<int, std::allocator<int> >::~_Vector_base() [4] _init
+   [5] ORB_SLAM3::LocalMapping::SearchInNeighbors() [22] void std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> >::_M_realloc_insert<ORB_SLAM3::KeyFrame* const&>(__gnu_cxx::__normal_iterator<ORB_SLAM3::KeyFrame**, std::vector<ORB_SLAM3::KeyFrame*, std::allocator<ORB_SLAM3::KeyFrame*> > >, ORB_SLAM3::KeyFrame* const&)
