@@ -20,6 +20,7 @@
 #include "Converter.h"
 #include "ImuTypes.h"
 #include <mutex>
+#include "tracy/public/tracy/Tracy.hpp"
 
 namespace ORB_SLAM3
 {
@@ -1842,3 +1843,4 @@ void KeyFrame::SetKeyFrameDatabase(KeyFrameDatabase *pKFDB)
 }
 
 } // namespace ORB_SLAM
+

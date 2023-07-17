@@ -13,6 +13,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 
+# Profiling
+# add_definitions(-DENABLE_TRACY)
+option(TRACY_ENABLE "" ON)
+option(TRACY_ON_DEMAND "" ON)
+add_subdirectory(tracy)
+# target_link_libraries (${PROJECT_NAME} PUBLIC Tracy :: TracyClient )
+
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -117,6 +124,7 @@ include/Settings.h
 include/MapGarbageCollector.h)
 add_subdirectory(Thirdparty/g2o)
 
+
 target_link_libraries(${PROJECT_NAME}
 ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
@@ -125,21 +133,21 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 -lboost_serialization
 -lcrypto
+Tracy::TracyClient 
 )
 
 # If RealSense SDK is found the library is added and its examples compiled
 if(realsense2_FOUND)
-    include_directories(${PROJECT_NAME}
-    ${realsense_INCLUDE_DIR}
+include_directories(${PROJECT_NAME}
+${realsense_INCLUDE_DIR}
     )
     target_link_libraries(${PROJECT_NAME}
     ${realsense2_LIBRARY}
     )
-endif()
-
-
+    endif()
+    
+    
 # Build examples
-
 # RGB-D examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 
@@ -152,7 +160,6 @@ if(realsense2_FOUND)
             Examples/RGB-D/rgbd_realsense_D435i.cc)
     target_link_libraries(rgbd_realsense_D435i ${PROJECT_NAME})
 endif()
-
 
 # RGB-D inertial examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D-Inertial)
@@ -309,6 +316,8 @@ target_link_libraries(stereo_euroc_old ${PROJECT_NAME})
 add_executable(stereo_tum_vi_old
         Examples_old/Stereo/stereo_tum_vi.cc)
 target_link_libraries(stereo_tum_vi_old ${PROJECT_NAME})
+
+
 
 if(realsense2_FOUND)
     add_executable(stereo_realsense_t265_old
