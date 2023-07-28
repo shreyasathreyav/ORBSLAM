@@ -3615,10 +3615,10 @@ namespace ORB_SLAM3
 
                 // } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
                 int old_value, new_value;
-                old_value = (it)->mReferencecount_lastframe_CAS;
+                old_value = (it)->mReferencecount_msp_CAS;
                 new_value = old_value - 1;
                 while (!atomic_compare_exchange_strong(
-                    &((it)->mReferencecount_lastframe_CAS), &old_value, new_value))
+                    &((it)->mReferencecount_msp_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
                 }
@@ -3662,10 +3662,10 @@ namespace ORB_SLAM3
 
                         // } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        old_value = (pMP)->mReferencecount_lastframe_CAS;
+                        old_value = (pMP)->mReferencecount_msp_CAS;
                         new_value = old_value + 1;
                         while (!atomic_compare_exchange_strong(
-                            &((pMP)->mReferencecount_lastframe_CAS), &old_value, new_value))
+                            &((pMP)->mReferencecount_msp_CAS), &old_value, new_value))
                         {
                             new_value = old_value + 1;
                         }
