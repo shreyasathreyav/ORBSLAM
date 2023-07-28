@@ -104,12 +104,11 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value{it->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(it->mReferencecount_canonicalmp_CAS), &old_value, new_value))
                     {
                         new_value = old_value + 1;
-
-                    } while (!atomic_compare_exchange_strong(&(it->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -224,12 +223,11 @@ namespace ORB_SLAM3
                 // canonical #1
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value{pKF->mReferencecount_canonical_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
                     {
                         new_value = old_value + 1;
-
-                    } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -280,12 +278,11 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -303,12 +300,11 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
-
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -339,12 +335,11 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
-
-                } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -423,12 +418,11 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value + 1;
-
-                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -449,12 +443,11 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value + 1;
-
-                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -493,12 +486,11 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value + 1;
-
-                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -573,12 +565,11 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{this->mReferencecount_mob_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(this->mReferencecount_mob_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(this->mReferencecount_mob_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -592,12 +583,11 @@ namespace ORB_SLAM3
 // This is a decrement for mappoints
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -612,12 +602,11 @@ namespace ORB_SLAM3
 
 #ifdef CASRF
         {
-            int old_value, new_value;
-            do
+            int old_value{pMP->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
+            while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value))
             {
                 new_value = old_value + 1;
-
-            } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+            }
         }
 #endif
 #ifdef RF
@@ -635,12 +624,11 @@ namespace ORB_SLAM3
         unique_lock<mutex> lock(mMutexFeatures);
         {
 #ifdef CASRF
-            {int old_value, new_value;
-        do
+            {int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
+        while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
         {
             new_value = old_value - 1;
-
-        } while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+        }
     }
 #endif
 #ifdef RF
@@ -665,12 +653,11 @@ void KeyFrame::EraseMapPointMatch(MapPoint *pMP)
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{mvpMapPoints[leftIndex]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(mvpMapPoints[leftIndex]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(mvpMapPoints[leftIndex]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -686,12 +673,11 @@ void KeyFrame::EraseMapPointMatch(MapPoint *pMP)
     {
         {
 #ifdef CASRF
-            {int old_value, new_value;
-        do
+            {int old_value{mvpMapPoints[rightIndex]->mReferencecount_canonicalmp_CAS}, new_value = old_value - 1;
+        while (!atomic_compare_exchange_strong(&(mvpMapPoints[rightIndex]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
         {
             new_value = old_value - 1;
-
-        } while (!atomic_compare_exchange_strong(&(mvpMapPoints[rightIndex]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+        }
     }
 #endif
 #ifdef RF
@@ -713,12 +699,11 @@ void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
     // Decrement for idx
 #ifdef CASRF
     {
-        int old_value, new_value;
-        do
+        int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
+        while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
         {
             new_value = old_value - 1;
-
-        } while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+        }
     }
 #endif
 #ifdef RF
@@ -730,12 +715,11 @@ void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
 // Increment for pMP
 #ifdef CASRF
     {
-        int old_value, new_value;
-        do
+        int old_value{pMP->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
+        while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value))
         {
             new_value = old_value + 1;
-
-        } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value));
+        }
     }
 #endif
 #ifdef RF
@@ -884,12 +868,11 @@ void KeyFrame::UpdateConnections(bool upParent)
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{it.first->mReferencecount_canonical_CAS}, new_value {old_value + 1};
+                while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
-
-                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -902,16 +885,19 @@ void KeyFrame::UpdateConnections(bool upParent)
         unique_lock<mutex> lockCon(mMutexConnections);
         for (auto it : mConnectedKeyFrameWeights)
         {
+#ifdef RF
             {
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_canonical--;
             }
-            int old_value, new_value;
-            do
+#endif
+#ifdef CASRF
+            int old_value{it.first->mReferencecount_canonical_CAS}, new_value{old_value - 1};
+            while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
             {
                 new_value = old_value - 1;
-
-            } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value));
+            }
+#endif
         }
         mConnectedKeyFrameWeights = KFcounter;
 
@@ -919,12 +905,11 @@ void KeyFrame::UpdateConnections(bool upParent)
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -943,12 +928,11 @@ void KeyFrame::UpdateConnections(bool upParent)
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value + 1};
+                while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
-
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -1106,17 +1090,22 @@ void KeyFrame::SetBadFlag()
 
         for (auto it : mConnectedKeyFrameWeights)
         {
+#ifdef RF
             {
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_canonical--;
             }
+#endif
+
+#ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value {it.first->mReferencecount_canonical_CAS}, new_value {old_value - 1};
+                while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-                } while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value));
+                }
             }
+#endif
         }
         mConnectedKeyFrameWeights.clear();
 
@@ -1124,12 +1113,11 @@ void KeyFrame::SetBadFlag()
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value {itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};                
+                while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -1183,12 +1171,11 @@ void KeyFrame::SetBadFlag()
 // // Increment for vpConnected[i]
 #ifdef CASRF
                                 {
-                                    int old_value, new_value;
-                                    do
+                                    int old_value {pP->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                                    while (!atomic_compare_exchange_strong(&(pP->mReferencecount_ockf_CAS), &old_value, new_value))
                                     {
                                         new_value = old_value + 1;
-
-                                    } while (!atomic_compare_exchange_strong(&(pP->mReferencecount_ockf_CAS), &old_value, new_value));
+                                    }
                                 }
 #endif
 #ifdef RF
@@ -1211,12 +1198,11 @@ void KeyFrame::SetBadFlag()
                 {
 #ifdef CASRF
                     {
-                        int old_value, new_value;
-                        do
+                        int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                        while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
-
-                        } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -1246,12 +1232,11 @@ void KeyFrame::SetBadFlag()
                 {
 #ifdef CASRF
                     {
-                        int old_value, new_value;
-                        do
+                        int old_value {itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                        while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
-
-                        } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -1271,12 +1256,11 @@ void KeyFrame::SetBadFlag()
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value {itr->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
-
-                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -1337,18 +1321,22 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
         if (mConnectedKeyFrameWeights.count(pKF))
         {
             mConnectedKeyFrameWeights.erase(pKF);
+
+#ifdef RF
             {
                 unique_lock<mutex> lock(pKF->mMutexreferencecount);
                 pKF->mReferencecount_canonical--;
             }
+#endif
+#ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value {pKF->mReferencecount_canonical_CAS}, new_value {old_value - 1};
+                while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value));
+                }
             }
+#endif
             bUpdate = true;
         }
     }
@@ -1358,12 +1346,11 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
     {
 #ifdef CASRF
         {
-            int old_value, new_value;
-            do
+            int old_value {(*index)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+            while (!atomic_compare_exchange_strong(&((*index)->mReferencecount_ockf_CAS), &old_value, new_value))
             {
                 new_value = old_value - 1;
-
-            } while (!atomic_compare_exchange_strong(&((*index)->mReferencecount_ockf_CAS), &old_value, new_value));
+            }
         }
 #endif
 #ifdef RF

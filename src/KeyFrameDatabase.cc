@@ -704,12 +704,11 @@ namespace ORB_SLAM3
 // Increment for pBestKF
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value {(pBestKF->mReferencecount_ockf_CAS)}, new_value {old_value + 1};
+                while (!atomic_compare_exchange_strong(&(pBestKF->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
-
-                } while (!atomic_compare_exchange_strong(&(pBestKF->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -730,12 +729,11 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
+                    int old_value {itr->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
-
-                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -770,12 +768,11 @@ namespace ORB_SLAM3
 // This is the increment that will make the reference count not zero
 #ifdef CASRF
                     {
-                        int old_value, new_value;
-                        do
+                        int old_value {pKFi->mReferencecount_ockf_CAS}, new_value {old_value + 1};
+                        while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value + 1;
-
-                        } while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -794,12 +791,11 @@ namespace ORB_SLAM3
 // This is the increment that will make the reference count not zero
 #ifdef CASRF
                     {
-                        int old_value, new_value;
-                        do
+                        int old_value {pKFi->mReferencecount_ockf_CAS}, new_value {old_value + 1};
+                        while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value + 1;
-
-                        } while (!atomic_compare_exchange_strong(&(pKFi->mReferencecount_ockf_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -822,12 +818,11 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
+                int old_value {itr.second->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                while (!atomic_compare_exchange_strong(&(itr.second->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(itr.second->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
