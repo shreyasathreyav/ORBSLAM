@@ -2310,12 +2310,20 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
+                        // int old_value, new_value;
+                        // do
+                        // {
+                        //     new_value = old_value + 1;
+
+                        // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        do
+                        old_value = (i)->mReferencecount_lastframe_CAS;
+                        new_value = old_value + 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((i)->mReferencecount_lastframe_CAS), &old_value, new_value))
                         {
                             new_value = old_value + 1;
-
-                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -2332,12 +2340,20 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
+                        // int old_value, new_value;
+                        // do
+                        // {
+                        //     new_value = old_value - 1;
+
+                        // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        do
+                        old_value = (i)->mReferencecount_lastframe_CAS;
+                        new_value = old_value - 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((i)->mReferencecount_lastframe_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
-
-                        } while (!atomic_compare_exchange_strong(&(i->mReferencecount_lastframe_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -2771,12 +2787,20 @@ namespace ORB_SLAM3
                     {
 #ifdef CASRF
                         {
+                            // int old_value, new_value;
+                            // do
+                            // {
+                            //     new_value = old_value - 1;
+
+                            // } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
                             int old_value, new_value;
-                            do
+                            old_value = mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS;
+                            new_value = old_value - 1;
+                            while (!atomic_compare_exchange_strong(
+                                &(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value))
                             {
                                 new_value = old_value - 1;
-
-                            } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
+                            }
                         }
 #endif
 #ifdef RF
@@ -2788,12 +2812,20 @@ namespace ORB_SLAM3
                     }
 #ifdef CASRF
                     {
+                        // int old_value, new_value;
+                        // do
+                        // {
+                        //     new_value = old_value + 1;
+
+                        // } while (!atomic_compare_exchange_strong(&(pRep->mReferencecount_lastframe_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        do
+                        old_value = (pRep)->mReferencecount_lastframe_CAS;
+                        new_value = old_value + 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((pRep)->mReferencecount_lastframe_CAS), &old_value, new_value))
                         {
                             new_value = old_value + 1;
-
-                        } while (!atomic_compare_exchange_strong(&(pRep->mReferencecount_lastframe_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -2934,12 +2966,20 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
+                        // int old_value, new_value;
+                        // do
+                        // {
+                        //     new_value = old_value - 1;
+
+                        // } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        do
+                        old_value = (mLastFrame.mvpMapPoints[i])->mReferencecount_lastframe_CAS;
+                        new_value = old_value - 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((mLastFrame.mvpMapPoints[i])->mReferencecount_lastframe_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
-
-                        } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -2952,12 +2992,20 @@ namespace ORB_SLAM3
                 }
 #ifdef CASRF
                 {
+                    // int old_value, new_value;
+                    // do
+                    // {
+                    //     new_value = old_value + 1;
+
+                    // } while (!atomic_compare_exchange_strong(&(pNewMP->mReferencecount_lastframe_CAS), &old_value, new_value));
                     int old_value, new_value;
-                    do
+                    old_value = (pNewMP)->mReferencecount_lastframe_CAS;
+                    new_value = old_value + 1;
+                    while (!atomic_compare_exchange_strong(
+                        &((pNewMP)->mReferencecount_lastframe_CAS), &old_value, new_value))
                     {
                         new_value = old_value + 1;
-
-                    } while (!atomic_compare_exchange_strong(&(pNewMP->mReferencecount_lastframe_CAS), &old_value, new_value));
+                    }
                 }
 #endif
 #ifdef RF
@@ -3560,12 +3608,20 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value - 1;
+
+                // } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
                 int old_value, new_value;
-                do
+                old_value = (it)->mReferencecount_lastframe_CAS;
+                new_value = old_value - 1;
+                while (!atomic_compare_exchange_strong(
+                    &((it)->mReferencecount_lastframe_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -3599,12 +3655,20 @@ namespace ORB_SLAM3
                     count_pts++;
 #ifdef CASRF
                     {
+                        // int old_value, new_value;
+                        // do
+                        // {
+                        //     new_value = old_value + 1;
+
+                        // } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        do
+                        old_value = (pMP)->mReferencecount_lastframe_CAS;
+                        new_value = old_value + 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((pMP)->mReferencecount_lastframe_CAS), &old_value, new_value))
                         {
                             new_value = old_value + 1;
-
-                        } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
+                        }
                     }
 #endif
 #ifdef RF
@@ -3674,12 +3738,20 @@ namespace ORB_SLAM3
                         {
 #ifdef CASRF
                             {
+                                // int old_value, new_value;
+                                // do
+                                // {
+                                //     new_value = old_value - 1;
+
+                                // } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
                                 int old_value, new_value;
-                                do
+                                old_value = (mLastFrame.mvpMapPoints[i])->mReferencecount_lastframe_CAS;
+                                new_value = old_value - 1;
+                                while (!atomic_compare_exchange_strong(
+                                    &((mLastFrame.mvpMapPoints[i])->mReferencecount_lastframe_CAS), &old_value, new_value))
                                 {
                                     new_value = old_value - 1;
-
-                                } while (!atomic_compare_exchange_strong(&(mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe_CAS), &old_value, new_value));
+                                }
                             }
 #endif
 #ifdef RF
@@ -3704,12 +3776,20 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value - 1;
+
+                // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
                 int old_value, new_value;
-                do
+                old_value = (i)->mReferencecount_mob_CAS;
+                new_value = old_value - 1;
+                while (!atomic_compare_exchange_strong(
+                    &((i)->mReferencecount_mob_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -3730,12 +3810,20 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value - 1;
+
+                // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
                 int old_value, new_value;
-                do
+                old_value = (i)->mReferencecount_ockf_CAS;
+                new_value = old_value - 1;
+                while (!atomic_compare_exchange_strong(
+                    &((i)->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
-
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -3770,12 +3858,20 @@ namespace ORB_SLAM3
             mvpLocalKeyFrames.push_back(pKF);
 #ifdef CASRF
             {
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value + 1;
+
+                // } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_mob_CAS), &old_value, new_value));
                 int old_value, new_value;
-                do
+                old_value = (pKF)->mReferencecount_mob_CAS;
+                new_value = old_value + 1;
+                while (!atomic_compare_exchange_strong(
+                    &((pKF)->mReferencecount_mob_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
-
-                } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_mob_CAS), &old_value, new_value));
+                }
             }
 #endif
 #ifdef RF
@@ -3809,12 +3905,20 @@ namespace ORB_SLAM3
                     {
 #ifdef CASRF
                         {
+                            // int old_value, new_value;
+                            // do
+                            // {
+                            //     new_value = old_value + 1;
+
+                            // } while (!atomic_compare_exchange_strong(&(pNeighKF->mReferencecount_ockf_CAS), &old_value, new_value));
                             int old_value, new_value;
-                            do
+                            old_value = (pNeighKF)->mReferencecount_ockf_CAS;
+                            new_value = old_value + 1;
+                            while (!atomic_compare_exchange_strong(
+                                &((pNeighKF)->mReferencecount_ockf_CAS), &old_value, new_value))
                             {
                                 new_value = old_value + 1;
-
-                            } while (!atomic_compare_exchange_strong(&(pNeighKF->mReferencecount_ockf_CAS), &old_value, new_value));
+                            }
                         }
 #endif
 #ifdef RF
@@ -3863,12 +3967,20 @@ namespace ORB_SLAM3
                     {
 #ifdef CASRF
                         {
+                            // int old_value, new_value;
+                            // do
+                            // {
+                            //     new_value = old_value - 1;
+
+                            // } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
                             int old_value, new_value;
-                            do
+                            old_value = (itr)->mReferencecount_ockf_CAS;
+                            new_value = old_value - 1;
+                            while (!atomic_compare_exchange_strong(
+                                &((itr)->mReferencecount_ockf_CAS), &old_value, new_value))
                             {
                                 new_value = old_value - 1;
-
-                            } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                            }
                         }
 #endif
 #ifdef RF
@@ -3888,12 +4000,20 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value, new_value;
-                    do
-                    {
-                        new_value = old_value - 1;
+                    // int old_value, new_value;
+                    // do
+                    // {
+                    //     new_value = old_value - 1;
 
-                    } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    // } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
+                    int old_value, new_value;
+                        old_value = (itr)->mReferencecount_ockf_CAS;
+                        new_value = old_value - 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((itr)->mReferencecount_ockf_CAS), &old_value, new_value))
+                        {
+                            new_value = old_value - 1;
+                        }
                 }
 #endif
 #ifdef RF
@@ -3936,12 +4056,20 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value, new_value;
-                do
-                {
-                    new_value = old_value - 1;
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value - 1;
 
-                } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
+                // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
+                int old_value, new_value;
+                        old_value = (i)->mReferencecount_mob_CAS;
+                        new_value = old_value - 1;
+                        while (!atomic_compare_exchange_strong(
+                            &((i)->mReferencecount_mob_CAS), &old_value, new_value))
+                        {
+                            new_value = old_value - 1;
+                        }
             }
 #endif
 #ifdef RF
