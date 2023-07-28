@@ -374,9 +374,9 @@ namespace ORB_SLAM3
 
                         // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value));
                         int old_value, new_value;
-                        old_value = i->mReferencecount_msp_CAS;
+                        old_value = i->mReferencecount_ockf_CAS;
                         new_value = old_value - 1;
-                        while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value))
+                        while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
                         }
