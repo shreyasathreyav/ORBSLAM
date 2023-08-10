@@ -1,5 +1,16 @@
 {
     "files.associations": {
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "core": "cpp",
+        "*.tcc": "cpp",
+        "mutex": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "variant": "cpp",
+        "__locale": "cpp",
+        "__threading_support": "cpp",
+        "locale": "cpp",
+        "*.inc": "cpp",
+        "*.ipp": "cpp"
     }
 }

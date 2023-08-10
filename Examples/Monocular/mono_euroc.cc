@@ -26,6 +26,12 @@
 
 #include<System.h>
 
+namespace Thread_ID
+{
+    std::thread::id always_there;
+};
+
+
 using namespace std;
 
 void LoadImages(const string &strImagePath, const string &strPathTimes,
