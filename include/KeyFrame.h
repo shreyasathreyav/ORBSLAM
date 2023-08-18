@@ -35,6 +35,7 @@
 #include <mutex>
 
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 
@@ -50,6 +51,7 @@ class KeyFrameDatabase;
 class GeometricCamera;
 
 class KeyFrame
+        : public std::enable_shared_from_this<KeyFrame>
 {
     friend class boost::serialization::access;
 
@@ -218,33 +220,33 @@ public:
     void ComputeBoW();
 
     // Covisibility graph functions
-    void AddConnection(KeyFrame* pKF, const int &weight);
-    void EraseConnection(KeyFrame* pKF);
+    void AddConnection(std::shared_ptr<KeyFrame> pKF, const int &weight);
+    void EraseConnection(std::shared_ptr<KeyFrame> pKF);
 
     void UpdateConnections(bool upParent=true);
     void UpdateBestCovisibles();
-    std::set<KeyFrame *> GetConnectedKeyFrames();
-    std::vector<KeyFrame* > GetVectorCovisibleKeyFrames();
-    std::vector<KeyFrame*> GetBestCovisibilityKeyFrames(const int &N);
-    std::vector<KeyFrame*> GetCovisiblesByWeight(const int &w);
-    int GetWeight(KeyFrame* pKF);
+    std::set<std::shared_ptr<KeyFrame>> GetConnectedKeyFrames();
+    std::vector<std::shared_ptr<KeyFrame> > GetVectorCovisibleKeyFrames();
+    std::vector<std::shared_ptr<KeyFrame>> GetBestCovisibilityKeyFrames(const int &N);
+    std::vector<std::shared_ptr<KeyFrame>> GetCovisiblesByWeight(const int &w);
+    int GetWeight(std::shared_ptr<KeyFrame> pKF);
 
     // Spanning tree functions
-    void AddChild(KeyFrame* pKF);
-    void EraseChild(KeyFrame* pKF);
-    void ChangeParent(KeyFrame* pKF);
-    std::set<KeyFrame*> GetChilds();
-    KeyFrame* GetParent();
-    bool hasChild(KeyFrame* pKF);
+    void AddChild(std::shared_ptr<KeyFrame> pKF);
+    void EraseChild(std::shared_ptr<KeyFrame> pKF);
+    void ChangeParent(std::shared_ptr<KeyFrame> pKF);
+    std::set<std::shared_ptr<KeyFrame>> GetChilds();
+    std::shared_ptr<KeyFrame> GetParent();
+    bool hasChild(std::shared_ptr<KeyFrame> pKF);
     void SetFirstConnection(bool bFirst);
 
     // Loop Edges
-    void AddLoopEdge(KeyFrame* pKF);
-    std::set<KeyFrame*> GetLoopEdges();
+    void AddLoopEdge(std::shared_ptr<KeyFrame> pKF);
+    std::set<std::shared_ptr<KeyFrame>> GetLoopEdges();
 
     // Merge Edges
-    void AddMergeEdge(KeyFrame* pKF);
-    set<KeyFrame*> GetMergeEdges();
+    void AddMergeEdge(std::shared_ptr<KeyFrame> pKF);
+    set<std::shared_ptr<KeyFrame>> GetMergeEdges();
 
     // MapPoint observation functions
     int GetNumberMPs();
@@ -279,7 +281,7 @@ public:
         return a>b;
     }
 
-    static bool lId(KeyFrame* pKF1, KeyFrame* pKF2){
+    static bool lId(std::shared_ptr<KeyFrame> pKF1, std::shared_ptr<KeyFrame> pKF2){
         return pKF1->mnId<pKF2->mnId;
     }
 
@@ -296,8 +298,8 @@ public:
     bool ProjectPointDistort(MapPoint* pMP, cv::Point2f &kp, float &u, float &v);
     bool ProjectPointUnDistort(MapPoint* pMP, cv::Point2f &kp, float &u, float &v);
 
-    void PreSave(set<KeyFrame*>& spKF,set<MapPoint*>& spMP, set<GeometricCamera*>& spCam);
-    void PostLoad(map<long unsigned int, KeyFrame*>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid, map<unsigned int, GeometricCamera*>& mpCamId);
+    void PreSave(set<std::shared_ptr<KeyFrame>>& spKF,set<MapPoint*>& spMP, set<GeometricCamera*>& spCam);
+    void PostLoad(map<long unsigned int, std::shared_ptr<KeyFrame>>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid, map<unsigned int, GeometricCamera*>& mpCamId);
 
 
     void SetORBVocabulary(ORBVocabulary* pORBVoc);
@@ -406,8 +408,8 @@ public:
     const int mnMaxY;
 
     // Preintegrated IMU measurements from previous keyframe
-    KeyFrame* mPrevKF;
-    KeyFrame* mNextKF;
+    std::shared_ptr<KeyFrame> mPrevKF;
+    std::shared_ptr<KeyFrame> mNextKF;
 
     IMU::Preintegrated* mpImuPreintegrated;
     IMU::Calib mImuCalib;
@@ -418,8 +420,8 @@ public:
 
     int mnDataset;
 
-    std::vector <KeyFrame*> mvpLoopCandKFs;
-    std::vector <KeyFrame*> mvpMergeCandKFs;
+    std::vector <std::shared_ptr<KeyFrame>> mvpLoopCandKFs;
+    std::vector <std::shared_ptr<KeyFrame>> mvpMergeCandKFs;
 
     //bool mbHasHessian;
     //cv::Mat mHessianPose;
@@ -457,18 +459,18 @@ protected:
     // Grid over the image to speed up feature matching
     std::vector< std::vector <std::vector<size_t> > > mGrid;
 
-    std::map<KeyFrame*,int> mConnectedKeyFrameWeights;
-    std::vector<KeyFrame*> mvpOrderedConnectedKeyFrames;
+    std::map<std::shared_ptr<KeyFrame>,int> mConnectedKeyFrameWeights;
+    std::vector<std::shared_ptr<KeyFrame>> mvpOrderedConnectedKeyFrames;
     std::vector<int> mvOrderedWeights;
     // For save relation without pointer, this is necessary for save/load function
     std::map<long unsigned int, int> mBackupConnectedKeyFrameIdWeights;
 
     // Spanning Tree and Loop Edges
     bool mbFirstConnection;
-    KeyFrame* mpParent;
-    std::set<KeyFrame*> mspChildrens;
-    std::set<KeyFrame*> mspLoopEdges;
-    std::set<KeyFrame*> mspMergeEdges;
+    std::shared_ptr<KeyFrame> mpParent;
+    std::set<std::shared_ptr<KeyFrame>> mspChildrens;
+    std::set<std::shared_ptr<KeyFrame>> mspLoopEdges;
+    std::set<std::shared_ptr<KeyFrame>> mspMergeEdges;
     // For save relation without pointer, this is necessary for save/load function
     long long int mBackupParentId;
     std::vector<long unsigned int> mvBackupChildrensId;

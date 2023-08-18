@@ -88,8 +88,8 @@ public:
     // Use this function if you have deactivated local mapping and you only want to localize the camera.
     void InformOnlyTracking(const bool &flag);
 
-    void UpdateFrameIMU(const float s, const IMU::Bias &b, KeyFrame* pCurrentKeyFrame);
-    KeyFrame* GetLastKeyFrame()
+    void UpdateFrameIMU(const float s, const IMU::Bias &b, std::shared_ptr<KeyFrame> pCurrentKeyFrame);
+    std::shared_ptr<KeyFrame> GetLastKeyFrame()
     {
         return mpLastKeyFrame;
     }
@@ -150,7 +150,8 @@ public:
     // Lists used to recover the full camera trajectory at the end of the execution.
     // Basically we store the reference keyframe for each frame and its relative transformation
     list<Sophus::SE3f> mlRelativeFramePoses;
-    list<KeyFrame*> mlpReferences;
+    list<std::shared_ptr<KeyFrame>> mlpReferences;
+    // list<std::shared_ptr<KeyFrame>> mlpReferences;
     list<double> mlFrameTimes;
     list<bool> mlbLost;
 
@@ -270,8 +271,8 @@ protected:
     bool mbSetInit;
 
     //Local Map
-    KeyFrame* mpReferenceKF;
-    std::vector<KeyFrame*> mvpLocalKeyFrames;
+    std::shared_ptr<KeyFrame> mpReferenceKF;
+    std::vector<std::shared_ptr<KeyFrame>> mvpLocalKeyFrames;
     std::vector<MapPoint*> mvpLocalMapPoints;
     
     // System
@@ -316,7 +317,11 @@ protected:
     int mnMatchesInliers;
 
     //Last Frame, KeyFrame and Relocalisation Info
-    KeyFrame* mpLastKeyFrame;
+    // std::shared_ptr<KeyFrame> mpLastKeyFrame;
+    // std::shared_ptr<KeyFrame> mpLastKeyFrame;
+
+    std::shared_ptr<KeyFrame> mpLastKeyFrame;
+
     unsigned int mnLastKeyFrameId;
     unsigned int mnLastRelocFrameId;
     double mTimeStampLost;

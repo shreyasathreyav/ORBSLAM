@@ -51,13 +51,13 @@ bool sortByVal(const pair<MapPoint*, int> &a, const pair<MapPoint*, int> &b)
 
 void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
 {
-    vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
     vector<MapPoint*> vpMP = pMap->GetAllMapPoints();
     BundleAdjustment(vpKFs,vpMP,nIterations,pbStopFlag, nLoopKF, bRobust);
 }
 
 
-void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<MapPoint *> &vpMP,
+void Optimizer::BundleAdjustment(const vector<std::shared_ptr<KeyFrame>> &vpKFs, const vector<MapPoint *> &vpMP,
                                  int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
 {
     vector<bool> vbNotIncludedMP;
@@ -89,10 +89,10 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     vector<ORB_SLAM3::EdgeSE3ProjectXYZToBody*> vpEdgesBody;
     vpEdgesBody.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFMono;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFMono;
     vpEdgeKFMono.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFBody;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFBody;
     vpEdgeKFBody.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeMono;
@@ -104,7 +104,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     vector<g2o::EdgeStereoSE3ProjectXYZ*> vpEdgesStereo;
     vpEdgesStereo.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFStereo;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFStereo;
     vpEdgeKFStereo.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeStereo;
@@ -115,7 +115,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
 
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKF = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKF = vpKFs[i];
         if(pKF->isBad())
             continue;
         g2o::VertexSE3Expmap * vSE3 = new g2o::VertexSE3Expmap();
@@ -144,13 +144,13 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
         vPoint->setMarginalized(true);
         optimizer.addVertex(vPoint);
 
-       const map<KeyFrame*,tuple<int,int>> observations = pMP->GetObservations();
+       const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMP->GetObservations();
 
         int nEdges = 0;
         //SET EDGES
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(); mit!=observations.end(); mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(); mit!=observations.end(); mit++)
         {
-            KeyFrame* pKF = mit->first;
+            std::shared_ptr<KeyFrame> pKF = mit->first;
             if(pKF->isBad() || pKF->mnId>maxKFid)
                 continue;
             if(optimizer.vertex(id) == NULL || optimizer.vertex(pKF->mnId) == NULL)
@@ -284,7 +284,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     //Keyframes
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKF = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKF = vpKFs[i];
         if(pKF->isBad())
             continue;
         g2o::VertexSE3Expmap* vSE3 = static_cast<g2o::VertexSE3Expmap*>(optimizer.vertex(pKF->mnId));
@@ -313,7 +313,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
                 {
                     ORB_SLAM3::EdgeSE3ProjectXYZ* e = vpEdgesMono[i2];
                     MapPoint* pMP = vpMapPointEdgeMono[i2];
-                    KeyFrame* pKFedge = vpEdgeKFMono[i2];
+                    std::shared_ptr<KeyFrame> pKFedge = vpEdgeKFMono[i2];
 
                     if(pKF != pKFedge)
                     {
@@ -340,7 +340,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
                 {
                     g2o::EdgeStereoSE3ProjectXYZ* e = vpEdgesStereo[i2];
                     MapPoint* pMP = vpMapPointEdgeStereo[i2];
-                    KeyFrame* pKFedge = vpEdgeKFMono[i2];
+                    std::shared_ptr<KeyFrame> pKFedge = vpEdgeKFMono[i2];
 
                     if(pKF != pKFedge)
                     {
@@ -392,7 +392,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
 void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const long unsigned int nLoopId, bool *pbStopFlag, bool bInit, float priorG, float priorA, Eigen::VectorXd *vSingVal, bool *bHess)
 {
     long unsigned int maxKFid = pMap->GetMaxKFid();
-    const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
     const vector<MapPoint*> vpMPs = pMap->GetAllMapPoints();
 
     // Setup optimizer
@@ -414,10 +414,10 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
     int nNonFixed = 0;
 
     // Set KeyFrame vertices
-    KeyFrame* pIncKF;
+    std::shared_ptr<KeyFrame> pIncKF;
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
         VertexPose * VP = new VertexPose(pKFi);
@@ -474,7 +474,7 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
     // IMU links
     for(size_t i=0;i<vpKFs.size();i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
 
         if(!pKFi->mPrevKF)
         {
@@ -606,15 +606,15 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
         vPoint->setMarginalized(true);
         optimizer.addVertex(vPoint);
 
-        const map<KeyFrame*,tuple<int,int>> observations = pMP->GetObservations();
+        const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMP->GetObservations();
 
 
         bool bAllFixed = true;
 
         //Set edges
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if(pKFi->mnId>maxKFid)
                 continue;
@@ -731,7 +731,7 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
     //Keyframes
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
         VertexPose* VP = static_cast<VertexPose*>(optimizer.vertex(pKFi->mnId));
@@ -1113,19 +1113,19 @@ int Optimizer::PoseOptimization(Frame *pFrame)
     return nInitialCorrespondences-nBad;
 }
 
-void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap, int& num_fixedKF, int& num_OptKF, int& num_MPs, int& num_edges)
+void Optimizer::LocalBundleAdjustment(std::shared_ptr<KeyFrame>pKF, bool* pbStopFlag, Map* pMap, int& num_fixedKF, int& num_OptKF, int& num_MPs, int& num_edges)
 {
     // Local KeyFrames: First Breath Search from Current Keyframe
-    list<KeyFrame*> lLocalKeyFrames;
+    list<std::shared_ptr<KeyFrame>> lLocalKeyFrames;
 
     lLocalKeyFrames.push_back(pKF);
     pKF->mnBALocalForKF = pKF->mnId;
     Map* pCurrentMap = pKF->GetMap();
 
-    const vector<KeyFrame*> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vNeighKFs = pKF->GetVectorCovisibleKeyFrames();
     for(int i=0, iend=vNeighKFs.size(); i<iend; i++)
     {
-        KeyFrame* pKFi = vNeighKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vNeighKFs[i];
         pKFi->mnBALocalForKF = pKF->mnId;
         if(!pKFi->isBad() && pKFi->GetMap() == pCurrentMap)
             lLocalKeyFrames.push_back(pKFi);
@@ -1135,9 +1135,9 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     num_fixedKF = 0;
     list<MapPoint*> lLocalMapPoints;
     set<MapPoint*> sNumObsMP;
-    for(list<KeyFrame*>::iterator lit=lLocalKeyFrames.begin() , lend=lLocalKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lLocalKeyFrames.begin() , lend=lLocalKeyFrames.end(); lit!=lend; lit++)
     {
-        KeyFrame* pKFi = *lit;
+        std::shared_ptr<KeyFrame> pKFi = *lit;
         if(pKFi->mnId==pMap->GetInitKFid())
         {
             num_fixedKF = 1;
@@ -1160,13 +1160,13 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     }
 
     // Fixed Keyframes. Keyframes that see Local MapPoints but that are not Local Keyframes
-    list<KeyFrame*> lFixedCameras;
+    list<std::shared_ptr<KeyFrame>> lFixedCameras;
     for(list<MapPoint*>::iterator lit=lLocalMapPoints.begin(), lend=lLocalMapPoints.end(); lit!=lend; lit++)
     {
-        map<KeyFrame*,tuple<int,int>> observations = (*lit)->GetObservations();
-        for(map<KeyFrame*,tuple<int,int>>::iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = (*lit)->GetObservations();
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if(pKFi->mnBALocalForKF!=pKF->mnId && pKFi->mnBAFixedForKF!=pKF->mnId )
             {                
@@ -1210,9 +1210,9 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     pCurrentMap->msFixedKFs.clear();
 
     // Set Local KeyFrame vertices
-    for(list<KeyFrame*>::iterator lit=lLocalKeyFrames.begin(), lend=lLocalKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lLocalKeyFrames.begin(), lend=lLocalKeyFrames.end(); lit!=lend; lit++)
     {
-        KeyFrame* pKFi = *lit;
+        std::shared_ptr<KeyFrame> pKFi = *lit;
         g2o::VertexSE3Expmap * vSE3 = new g2o::VertexSE3Expmap();
         Sophus::SE3<float> Tcw = pKFi->GetPose();
         vSE3->setEstimate(g2o::SE3Quat(Tcw.unit_quaternion().cast<double>(), Tcw.translation().cast<double>()));
@@ -1227,9 +1227,9 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     num_OptKF = lLocalKeyFrames.size();
 
     // Set Fixed KeyFrame vertices
-    for(list<KeyFrame*>::iterator lit=lFixedCameras.begin(), lend=lFixedCameras.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lFixedCameras.begin(), lend=lFixedCameras.end(); lit!=lend; lit++)
     {
-        KeyFrame* pKFi = *lit;
+        std::shared_ptr<KeyFrame> pKFi = *lit;
         g2o::VertexSE3Expmap * vSE3 = new g2o::VertexSE3Expmap();
         Sophus::SE3<float> Tcw = pKFi->GetPose();
         vSE3->setEstimate(g2o::SE3Quat(Tcw.unit_quaternion().cast<double>(),Tcw.translation().cast<double>()));
@@ -1251,10 +1251,10 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     vector<ORB_SLAM3::EdgeSE3ProjectXYZToBody*> vpEdgesBody;
     vpEdgesBody.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFMono;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFMono;
     vpEdgeKFMono.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFBody;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFBody;
     vpEdgeKFBody.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeMono;
@@ -1266,7 +1266,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     vector<g2o::EdgeStereoSE3ProjectXYZ*> vpEdgesStereo;
     vpEdgesStereo.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFStereo;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFStereo;
     vpEdgeKFStereo.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeStereo;
@@ -1290,12 +1290,12 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
         optimizer.addVertex(vPoint);
         nPoints++;
 
-        const map<KeyFrame*,tuple<int,int>> observations = pMP->GetObservations();
+        const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMP->GetObservations();
 
         //Set edges
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if(!pKFi->isBad() && pKFi->GetMap() == pCurrentMap)
             {
@@ -1410,7 +1410,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     optimizer.initializeOptimization();
     optimizer.optimize(10);
 
-    vector<pair<KeyFrame*,MapPoint*> > vToErase;
+    vector<pair<std::shared_ptr<KeyFrame>,MapPoint*> > vToErase;
     vToErase.reserve(vpEdgesMono.size()+vpEdgesBody.size()+vpEdgesStereo.size());
 
     // Check inlier observations       
@@ -1424,7 +1424,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
         if(e->chi2()>5.991 || !e->isDepthPositive())
         {
-            KeyFrame* pKFi = vpEdgeKFMono[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFMono[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -1439,7 +1439,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
         if(e->chi2()>5.991 || !e->isDepthPositive())
         {
-            KeyFrame* pKFi = vpEdgeKFBody[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFBody[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -1454,7 +1454,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
         if(e->chi2()>7.815 || !e->isDepthPositive())
         {
-            KeyFrame* pKFi = vpEdgeKFStereo[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFStereo[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -1467,7 +1467,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     {
         for(size_t i=0;i<vToErase.size();i++)
         {
-            KeyFrame* pKFi = vToErase[i].first;
+            std::shared_ptr<KeyFrame> pKFi = vToErase[i].first;
             MapPoint* pMPi = vToErase[i].second;
             pKFi->EraseMapPointMatch(pMPi);
             pMPi->EraseObservation(pKFi);
@@ -1476,9 +1476,9 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
     // Recover optimized data
     //Keyframes
-    for(list<KeyFrame*>::iterator lit=lLocalKeyFrames.begin(), lend=lLocalKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lLocalKeyFrames.begin(), lend=lLocalKeyFrames.end(); lit!=lend; lit++)
     {
-        KeyFrame* pKFi = *lit;
+        std::shared_ptr<KeyFrame> pKFi = *lit;
         g2o::VertexSE3Expmap* vSE3 = static_cast<g2o::VertexSE3Expmap*>(optimizer.vertex(pKFi->mnId));
         g2o::SE3Quat SE3quat = vSE3->estimate();
         Sophus::SE3f Tiw(SE3quat.rotation().cast<float>(), SE3quat.translation().cast<float>());
@@ -1498,10 +1498,10 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 }
 
 
-void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* pCurKF,
+void Optimizer::OptimizeEssentialGraph(Map* pMap, std::shared_ptr<KeyFrame> pLoopKF, std::shared_ptr<KeyFrame> pCurKF,
                                        const LoopClosing::KeyFrameAndPose &NonCorrectedSim3,
                                        const LoopClosing::KeyFrameAndPose &CorrectedSim3,
-                                       const map<KeyFrame *, set<KeyFrame *> > &LoopConnections, const bool &bFixScale)
+                                       const map<std::shared_ptr<KeyFrame>, set<std::shared_ptr<KeyFrame>> > &LoopConnections, const bool &bFixScale)
 {   
     // Setup optimizer
     g2o::SparseOptimizer optimizer;
@@ -1514,7 +1514,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     solver->setUserLambdaInit(1e-16);
     optimizer.setAlgorithm(solver);
 
-    const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
     const vector<MapPoint*> vpMPs = pMap->GetAllMapPoints();
 
     const unsigned int nMaxKFid = pMap->GetMaxKFid();
@@ -1532,7 +1532,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     // Set KeyFrame vertices
     for(size_t i=0, iend=vpKFs.size(); i<iend;i++)
     {
-        KeyFrame* pKF = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKF = vpKFs[i];
         if(pKF->isBad())
             continue;
         g2o::VertexSim3Expmap* VSim3 = new g2o::VertexSim3Expmap();
@@ -1574,15 +1574,15 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
 
     // Set Loop edges
     int count_loop = 0;
-    for(map<KeyFrame *, set<KeyFrame *> >::const_iterator mit = LoopConnections.begin(), mend=LoopConnections.end(); mit!=mend; mit++)
+    for(map<std::shared_ptr<KeyFrame>, set<std::shared_ptr<KeyFrame>> >::const_iterator mit = LoopConnections.begin(), mend=LoopConnections.end(); mit!=mend; mit++)
     {
-        KeyFrame* pKF = mit->first;
+        std::shared_ptr<KeyFrame> pKF = mit->first;
         const long unsigned int nIDi = pKF->mnId;
-        const set<KeyFrame*> &spConnections = mit->second;
+        const set<std::shared_ptr<KeyFrame>> &spConnections = mit->second;
         const g2o::Sim3 Siw = vScw[nIDi];
         const g2o::Sim3 Swi = Siw.inverse();
 
-        for(set<KeyFrame*>::const_iterator sit=spConnections.begin(), send=spConnections.end(); sit!=send; sit++)
+        for(set<std::shared_ptr<KeyFrame>>::const_iterator sit=spConnections.begin(), send=spConnections.end(); sit!=send; sit++)
         {
             const long unsigned int nIDj = (*sit)->mnId;
             if((nIDi!=pCurKF->mnId || nIDj!=pLoopKF->mnId) && pKF->GetWeight(*sit)<minFeat)
@@ -1607,7 +1607,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     // Set normal edges
     for(size_t i=0, iend=vpKFs.size(); i<iend; i++)
     {
-        KeyFrame* pKF = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKF = vpKFs[i];
 
         const int nIDi = pKF->mnId;
 
@@ -1620,7 +1620,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
         else
             Swi = vScw[nIDi].inverse();
 
-        KeyFrame* pParentKF = pKF->GetParent();
+        std::shared_ptr<KeyFrame> pParentKF = pKF->GetParent();
 
         // Spanning tree edge
         if(pParentKF)
@@ -1647,10 +1647,10 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
         }
 
         // Loop edges
-        const set<KeyFrame*> sLoopEdges = pKF->GetLoopEdges();
-        for(set<KeyFrame*>::const_iterator sit=sLoopEdges.begin(), send=sLoopEdges.end(); sit!=send; sit++)
+        const set<std::shared_ptr<KeyFrame>> sLoopEdges = pKF->GetLoopEdges();
+        for(set<std::shared_ptr<KeyFrame>>::const_iterator sit=sLoopEdges.begin(), send=sLoopEdges.end(); sit!=send; sit++)
         {
-            KeyFrame* pLKF = *sit;
+            std::shared_ptr<KeyFrame> pLKF = *sit;
             if(pLKF->mnId<pKF->mnId)
             {
                 g2o::Sim3 Slw;
@@ -1673,10 +1673,10 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
         }
 
         // Covisibility graph edges
-        const vector<KeyFrame*> vpConnectedKFs = pKF->GetCovisiblesByWeight(minFeat);
-        for(vector<KeyFrame*>::const_iterator vit=vpConnectedKFs.begin(); vit!=vpConnectedKFs.end(); vit++)
+        const vector<std::shared_ptr<KeyFrame>> vpConnectedKFs = pKF->GetCovisiblesByWeight(minFeat);
+        for(vector<std::shared_ptr<KeyFrame>>::const_iterator vit=vpConnectedKFs.begin(); vit!=vpConnectedKFs.end(); vit++)
         {
-            KeyFrame* pKFn = *vit;
+            std::shared_ptr<KeyFrame> pKFn = *vit;
             if(pKFn && pKFn!=pParentKF && !pKF->hasChild(pKFn) /*&& !sLoopEdges.count(pKFn)*/)
             {
                 if(!pKFn->isBad() && pKFn->mnId<pKF->mnId)
@@ -1735,7 +1735,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     // SE3 Pose Recovering. Sim3:[sR t;0 1] -> SE3:[R t/s;0 1]
     for(size_t i=0;i<vpKFs.size();i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
 
         const int nIDi = pKFi->mnId;
 
@@ -1763,7 +1763,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
         }
         else
         {
-            KeyFrame* pRefKF = pMP->GetReferenceKeyFrame();
+            std::shared_ptr<KeyFrame> pRefKF = pMP->GetReferenceKeyFrame();
             nIDr = pRefKF->mnId;
         }
 
@@ -1782,8 +1782,8 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     pMap->IncreaseChangeIndex();
 }
 
-void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFixedKFs, vector<KeyFrame*> &vpFixedCorrectedKFs,
-                                       vector<KeyFrame*> &vpNonFixedKFs, vector<MapPoint*> &vpNonCorrectedMPs)
+void Optimizer::OptimizeEssentialGraph(std::shared_ptr<KeyFrame> pCurKF, vector<std::shared_ptr<KeyFrame>> &vpFixedKFs, vector<std::shared_ptr<KeyFrame>> &vpFixedCorrectedKFs,
+                                       vector<std::shared_ptr<KeyFrame>> &vpNonFixedKFs, vector<MapPoint*> &vpNonCorrectedMPs)
 {
     Verbose::PrintMess("Opt_Essential: There are " + to_string(vpFixedKFs.size()) + " KFs fixed in the merged map", Verbose::VERBOSITY_DEBUG);
     Verbose::PrintMess("Opt_Essential: There are " + to_string(vpFixedCorrectedKFs.size()) + " KFs fixed in the old map", Verbose::VERBOSITY_DEBUG);
@@ -1812,7 +1812,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
 
     const int minFeat = 100;
 
-    for(KeyFrame* pKFi : vpFixedKFs)
+    for(std::shared_ptr<KeyFrame> pKFi : vpFixedKFs)
     {
         if(pKFi->isBad())
             continue;
@@ -1843,7 +1843,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
     Verbose::PrintMess("Opt_Essential: vpFixedKFs loaded", Verbose::VERBOSITY_DEBUG);
 
     set<unsigned long> sIdKF;
-    for(KeyFrame* pKFi : vpFixedCorrectedKFs)
+    for(std::shared_ptr<KeyFrame> pKFi : vpFixedCorrectedKFs)
     {
         if(pKFi->isBad())
             continue;
@@ -1876,7 +1876,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         vpBadPose[nIDi] = true;
     }
 
-    for(KeyFrame* pKFi : vpNonFixedKFs)
+    for(std::shared_ptr<KeyFrame> pKFi : vpNonFixedKFs)
     {
         if(pKFi->isBad())
             continue;
@@ -1909,16 +1909,16 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         vpBadPose[nIDi] = true;
     }
 
-    vector<KeyFrame*> vpKFs;
+    vector<std::shared_ptr<KeyFrame>> vpKFs;
     vpKFs.reserve(vpFixedKFs.size() + vpFixedCorrectedKFs.size() + vpNonFixedKFs.size());
     vpKFs.insert(vpKFs.end(),vpFixedKFs.begin(),vpFixedKFs.end());
     vpKFs.insert(vpKFs.end(),vpFixedCorrectedKFs.begin(),vpFixedCorrectedKFs.end());
     vpKFs.insert(vpKFs.end(),vpNonFixedKFs.begin(),vpNonFixedKFs.end());
-    set<KeyFrame*> spKFs(vpKFs.begin(), vpKFs.end());
+    set<std::shared_ptr<KeyFrame>> spKFs(vpKFs.begin(), vpKFs.end());
 
     const Eigen::Matrix<double,7,7> matLambda = Eigen::Matrix<double,7,7>::Identity();
 
-    for(KeyFrame* pKFi : vpKFs)
+    for(std::shared_ptr<KeyFrame> pKFi : vpKFs)
     {
         int num_connections = 0;
         const int nIDi = pKFi->mnId;
@@ -1931,7 +1931,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         if(vpBadPose[nIDi])
             Swi = vScw[nIDi].inverse();
 
-        KeyFrame* pParentKFi = pKFi->GetParent();
+        std::shared_ptr<KeyFrame> pParentKFi = pKFi->GetParent();
 
         // Spanning tree edge
         if(pParentKFi && spKFs.find(pParentKFi) != spKFs.end())
@@ -1969,10 +1969,10 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         }
 
         // Loop edges
-        const set<KeyFrame*> sLoopEdges = pKFi->GetLoopEdges();
-        for(set<KeyFrame*>::const_iterator sit=sLoopEdges.begin(), send=sLoopEdges.end(); sit!=send; sit++)
+        const set<std::shared_ptr<KeyFrame>> sLoopEdges = pKFi->GetLoopEdges();
+        for(set<std::shared_ptr<KeyFrame>>::const_iterator sit=sLoopEdges.begin(), send=sLoopEdges.end(); sit!=send; sit++)
         {
-            KeyFrame* pLKF = *sit;
+            std::shared_ptr<KeyFrame> pLKF = *sit;
             if(spKFs.find(pLKF) != spKFs.end() && pLKF->mnId<pKFi->mnId)
             {
                 g2o::Sim3 Slw;
@@ -2005,10 +2005,10 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         }
 
         // Covisibility graph edges
-        const vector<KeyFrame*> vpConnectedKFs = pKFi->GetCovisiblesByWeight(minFeat);
-        for(vector<KeyFrame*>::const_iterator vit=vpConnectedKFs.begin(); vit!=vpConnectedKFs.end(); vit++)
+        const vector<std::shared_ptr<KeyFrame>> vpConnectedKFs = pKFi->GetCovisiblesByWeight(minFeat);
+        for(vector<std::shared_ptr<KeyFrame>>::const_iterator vit=vpConnectedKFs.begin(); vit!=vpConnectedKFs.end(); vit++)
         {
-            KeyFrame* pKFn = *vit;
+            std::shared_ptr<KeyFrame> pKFn = *vit;
             if(pKFn && pKFn!=pParentKFi && !pKFi->hasChild(pKFn) && !sLoopEdges.count(pKFn) && spKFs.find(pKFn) != spKFs.end())
             {
                 if(!pKFn->isBad() && pKFn->mnId<pKFi->mnId)
@@ -2057,7 +2057,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
     unique_lock<mutex> lock(pMap->mMutexMapUpdate);
 
     // SE3 Pose Recovering. Sim3:[sR t;0 1] -> SE3:[R t/s;0 1]
-    for(KeyFrame* pKFi : vpNonFixedKFs)
+    for(std::shared_ptr<KeyFrame> pKFi : vpNonFixedKFs)
     {
         if(pKFi->isBad())
             continue;
@@ -2081,7 +2081,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
         if(pMPi->isBad())
             continue;
 
-        KeyFrame* pRefKF = pMPi->GetReferenceKeyFrame();
+        std::shared_ptr<KeyFrame> pRefKF = pMPi->GetReferenceKeyFrame();
         while(pRefKF->isBad())
         {
             if(!pRefKF)
@@ -2112,7 +2112,7 @@ void Optimizer::OptimizeEssentialGraph(KeyFrame* pCurKF, vector<KeyFrame*> &vpFi
     }
 }
 
-int Optimizer::OptimizeSim3(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &vpMatches1, g2o::Sim3 &g2oS12, const float th2,
+int Optimizer::OptimizeSim3(std::shared_ptr<KeyFrame>pKF1, std::shared_ptr<KeyFrame>pKF2, vector<MapPoint *> &vpMatches1, g2o::Sim3 &g2oS12, const float th2,
                             const bool bFixScale, Eigen::Matrix<double,7,7> &mAcumHessian, const bool bAllPoints)
 {
     g2o::SparseOptimizer optimizer;
@@ -2380,7 +2380,7 @@ int Optimizer::OptimizeSim3(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &
     return nIn;
 }
 
-void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int& num_fixedKF, int& num_OptKF, int& num_MPs, int& num_edges, bool bLarge, bool bRecInit)
+void Optimizer::LocalInertialBA(std::shared_ptr<KeyFrame>pKF, bool *pbStopFlag, Map *pMap, int& num_fixedKF, int& num_OptKF, int& num_MPs, int& num_edges, bool bLarge, bool bRecInit)
 {
     Map* pCurrentMap = pKF->GetMap();
 
@@ -2394,9 +2394,9 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     const int Nd = std::min((int)pCurrentMap->KeyFramesInMap()-2,maxOpt);
     const unsigned long maxKFid = pKF->mnId;
 
-    vector<KeyFrame*> vpOptimizableKFs;
-    const vector<KeyFrame*> vpNeighsKFs = pKF->GetVectorCovisibleKeyFrames();
-    list<KeyFrame*> lpOptVisKFs;
+    vector<std::shared_ptr<KeyFrame>> vpOptimizableKFs;
+    const vector<std::shared_ptr<KeyFrame>> vpNeighsKFs = pKF->GetVectorCovisibleKeyFrames();
+    list<std::shared_ptr<KeyFrame>> lpOptVisKFs;
 
     vpOptimizableKFs.reserve(Nd);
     vpOptimizableKFs.push_back(pKF);
@@ -2433,7 +2433,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     }
 
     // Fixed Keyframe: First frame previous KF to optimization window)
-    list<KeyFrame*> lFixedKeyFrames;
+    list<std::shared_ptr<KeyFrame>> lFixedKeyFrames;
     if(vpOptimizableKFs.back()->mPrevKF)
     {
         lFixedKeyFrames.push_back(vpOptimizableKFs.back()->mPrevKF);
@@ -2454,7 +2454,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
         if(lpOptVisKFs.size() >= maxCovKF)
             break;
 
-        KeyFrame* pKFi = vpNeighsKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpNeighsKFs[i];
         if(pKFi->mnBALocalForKF == pKF->mnId || pKFi->mnBAFixedForKF == pKF->mnId)
             continue;
         pKFi->mnBALocalForKF = pKF->mnId;
@@ -2482,10 +2482,10 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
 
     for(list<MapPoint*>::iterator lit=lLocalMapPoints.begin(), lend=lLocalMapPoints.end(); lit!=lend; lit++)
     {
-        map<KeyFrame*,tuple<int,int>> observations = (*lit)->GetObservations();
-        for(map<KeyFrame*,tuple<int,int>>::iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = (*lit)->GetObservations();
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if(pKFi->mnBALocalForKF!=pKF->mnId && pKFi->mnBAFixedForKF!=pKF->mnId)
             {
@@ -2528,7 +2528,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     N=vpOptimizableKFs.size();
     for(int i=0; i<N; i++)
     {
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
 
         VertexPose * VP = new VertexPose(pKFi);
         VP->setId(pKFi->mnId);
@@ -2553,9 +2553,9 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     }
 
     // Set Local visual KeyFrame vertices
-    for(list<KeyFrame*>::iterator it=lpOptVisKFs.begin(), itEnd = lpOptVisKFs.end(); it!=itEnd; it++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator it=lpOptVisKFs.begin(), itEnd = lpOptVisKFs.end(); it!=itEnd; it++)
     {
-        KeyFrame* pKFi = *it;
+        std::shared_ptr<KeyFrame> pKFi = *it;
         VertexPose * VP = new VertexPose(pKFi);
         VP->setId(pKFi->mnId);
         VP->setFixed(false);
@@ -2563,9 +2563,9 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     }
 
     // Set Fixed KeyFrame vertices
-    for(list<KeyFrame*>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
     {
-        KeyFrame* pKFi = *lit;
+        std::shared_ptr<KeyFrame> pKFi = *lit;
         VertexPose * VP = new VertexPose(pKFi);
         VP->setId(pKFi->mnId);
         VP->setFixed(true);
@@ -2595,7 +2595,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
 
     for(int i=0;i<N;i++)
     {
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
 
         if(!pKFi->mPrevKF)
         {
@@ -2669,7 +2669,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     vector<EdgeMono*> vpEdgesMono;
     vpEdgesMono.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFMono;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFMono;
     vpEdgeKFMono.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeMono;
@@ -2679,7 +2679,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     vector<EdgeStereo*> vpEdgesStereo;
     vpEdgesStereo.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFStereo;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFStereo;
     vpEdgeKFStereo.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeStereo;
@@ -2697,10 +2697,10 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     map<int,int> mVisEdges;
     for(int i=0;i<N;i++)
     {
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
         mVisEdges[pKFi->mnId] = 0;
     }
-    for(list<KeyFrame*>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
     {
         mVisEdges[(*lit)->mnId] = 0;
     }
@@ -2715,12 +2715,12 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
         vPoint->setId(id);
         vPoint->setMarginalized(true);
         optimizer.addVertex(vPoint);
-        const map<KeyFrame*,tuple<int,int>> observations = pMP->GetObservations();
+        const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMP->GetObservations();
 
         // Create visual constraints
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if(pKFi->mnBALocalForKF!=pKF->mnId && pKFi->mnBAFixedForKF!=pKF->mnId)
                 continue;
@@ -2845,7 +2845,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     if(pbStopFlag)
         optimizer.setForceStopFlag(pbStopFlag);
 
-    vector<pair<KeyFrame*,MapPoint*> > vToErase;
+    vector<pair<std::shared_ptr<KeyFrame>,MapPoint*> > vToErase;
     vToErase.reserve(vpEdgesMono.size()+vpEdgesStereo.size());
 
     // Check inlier observations
@@ -2861,7 +2861,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
 
         if((e->chi2()>chi2Mono2 && !bClose) || (e->chi2()>1.5f*chi2Mono2 && bClose) || !e->isDepthPositive())
         {
-            KeyFrame* pKFi = vpEdgeKFMono[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFMono[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -2878,7 +2878,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
 
         if(e->chi2()>chi2Stereo2)
         {
-            KeyFrame* pKFi = vpEdgeKFStereo[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFStereo[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -2900,14 +2900,14 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     {
         for(size_t i=0;i<vToErase.size();i++)
         {
-            KeyFrame* pKFi = vToErase[i].first;
+            std::shared_ptr<KeyFrame> pKFi = vToErase[i].first;
             MapPoint* pMPi = vToErase[i].second;
             pKFi->EraseMapPointMatch(pMPi);
             pMPi->EraseObservation(pKFi);
         }
     }
 
-    for(list<KeyFrame*>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
         (*lit)->mnBAFixedForKF = 0;
 
     // Recover optimized data
@@ -2915,7 +2915,7 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     N=vpOptimizableKFs.size();
     for(int i=0; i<N; i++)
     {
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
 
         VertexPose* VP = static_cast<VertexPose*>(optimizer.vertex(pKFi->mnId));
         Sophus::SE3f Tcw(VP->estimate().Rcw[0].cast<float>(), VP->estimate().tcw[0].cast<float>());
@@ -2936,9 +2936,9 @@ void Optimizer::LocalInertialBA(KeyFrame *pKF, bool *pbStopFlag, Map *pMap, int&
     }
 
     // Local visual KeyFrame
-    for(list<KeyFrame*>::iterator it=lpOptVisKFs.begin(), itEnd = lpOptVisKFs.end(); it!=itEnd; it++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator it=lpOptVisKFs.begin(), itEnd = lpOptVisKFs.end(); it!=itEnd; it++)
     {
-        KeyFrame* pKFi = *it;
+        std::shared_ptr<KeyFrame> pKFi = *it;
         VertexPose* VP = static_cast<VertexPose*>(optimizer.vertex(pKFi->mnId));
         Sophus::SE3f Tcw(VP->estimate().Rcw[0].cast<float>(), VP->estimate().tcw[0].cast<float>());
         pKFi->SetPose(Tcw);
@@ -3044,7 +3044,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     Verbose::PrintMess("inertial optimization", Verbose::VERBOSITY_NORMAL);
     int its = 200;
     long unsigned int maxKFid = pMap->GetMaxKFid();
-    const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
 
     // Setup optimizer
     g2o::SparseOptimizer optimizer;
@@ -3064,7 +3064,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     // Set KeyFrame vertices (fixed poses and optimizable velocities)
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
         VertexPose * VP = new VertexPose(pKFi);
@@ -3127,13 +3127,13 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     // IMU links with gravity and scale
     vector<EdgeInertialGS*> vpei;
     vpei.reserve(vpKFs.size());
-    vector<pair<KeyFrame*,KeyFrame*> > vppUsedKF;
+    vector<pair<std::shared_ptr<KeyFrame>,std::shared_ptr<KeyFrame>> > vppUsedKF;
     vppUsedKF.reserve(vpKFs.size());
     //std::cout << "build optimization graph" << std::endl;
 
     for(size_t i=0;i<vpKFs.size();i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
 
         if(pKFi->mPrevKF && pKFi->mnId<=maxKFid)
         {
@@ -3202,7 +3202,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     const int N = vpKFs.size();
     for(size_t i=0; i<N; i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
 
@@ -3228,7 +3228,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Vector3d &bg, Eigen::Vect
 {
     int its = 200; // Check number of iterations
     long unsigned int maxKFid = pMap->GetMaxKFid();
-    const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
 
     // Setup optimizer
     g2o::SparseOptimizer optimizer;
@@ -3246,7 +3246,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Vector3d &bg, Eigen::Vect
     // Set KeyFrame vertices (fixed poses and optimizable velocities)
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
         VertexPose * VP = new VertexPose(pKFi);
@@ -3301,12 +3301,12 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Vector3d &bg, Eigen::Vect
     // IMU links with gravity and scale
     vector<EdgeInertialGS*> vpei;
     vpei.reserve(vpKFs.size());
-    vector<pair<KeyFrame*,KeyFrame*> > vppUsedKF;
+    vector<pair<std::shared_ptr<KeyFrame>,std::shared_ptr<KeyFrame>> > vppUsedKF;
     vppUsedKF.reserve(vpKFs.size());
 
     for(size_t i=0;i<vpKFs.size();i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
 
         if(pKFi->mPrevKF && pKFi->mnId<=maxKFid)
         {
@@ -3367,7 +3367,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Vector3d &bg, Eigen::Vect
     const int N = vpKFs.size();
     for(size_t i=0; i<N; i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
 
@@ -3390,7 +3390,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
 {
     int its = 10;
     long unsigned int maxKFid = pMap->GetMaxKFid();
-    const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
 
     // Setup optimizer
     g2o::SparseOptimizer optimizer;
@@ -3406,7 +3406,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     // Set KeyFrame vertices (all variables are fixed)
     for(size_t i=0; i<vpKFs.size(); i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
         if(pKFi->mnId>maxKFid)
             continue;
         VertexPose * VP = new VertexPose(pKFi);
@@ -3444,7 +3444,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     int count_edges = 0;
     for(size_t i=0;i<vpKFs.size();i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
 
         if(pKFi->mPrevKF && pKFi->mnId<=maxKFid)
         {
@@ -3495,7 +3495,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
     Rwg = VGDir->estimate().Rwg;
 }
 
-void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdjustKF, vector<KeyFrame*> vpFixedKF, bool *pbStopFlag)
+void Optimizer::LocalBundleAdjustment(std::shared_ptr<KeyFrame> pMainKF,vector<std::shared_ptr<KeyFrame>> vpAdjustKF, vector<std::shared_ptr<KeyFrame>> vpFixedKF, bool *pbStopFlag)
 {
     bool bShowImages = false;
 
@@ -3517,13 +3517,13 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         optimizer.setForceStopFlag(pbStopFlag);
 
     long unsigned int maxKFid = 0;
-    set<KeyFrame*> spKeyFrameBA;
+    set<std::shared_ptr<KeyFrame>> spKeyFrameBA;
 
     Map* pCurrentMap = pMainKF->GetMap();
 
     // Set fixed KeyFrame vertices
     int numInsertedPoints = 0;
-    for(KeyFrame* pKFi : vpFixedKF)
+    for(std::shared_ptr<KeyFrame> pKFi : vpFixedKF)
     {
         if(pKFi->isBad() || pKFi->GetMap() != pCurrentMap)
         {
@@ -3560,9 +3560,9 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     }
 
     // Set non fixed Keyframe vertices
-    set<KeyFrame*> spAdjustKF(vpAdjustKF.begin(), vpAdjustKF.end());
+    set<std::shared_ptr<KeyFrame>> spAdjustKF(vpAdjustKF.begin(), vpAdjustKF.end());
     numInsertedPoints = 0;
-    for(KeyFrame* pKFi : vpAdjustKF)
+    for(std::shared_ptr<KeyFrame> pKFi : vpAdjustKF)
     {
         if(pKFi->isBad() || pKFi->GetMap() != pCurrentMap)
             continue;
@@ -3602,7 +3602,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     vector<ORB_SLAM3::EdgeSE3ProjectXYZ*> vpEdgesMono;
     vpEdgesMono.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFMono;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFMono;
     vpEdgeKFMono.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeMono;
@@ -3611,7 +3611,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     vector<g2o::EdgeStereoSE3ProjectXYZ*> vpEdgesStereo;
     vpEdgesStereo.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFStereo;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFStereo;
     vpEdgeKFStereo.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeStereo;
@@ -3621,8 +3621,8 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     const float thHuber3D = sqrt(7.815);
 
     // Set MapPoint vertices
-    map<KeyFrame*, int> mpObsKFs;
-    map<KeyFrame*, int> mpObsFinalKFs;
+    map<std::shared_ptr<KeyFrame>, int> mpObsKFs;
+    map<std::shared_ptr<KeyFrame>, int> mpObsFinalKFs;
     map<MapPoint*, int> mpObsMPs;
     for(unsigned int i=0; i < vpMPs.size(); ++i)
     {
@@ -3638,12 +3638,12 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         optimizer.addVertex(vPoint);
 
 
-        const map<KeyFrame*,tuple<int,int>> observations = pMPi->GetObservations();
+        const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMPi->GetObservations();
         int nEdges = 0;
         //SET EDGES
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(); mit!=observations.end(); mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(); mit!=observations.end(); mit++)
         {
-            KeyFrame* pKF = mit->first;
+            std::shared_ptr<KeyFrame> pKF = mit->first;
             if(pKF->isBad() || pKF->mnId>maxKFid || pKF->mnBALocalForMerge != pMainKF->mnId || !pKF->GetMapPoint(get<0>(mit->second)))
                 continue;
 
@@ -3772,10 +3772,10 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     optimizer.optimize(10);
     }
 
-    vector<pair<KeyFrame*,MapPoint*> > vToErase;
+    vector<pair<std::shared_ptr<KeyFrame>,MapPoint*> > vToErase;
     vToErase.reserve(vpEdgesMono.size()+vpEdgesStereo.size());
     set<MapPoint*> spErasedMPs;
-    set<KeyFrame*> spErasedKFs;
+    set<std::shared_ptr<KeyFrame>> spErasedKFs;
 
     // Check inlier observations
     int badMonoMP = 0, badStereoMP = 0;
@@ -3789,7 +3789,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
 
         if(e->chi2()>5.991 || !e->isDepthPositive())
         {
-            KeyFrame* pKFi = vpEdgeKFMono[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFMono[i];
             vToErase.push_back(make_pair(pKFi,pMP));
             mWrongObsKF[pKFi->mnId]++;
             badMonoMP++;
@@ -3809,7 +3809,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
 
         if(e->chi2()>7.815 || !e->isDepthPositive())
         {
-            KeyFrame* pKFi = vpEdgeKFStereo[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFStereo[i];
             vToErase.push_back(make_pair(pKFi,pMP));
             mWrongObsKF[pKFi->mnId]++;
             badStereoMP++;
@@ -3828,7 +3828,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
     {
         for(size_t i=0;i<vToErase.size();i++)
         {
-            KeyFrame* pKFi = vToErase[i].first;
+            std::shared_ptr<KeyFrame> pKFi = vToErase[i].first;
             MapPoint* pMPi = vToErase[i].second;
             pKFi->EraseMapPointMatch(pMPi);
             pMPi->EraseObservation(pKFi);
@@ -3840,10 +3840,10 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         if(pMPi->isBad())
             continue;
 
-        const map<KeyFrame*,tuple<int,int>> observations = pMPi->GetObservations();
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(); mit!=observations.end(); mit++)
+        const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMPi->GetObservations();
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(); mit!=observations.end(); mit++)
         {
-            KeyFrame* pKF = mit->first;
+            std::shared_ptr<KeyFrame> pKF = mit->first;
             if(pKF->isBad() || pKF->mnId>maxKFid || pKF->mnBALocalForKF != pMainKF->mnId || !pKF->GetMapPoint(get<0>(mit->second)))
                 continue;
 
@@ -3860,7 +3860,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
 
     // Recover optimized data
     // Keyframes
-    for(KeyFrame* pKFi : vpAdjustKF)
+    for(std::shared_ptr<KeyFrame> pKFi : vpAdjustKF)
     {
         if(pKFi->isBad())
             continue;
@@ -3878,7 +3878,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         {
             ORB_SLAM3::EdgeSE3ProjectXYZ* e = vpEdgesMono[i];
             MapPoint* pMP = vpMapPointEdgeMono[i];
-            KeyFrame* pKFedge = vpEdgeKFMono[i];
+            std::shared_ptr<KeyFrame> pKFedge = vpEdgeKFMono[i];
 
             if(pKFi != pKFedge)
             {
@@ -3906,7 +3906,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
         {
             g2o::EdgeStereoSE3ProjectXYZ* e = vpEdgesStereo[i];
             MapPoint* pMP = vpMapPointEdgeStereo[i];
-            KeyFrame* pKFedge = vpEdgeKFMono[i];
+            std::shared_ptr<KeyFrame> pKFedge = vpEdgeKFMono[i];
 
             if(pKFi != pKFedge)
             {
@@ -3945,17 +3945,17 @@ void Optimizer::LocalBundleAdjustment(KeyFrame* pMainKF,vector<KeyFrame*> vpAdju
 }
 
 
-void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbStopFlag, Map *pMap, LoopClosing::KeyFrameAndPose &corrPoses)
+void Optimizer::MergeInertialBA(std::shared_ptr<KeyFrame> pCurrKF, std::shared_ptr<KeyFrame> pMergeKF, bool *pbStopFlag, Map *pMap, LoopClosing::KeyFrameAndPose &corrPoses)
 {
     const int Nd = 6;
     const unsigned long maxKFid = pCurrKF->mnId;
 
-    vector<KeyFrame*> vpOptimizableKFs;
+    vector<std::shared_ptr<KeyFrame>> vpOptimizableKFs;
     vpOptimizableKFs.reserve(2*Nd);
 
     // For cov KFS, inertial parameters are not optimized
     const int maxCovKF = 30;
-    vector<KeyFrame*> vpOptimizableCovKFs;
+    vector<std::shared_ptr<KeyFrame>> vpOptimizableCovKFs;
     vpOptimizableCovKFs.reserve(maxCovKF);
 
     // Add sliding window for current KF
@@ -3972,7 +3972,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
             break;
     }
 
-    list<KeyFrame*> lFixedKeyFrames;
+    list<std::shared_ptr<KeyFrame>> lFixedKeyFrames;
     if(vpOptimizableKFs.back()->mPrevKF)
     {
         vpOptimizableCovKFs.push_back(vpOptimizableKFs.back()->mPrevKF);
@@ -4068,12 +4068,12 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     int i=0;
     for(vector<pair<MapPoint*,int>>::iterator lit=pairs.begin(), lend=pairs.end(); lit!=lend; lit++, i++)
     {
-        map<KeyFrame*,tuple<int,int>> observations = lit->first->GetObservations();
+        map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = lit->first->GetObservations();
         if(i>=maxCovKF)
             break;
-        for(map<KeyFrame*,tuple<int,int>>::iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if(pKFi->mnBALocalForKF!=pCurrKF->mnId && pKFi->mnBAFixedForKF!=pCurrKF->mnId) // If optimizable or already included...
             {
@@ -4104,7 +4104,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     N=vpOptimizableKFs.size();
     for(int i=0; i<N; i++)
     {
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
 
         VertexPose * VP = new VertexPose(pKFi);
         VP->setId(pKFi->mnId);
@@ -4132,7 +4132,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     int Ncov=vpOptimizableCovKFs.size();
     for(int i=0; i<Ncov; i++)
     {
-        KeyFrame* pKFi = vpOptimizableCovKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableCovKFs[i];
 
         VertexPose * VP = new VertexPose(pKFi);
         VP->setId(pKFi->mnId);
@@ -4157,9 +4157,9 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     }
 
     // Set Fixed KeyFrame vertices
-    for(list<KeyFrame*>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
+    for(list<std::shared_ptr<KeyFrame>>::iterator lit=lFixedKeyFrames.begin(), lend=lFixedKeyFrames.end(); lit!=lend; lit++)
     {
-        KeyFrame* pKFi = *lit;
+        std::shared_ptr<KeyFrame> pKFi = *lit;
         VertexPose * VP = new VertexPose(pKFi);
         VP->setId(pKFi->mnId);
         VP->setFixed(true);
@@ -4189,7 +4189,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     for(int i=0;i<N;i++)
     {
         //cout << "inserting inertial edge " << i << endl;
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
 
         if(!pKFi->mPrevKF)
         {
@@ -4257,7 +4257,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     vector<EdgeMono*> vpEdgesMono;
     vpEdgesMono.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFMono;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFMono;
     vpEdgeKFMono.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeMono;
@@ -4267,7 +4267,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     vector<EdgeStereo*> vpEdgesStereo;
     vpEdgesStereo.reserve(nExpectedSize);
 
-    vector<KeyFrame*> vpEdgeKFStereo;
+    vector<std::shared_ptr<KeyFrame>> vpEdgeKFStereo;
     vpEdgeKFStereo.reserve(nExpectedSize);
 
     vector<MapPoint*> vpMapPointEdgeStereo;
@@ -4294,12 +4294,12 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
         vPoint->setMarginalized(true);
         optimizer.addVertex(vPoint);
 
-        const map<KeyFrame*,tuple<int,int>> observations = pMP->GetObservations();
+        const map<std::shared_ptr<KeyFrame>,tuple<int,int>> observations = pMP->GetObservations();
 
         // Create visual constraints
-        for(map<KeyFrame*,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
+        for(map<std::shared_ptr<KeyFrame>,tuple<int,int>>::const_iterator mit=observations.begin(), mend=observations.end(); mit!=mend; mit++)
         {
-            KeyFrame* pKFi = mit->first;
+            std::shared_ptr<KeyFrame> pKFi = mit->first;
 
             if (!pKFi)
                 continue;
@@ -4376,7 +4376,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     optimizer.initializeOptimization();
     optimizer.optimize(8);
 
-    vector<pair<KeyFrame*,MapPoint*> > vToErase;
+    vector<pair<std::shared_ptr<KeyFrame>,MapPoint*> > vToErase;
     vToErase.reserve(vpEdgesMono.size()+vpEdgesStereo.size());
 
     // Check inlier observations
@@ -4391,7 +4391,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
 
         if(e->chi2()>chi2Mono2)
         {
-            KeyFrame* pKFi = vpEdgeKFMono[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFMono[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -4407,7 +4407,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
 
         if(e->chi2()>chi2Stereo2)
         {
-            KeyFrame* pKFi = vpEdgeKFStereo[i];
+            std::shared_ptr<KeyFrame> pKFi = vpEdgeKFStereo[i];
             vToErase.push_back(make_pair(pKFi,pMP));
         }
     }
@@ -4418,7 +4418,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     {
         for(size_t i=0;i<vToErase.size();i++)
         {
-            KeyFrame* pKFi = vToErase[i].first;
+            std::shared_ptr<KeyFrame> pKFi = vToErase[i].first;
             MapPoint* pMPi = vToErase[i].second;
             pKFi->EraseMapPointMatch(pMPi);
             pMPi->EraseObservation(pKFi);
@@ -4430,7 +4430,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
     //Keyframes
     for(int i=0; i<N; i++)
     {
-        KeyFrame* pKFi = vpOptimizableKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableKFs[i];
 
         VertexPose* VP = static_cast<VertexPose*>(optimizer.vertex(pKFi->mnId));
         Sophus::SE3f Tcw(VP->estimate().Rcw[0].cast<float>(), VP->estimate().tcw[0].cast<float>());
@@ -4454,7 +4454,7 @@ void Optimizer::MergeInertialBA(KeyFrame* pCurrKF, KeyFrame* pMergeKF, bool *pbS
 
     for(int i=0; i<Ncov; i++)
     {
-        KeyFrame* pKFi = vpOptimizableCovKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpOptimizableCovKFs[i];
 
         VertexPose* VP = static_cast<VertexPose*>(optimizer.vertex(pKFi->mnId));
         Sophus::SE3f Tcw(VP->estimate().Rcw[0].cast<float>(), VP->estimate().tcw[0].cast<float>());
@@ -4651,7 +4651,7 @@ int Optimizer::PoseInertialOptimizationLastKeyFrame(Frame *pFrame, bool bRecInit
     }
     nInitialCorrespondences = nInitialMonoCorrespondences + nInitialStereoCorrespondences;
 
-    KeyFrame* pKF = pFrame->mpLastKeyFrame;
+    std::shared_ptr<KeyFrame> pKF = pFrame->mpLastKeyFrame;
     VertexPose* VPk = new VertexPose(pKF);
     VPk->setId(4);
     VPk->setFixed(true);
@@ -5289,10 +5289,10 @@ int Optimizer::PoseInertialOptimizationLastFrame(Frame *pFrame, bool bRecInit)
     return nInitialCorrespondences-nBad;
 }
 
-void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFrame* pCurKF,
+void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, std::shared_ptr<KeyFrame> pLoopKF, std::shared_ptr<KeyFrame> pCurKF,
                                        const LoopClosing::KeyFrameAndPose &NonCorrectedSim3,
                                        const LoopClosing::KeyFrameAndPose &CorrectedSim3,
-                                       const map<KeyFrame *, set<KeyFrame *> > &LoopConnections)
+                                       const map<std::shared_ptr<KeyFrame>, set<std::shared_ptr<KeyFrame>> > &LoopConnections)
 {
     typedef g2o::BlockSolver< g2o::BlockSolverTraits<4, 4> > BlockSolver_4_4;
 
@@ -5307,7 +5307,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
 
     optimizer.setAlgorithm(solver);
 
-    const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
+    const vector<std::shared_ptr<KeyFrame>> vpKFs = pMap->GetAllKeyFrames();
     const vector<MapPoint*> vpMPs = pMap->GetAllMapPoints();
 
     const unsigned int nMaxKFid = pMap->GetMaxKFid();
@@ -5321,7 +5321,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
     // Set KeyFrame vertices
     for(size_t i=0, iend=vpKFs.size(); i<iend;i++)
     {
-        KeyFrame* pKF = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKF = vpKFs[i];
         if(pKF->isBad())
             continue;
 
@@ -5367,14 +5367,14 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
 
     // Set Loop edges
     Edge4DoF* e_loop;
-    for(map<KeyFrame *, set<KeyFrame *> >::const_iterator mit = LoopConnections.begin(), mend=LoopConnections.end(); mit!=mend; mit++)
+    for(map<std::shared_ptr<KeyFrame>, set<std::shared_ptr<KeyFrame>> >::const_iterator mit = LoopConnections.begin(), mend=LoopConnections.end(); mit!=mend; mit++)
     {
-        KeyFrame* pKF = mit->first;
+        std::shared_ptr<KeyFrame> pKF = mit->first;
         const long unsigned int nIDi = pKF->mnId;
-        const set<KeyFrame*> &spConnections = mit->second;
+        const set<std::shared_ptr<KeyFrame>> &spConnections = mit->second;
         const g2o::Sim3 Siw = vScw[nIDi];
 
-        for(set<KeyFrame*>::const_iterator sit=spConnections.begin(), send=spConnections.end(); sit!=send; sit++)
+        for(set<std::shared_ptr<KeyFrame>>::const_iterator sit=spConnections.begin(), send=spConnections.end(); sit!=send; sit++)
         {
             const long unsigned int nIDj = (*sit)->mnId;
             if((nIDi!=pCurKF->mnId || nIDj!=pLoopKF->mnId) && pKF->GetWeight(*sit)<minFeat)
@@ -5402,7 +5402,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
     // 1. Set normal edges
     for(size_t i=0, iend=vpKFs.size(); i<iend; i++)
     {
-        KeyFrame* pKF = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKF = vpKFs[i];
 
         const int nIDi = pKF->mnId;
 
@@ -5417,7 +5417,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
             Siw = vScw[nIDi];
 
         // 1.1.0 Spanning tree edge
-        KeyFrame* pParentKF = static_cast<KeyFrame*>(NULL);
+        std::shared_ptr<KeyFrame> pParentKF = static_cast<std::shared_ptr<KeyFrame>>(NULL);
         if(pParentKF)
         {
             int nIDj = pParentKF->mnId;
@@ -5445,7 +5445,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
         }
 
         // 1.1.1 Inertial edges
-        KeyFrame* prevKF = pKF->mPrevKF;
+        std::shared_ptr<KeyFrame> prevKF = pKF->mPrevKF;
         if(prevKF)
         {
             int nIDj = prevKF->mnId;
@@ -5473,10 +5473,10 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
         }
 
         // 1.2 Loop edges
-        const set<KeyFrame*> sLoopEdges = pKF->GetLoopEdges();
-        for(set<KeyFrame*>::const_iterator sit=sLoopEdges.begin(), send=sLoopEdges.end(); sit!=send; sit++)
+        const set<std::shared_ptr<KeyFrame>> sLoopEdges = pKF->GetLoopEdges();
+        for(set<std::shared_ptr<KeyFrame>>::const_iterator sit=sLoopEdges.begin(), send=sLoopEdges.end(); sit!=send; sit++)
         {
-            KeyFrame* pLKF = *sit;
+            std::shared_ptr<KeyFrame> pLKF = *sit;
             if(pLKF->mnId<pKF->mnId)
             {
                 g2o::Sim3 Swl;
@@ -5503,10 +5503,10 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
         }
 
         // 1.3 Covisibility graph edges
-        const vector<KeyFrame*> vpConnectedKFs = pKF->GetCovisiblesByWeight(minFeat);
-        for(vector<KeyFrame*>::const_iterator vit=vpConnectedKFs.begin(); vit!=vpConnectedKFs.end(); vit++)
+        const vector<std::shared_ptr<KeyFrame>> vpConnectedKFs = pKF->GetCovisiblesByWeight(minFeat);
+        for(vector<std::shared_ptr<KeyFrame>>::const_iterator vit=vpConnectedKFs.begin(); vit!=vpConnectedKFs.end(); vit++)
         {
-            KeyFrame* pKFn = *vit;
+            std::shared_ptr<KeyFrame> pKFn = *vit;
             if(pKFn && pKFn!=pParentKF && pKFn!=prevKF && pKFn!=pKF->mNextKF && !pKF->hasChild(pKFn) && !sLoopEdges.count(pKFn))
             {
                 if(!pKFn->isBad() && pKFn->mnId<pKF->mnId)
@@ -5547,7 +5547,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
     // SE3 Pose Recovering. Sim3:[sR t;0 1] -> SE3:[R t/s;0 1]
     for(size_t i=0;i<vpKFs.size();i++)
     {
-        KeyFrame* pKFi = vpKFs[i];
+        std::shared_ptr<KeyFrame> pKFi = vpKFs[i];
 
         const int nIDi = pKFi->mnId;
 
@@ -5572,7 +5572,7 @@ void Optimizer::OptimizeEssentialGraph4DoF(Map* pMap, KeyFrame* pLoopKF, KeyFram
 
         int nIDr;
 
-        KeyFrame* pRefKF = pMP->GetReferenceKeyFrame();
+        std::shared_ptr<KeyFrame> pRefKF = pMP->GetReferenceKeyFrame();
         nIDr = pRefKF->mnId;
 
         g2o::Sim3 Srw = vScw[nIDr];

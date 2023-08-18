@@ -100,7 +100,7 @@ void Atlas::SetViewer(Viewer* pViewer)
     mHasViewer = true;
 }
 
-void Atlas::AddKeyFrame(KeyFrame* pKF)
+void Atlas::AddKeyFrame(std::shared_ptr<KeyFrame> pKF)
 {
     Map* pMapKF = pKF->GetMap();
     pMapKF->AddKeyFrame(pKF);
@@ -188,7 +188,7 @@ long unsigned Atlas::KeyFramesInMap()
     return mpCurrentMap->KeyFramesInMap();
 }
 
-std::vector<KeyFrame*> Atlas::GetAllKeyFrames()
+std::vector<std::shared_ptr<KeyFrame>> Atlas::GetAllKeyFrames()
 {
     unique_lock<mutex> lock(mMutexAtlas);
     return mpCurrentMap->GetAllKeyFrames();
@@ -394,14 +394,14 @@ long unsigned int Atlas::GetNumLivedMP() {
     return num;
 }
 
-map<long unsigned int, KeyFrame*> Atlas::GetAtlasKeyframes()
+map<long unsigned int, std::shared_ptr<KeyFrame>> Atlas::GetAtlasKeyframes()
 {
-    map<long unsigned int, KeyFrame*> mpIdKFs;
+    map<long unsigned int, std::shared_ptr<KeyFrame>> mpIdKFs;
     for(Map* pMap_i : mvpBackupMaps)
     {
-        vector<KeyFrame*> vpKFs_Mi = pMap_i->GetAllKeyFrames();
+        vector<std::shared_ptr<KeyFrame>> vpKFs_Mi = pMap_i->GetAllKeyFrames();
 
-        for(KeyFrame* pKF_j_Mi : vpKFs_Mi)
+        for(std::shared_ptr<KeyFrame> pKF_j_Mi : vpKFs_Mi)
         {
             mpIdKFs[pKF_j_Mi->mnId] = pKF_j_Mi;
         }
