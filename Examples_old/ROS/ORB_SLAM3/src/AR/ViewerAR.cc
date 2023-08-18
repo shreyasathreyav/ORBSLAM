@@ -59,7 +59,7 @@ void ViewerAR::Run()
     cv::Mat im, Tcw;
     int status;
     vector<cv::KeyPoint> vKeys;
-    vector<MapPoint*> vMPs;
+    vector<std::shared_ptr<MapPoint>> vMPs;
 
     while(1)
     {
@@ -233,7 +233,7 @@ void ViewerAR::Run()
 
 }
 
-void ViewerAR::SetImagePose(const cv::Mat &im, const cv::Mat &Tcw, const int &status, const vector<cv::KeyPoint> &vKeys, const vector<ORB_SLAM3::MapPoint*> &vMPs)
+void ViewerAR::SetImagePose(const cv::Mat &im, const cv::Mat &Tcw, const int &status, const vector<cv::KeyPoint> &vKeys, const vector<ORB_SLAM3::std::shared_ptr<MapPoint>> &vMPs)
 {
     unique_lock<mutex> lock(mMutexPoseImage);
     mImage = im.clone();
@@ -243,7 +243,7 @@ void ViewerAR::SetImagePose(const cv::Mat &im, const cv::Mat &Tcw, const int &st
     mvMPs = vMPs;
 }
 
-void ViewerAR::GetImagePose(cv::Mat &im, cv::Mat &Tcw, int &status, std::vector<cv::KeyPoint> &vKeys,  std::vector<MapPoint*> &vMPs)
+void ViewerAR::GetImagePose(cv::Mat &im, cv::Mat &Tcw, int &status, std::vector<cv::KeyPoint> &vKeys,  std::vector<std::shared_ptr<MapPoint>> &vMPs)
 {
     unique_lock<mutex> lock(mMutexPoseImage);
     im = mImage.clone();
@@ -373,7 +373,7 @@ void ViewerAR::DrawPlane(int ndivs, float ndivsize)
 
 }
 
-void ViewerAR::DrawTrackedPoints(const std::vector<cv::KeyPoint> &vKeys, const std::vector<MapPoint *> &vMPs, cv::Mat &im)
+void ViewerAR::DrawTrackedPoints(const std::vector<cv::KeyPoint> &vKeys, const std::vector<std::shared_ptr<MapPoint>> &vMPs, cv::Mat &im)
 {
     const int N = vKeys.size();
 
@@ -387,17 +387,17 @@ void ViewerAR::DrawTrackedPoints(const std::vector<cv::KeyPoint> &vKeys, const s
     }
 }
 
-Plane* ViewerAR::DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vMPs, const int iterations)
+Plane* ViewerAR::DetectPlane(const cv::Mat Tcw, const std::vector<std::shared_ptr<MapPoint>> &vMPs, const int iterations)
 {
     // Retrieve 3D points
     vector<cv::Mat> vPoints;
     vPoints.reserve(vMPs.size());
-    vector<MapPoint*> vPointMP;
+    vector<std::shared_ptr<MapPoint>> vPointMP;
     vPointMP.reserve(vMPs.size());
 
     for(size_t i=0; i<vMPs.size(); i++)
     {
-        MapPoint* pMP=vMPs[i];
+        std::shared_ptr<MapPoint> pMP=vMPs[i];
         if(pMP)
         {
             if(pMP->Observations()>5)
@@ -491,7 +491,7 @@ Plane* ViewerAR::DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vM
         }
     }
 
-    vector<MapPoint*> vInlierMPs(nInliers,NULL);
+    vector<std::shared_ptr<MapPoint>> vInlierMPs(nInliers,NULL);
     int nin = 0;
     for(int i=0; i<N; i++)
     {
@@ -505,7 +505,7 @@ Plane* ViewerAR::DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vM
     return new Plane(vInlierMPs,Tcw);
 }
 
-Plane::Plane(const std::vector<MapPoint *> &vMPs, const cv::Mat &Tcw):mvMPs(vMPs),mTcw(Tcw.clone())
+Plane::Plane(const std::vector<std::shared_ptr<MapPoint>> &vMPs, const cv::Mat &Tcw):mvMPs(vMPs),mTcw(Tcw.clone())
 {
     rang = -3.14f/2+((float)rand()/RAND_MAX)*3.14f;
     Recompute();
@@ -524,7 +524,7 @@ void Plane::Recompute()
     int nPoints = 0;
     for(int i=0; i<N; i++)
     {
-        MapPoint* pMP = mvMPs[i];
+        std::shared_ptr<MapPoint> pMP = mvMPs[i];
         if(!pMP->isBad())
         {
             cv::Mat Xw = pMP->GetWorldPos();

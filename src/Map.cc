@@ -77,7 +77,7 @@ void Map::AddKeyFrame(std::shared_ptr<KeyFrame>pKF)
     }
 }
 
-void Map::AddMapPoint(MapPoint *pMP)
+void Map::AddMapPoint(std::shared_ptr<MapPoint>pMP)
 {
     unique_lock<mutex> lock(mMutexMap);
     mspMapPoints.insert(pMP);
@@ -95,7 +95,7 @@ bool Map::isImuInitialized()
     return mbImuInitialized;
 }
 
-void Map::EraseMapPoint(MapPoint *pMP)
+void Map::EraseMapPoint(std::shared_ptr<MapPoint>pMP)
 {
     unique_lock<mutex> lock(mMutexMap);
     mspMapPoints.erase(pMP);
@@ -126,7 +126,7 @@ void Map::EraseKeyFrame(std::shared_ptr<KeyFrame>pKF)
     // Delete the MapPoint
 }
 
-void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
+void Map::SetReferenceMapPoints(const vector<std::shared_ptr<MapPoint>> &vpMPs)
 {
     unique_lock<mutex> lock(mMutexMap);
     mvpReferenceMapPoints = vpMPs;
@@ -150,10 +150,10 @@ vector<std::shared_ptr<KeyFrame>> Map::GetAllKeyFrames()
     return vector<std::shared_ptr<KeyFrame>>(mspKeyFrames.begin(),mspKeyFrames.end());
 }
 
-vector<MapPoint*> Map::GetAllMapPoints()
+vector<std::shared_ptr<MapPoint>> Map::GetAllMapPoints()
 {
     unique_lock<mutex> lock(mMutexMap);
-    return vector<MapPoint*>(mspMapPoints.begin(),mspMapPoints.end());
+    return vector<std::shared_ptr<MapPoint>>(mspMapPoints.begin(),mspMapPoints.end());
 }
 
 long unsigned int Map::MapPointsInMap()
@@ -168,7 +168,7 @@ long unsigned int Map::KeyFramesInMap()
     return mspKeyFrames.size();
 }
 
-vector<MapPoint*> Map::GetReferenceMapPoints()
+vector<std::shared_ptr<MapPoint>> Map::GetReferenceMapPoints()
 {
     unique_lock<mutex> lock(mMutexMap);
     return mvpReferenceMapPoints;
@@ -213,7 +213,7 @@ void Map::SetStoredMap()
 
 void Map::clear()
 {
-//    for(set<MapPoint*>::iterator sit=mspMapPoints.begin(), send=mspMapPoints.end(); sit!=send; sit++)
+//    for(set<std::shared_ptr<MapPoint>>::iterator sit=mspMapPoints.begin(), send=mspMapPoints.end(); sit!=send; sit++)
 //        delete *sit;
 
     for(set<std::shared_ptr<KeyFrame>>::iterator sit=mspKeyFrames.begin(), send=mspKeyFrames.end(); sit!=send; sit++)
@@ -273,9 +273,9 @@ void Map::ApplyScaledRotation(const Sophus::SE3f &T, const float s, const bool b
             pKF->SetVelocity(Ryw*Vw*s);
 
     }
-    for(set<MapPoint*>::iterator sit=mspMapPoints.begin(); sit!=mspMapPoints.end(); sit++)
+    for(set<std::shared_ptr<MapPoint>>::iterator sit=mspMapPoints.begin(); sit!=mspMapPoints.end(); sit++)
     {
-        MapPoint* pMP = *sit;
+        std::shared_ptr<MapPoint> pMP = *sit;
         pMP->SetWorldPos(s * Ryw * pMP->GetWorldPos() + tyw);
         pMP->UpdateNormalAndDepth();
     }
@@ -359,7 +359,7 @@ void Map::SetLastMapChange(int currentChangeId)
 void Map::PreSave(std::set<GeometricCamera*> &spCams)
 {
     int nMPWithoutObs = 0;
-    for(MapPoint* pMPi : mspMapPoints)
+    for(std::shared_ptr<MapPoint> pMPi : mspMapPoints)
     {
         if(!pMPi || pMPi->isBad())
             continue;
@@ -390,7 +390,7 @@ void Map::PreSave(std::set<GeometricCamera*> &spCams)
 
     // Backup of MapPoints
     mvpBackupMapPoints.clear();
-    for(MapPoint* pMPi : mspMapPoints)
+    for(std::shared_ptr<MapPoint> pMPi : mspMapPoints)
     {
         if(!pMPi || pMPi->isBad())
             continue;
@@ -429,8 +429,8 @@ void Map::PostLoad(KeyFrameDatabase* pKFDB, ORBVocabulary* pORBVoc/*, map<long u
     std::copy(mvpBackupMapPoints.begin(), mvpBackupMapPoints.end(), std::inserter(mspMapPoints, mspMapPoints.begin()));
     std::copy(mvpBackupKeyFrames.begin(), mvpBackupKeyFrames.end(), std::inserter(mspKeyFrames, mspKeyFrames.begin()));
 
-    map<long unsigned int,MapPoint*> mpMapPointId;
-    for(MapPoint* pMPi : mspMapPoints)
+    map<long unsigned int,std::shared_ptr<MapPoint>> mpMapPointId;
+    for(std::shared_ptr<MapPoint> pMPi : mspMapPoints)
     {
         if(!pMPi || pMPi->isBad())
             continue;
@@ -452,7 +452,7 @@ void Map::PostLoad(KeyFrameDatabase* pKFDB, ORBVocabulary* pORBVoc/*, map<long u
     }
 
     // References reconstruction between different instances
-    for(MapPoint* pMPi : mspMapPoints)
+    for(std::shared_ptr<MapPoint> pMPi : mspMapPoints)
     {
         if(!pMPi || pMPi->isBad())
             continue;

@@ -173,7 +173,7 @@ public:
     bool mFastInit = false;
 
 
-    vector<MapPoint*> GetLocalMapMPS();
+    vector<std::shared_ptr<MapPoint>> GetLocalMapMPS();
 
     bool mbWriteStats;
 
@@ -273,7 +273,7 @@ protected:
     //Local Map
     std::shared_ptr<KeyFrame> mpReferenceKF;
     std::vector<std::shared_ptr<KeyFrame>> mvpLocalKeyFrames;
-    std::vector<MapPoint*> mvpLocalMapPoints;
+    std::vector<std::shared_ptr<MapPoint>> mvpLocalMapPoints;
     
     // System
     System* mpSystem;
@@ -340,7 +340,7 @@ protected:
     //Color order (true RGB, false BGR, ignored if grayscale)
     bool mbRGB;
 
-    list<MapPoint*> mlpTemporalPoints;
+    list<std::shared_ptr<MapPoint>> mlpTemporalPoints;
 
     //int nMapChangeIndex;
 

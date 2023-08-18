@@ -1324,7 +1324,7 @@ int System::GetTrackingState()
     return mTrackingState;
 }
 
-vector<MapPoint*> System::GetTrackedMapPoints()
+vector<std::shared_ptr<MapPoint>> System::GetTrackedMapPoints()
 {
     unique_lock<mutex> lock(mMutexState);
     return mTrackedMapPoints;

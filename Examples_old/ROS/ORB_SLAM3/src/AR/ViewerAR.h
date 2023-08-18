@@ -32,7 +32,7 @@ namespace ORB_SLAM3
 class Plane
 {
 public:
-    Plane(const std::vector<MapPoint*> &vMPs, const cv::Mat &Tcw);
+    Plane(const std::vector<std::shared_ptr<MapPoint>> &vMPs, const cv::Mat &Tcw);
     Plane(const float &nx, const float &ny, const float &nz, const float &ox, const float &oy, const float &oz);
 
     void Recompute();
@@ -47,7 +47,7 @@ public:
     cv::Mat Tpw;
     pangolin::OpenGlMatrix glTpw;
     //MapPoints that define the plane
-    std::vector<MapPoint*> mvMPs;
+    std::vector<std::shared_ptr<MapPoint>> mvMPs;
     //camera pose when the plane was first observed (to compute normal direction)
     cv::Mat mTcw, XC;
 };
@@ -74,10 +74,10 @@ public:
     }
 
     void SetImagePose(const cv::Mat &im, const cv::Mat &Tcw, const int &status,
-                      const std::vector<cv::KeyPoint> &vKeys, const std::vector<MapPoint*> &vMPs);
+                      const std::vector<cv::KeyPoint> &vKeys, const std::vector<std::shared_ptr<MapPoint>> &vMPs);
 
     void GetImagePose(cv::Mat &im, cv::Mat &Tcw, int &status,
-                      std::vector<cv::KeyPoint> &vKeys,  std::vector<MapPoint*> &vMPs);
+                      std::vector<cv::KeyPoint> &vKeys,  std::vector<std::shared_ptr<MapPoint>> &vMPs);
 
 private:
 
@@ -91,9 +91,9 @@ private:
     void DrawCube(const float &size, const float x=0, const float y=0, const float z=0);
     void DrawPlane(int ndivs, float ndivsize);
     void DrawPlane(Plane* pPlane, int ndivs, float ndivsize);
-    void DrawTrackedPoints(const std::vector<cv::KeyPoint> &vKeys, const std::vector<MapPoint*> &vMPs, cv::Mat &im);
+    void DrawTrackedPoints(const std::vector<cv::KeyPoint> &vKeys, const std::vector<std::shared_ptr<MapPoint>> &vMPs, cv::Mat &im);
 
-    Plane* DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vMPs, const int iterations=50);
+    Plane* DetectPlane(const cv::Mat Tcw, const std::vector<std::shared_ptr<MapPoint>> &vMPs, const int iterations=50);
 
     // frame rate
     float mFPS, mT;
@@ -105,7 +105,7 @@ private:
     cv::Mat mImage;
     int mStatus;
     std::vector<cv::KeyPoint> mvKeys;
-    std::vector<MapPoint*> mvMPs;
+    std::vector<std::shared_ptr<MapPoint>> mvMPs;
 
 };
 

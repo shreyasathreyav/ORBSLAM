@@ -150,7 +150,7 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
     cv::Mat imu;
     cv::Mat Tcw = mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
     int state = mpSLAM->GetTrackingState();
-    vector<ORB_SLAM3::MapPoint*> vMPs = mpSLAM->GetTrackedMapPoints();
+    vector<ORB_SLAM3::std::shared_ptr<MapPoint>> vMPs = mpSLAM->GetTrackedMapPoints();
     vector<cv::KeyPoint> vKeys = mpSLAM->GetTrackedKeyPointsUn();
 
     cv::undistort(im,imu,K,DistCoef);

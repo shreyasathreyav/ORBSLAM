@@ -307,11 +307,11 @@ void LocalMapping::ProcessNewKeyFrame()
     mpCurrentKeyFrame->ComputeBoW();
 
     // Associate MapPoints to the new keyframe and update normal and descriptor
-    const vector<MapPoint*> vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();
+    const vector<std::shared_ptr<MapPoint>> vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();
 
     for(size_t i=0; i<vpMapPointMatches.size(); i++)
     {
-        MapPoint* pMP = vpMapPointMatches[i];
+        std::shared_ptr<MapPoint> pMP = vpMapPointMatches[i];
         if(pMP)
         {
             if(!pMP->isBad())
@@ -346,7 +346,7 @@ void LocalMapping::EmptyQueue()
 void LocalMapping::MapPointCulling()
 {
     // Check Recent Added MapPoints
-    list<MapPoint*>::iterator lit = mlpRecentAddedMapPoints.begin();
+    list<std::shared_ptr<MapPoint>>::iterator lit = mlpRecentAddedMapPoints.begin();
     const unsigned long int nCurrentKFid = mpCurrentKeyFrame->mnId;
 
     int nThObs;
@@ -360,7 +360,7 @@ void LocalMapping::MapPointCulling()
 
     while(lit!=mlpRecentAddedMapPoints.end())
     {
-        MapPoint* pMP = *lit;
+        std::shared_ptr<MapPoint> pMP = *lit;
 
         if(pMP->isBad())
             lit = mlpRecentAddedMapPoints.erase(lit);
@@ -691,7 +691,7 @@ void LocalMapping::CreateNewMapPoints()
                 continue;
 
             // Triangulation is succesfull
-            MapPoint* pMP = new MapPoint(x3D, mpCurrentKeyFrame, mpAtlas->GetCurrentMap());
+            std::shared_ptr<MapPoint> pMP = std::shared_ptr<MapPoint>(new MapPoint(x3D, mpCurrentKeyFrame, mpAtlas->GetCurrentMap()));
             if (bPointStereo)
                 countStereo++;
             
@@ -764,7 +764,7 @@ void LocalMapping::SearchInNeighbors()
 
     // Search matches by projection from current KF in target KFs
     ORBmatcher matcher;
-    vector<MapPoint*> vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();
+    vector<std::shared_ptr<MapPoint>> vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();
     for(vector<std::shared_ptr<KeyFrame>>::iterator vit=vpTargetKFs.begin(), vend=vpTargetKFs.end(); vit!=vend; vit++)
     {
         std::shared_ptr<KeyFrame> pKFi = *vit;
@@ -778,18 +778,18 @@ void LocalMapping::SearchInNeighbors()
         return;
 
     // Search matches by projection from target KFs in current KF
-    vector<MapPoint*> vpFuseCandidates;
+    vector<std::shared_ptr<MapPoint>> vpFuseCandidates;
     vpFuseCandidates.reserve(vpTargetKFs.size()*vpMapPointMatches.size());
 
     for(vector<std::shared_ptr<KeyFrame>>::iterator vitKF=vpTargetKFs.begin(), vendKF=vpTargetKFs.end(); vitKF!=vendKF; vitKF++)
     {
         std::shared_ptr<KeyFrame> pKFi = *vitKF;
 
-        vector<MapPoint*> vpMapPointsKFi = pKFi->GetMapPointMatches();
+        vector<std::shared_ptr<MapPoint>> vpMapPointsKFi = pKFi->GetMapPointMatches();
 
-        for(vector<MapPoint*>::iterator vitMP=vpMapPointsKFi.begin(), vendMP=vpMapPointsKFi.end(); vitMP!=vendMP; vitMP++)
+        for(vector<std::shared_ptr<MapPoint>>::iterator vitMP=vpMapPointsKFi.begin(), vendMP=vpMapPointsKFi.end(); vitMP!=vendMP; vitMP++)
         {
-            MapPoint* pMP = *vitMP;
+            std::shared_ptr<MapPoint> pMP = *vitMP;
             if(!pMP)
                 continue;
             if(pMP->isBad() || pMP->mnFuseCandidateForKF == mpCurrentKeyFrame->mnId)
@@ -807,7 +807,7 @@ void LocalMapping::SearchInNeighbors()
     vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();
     for(size_t i=0, iend=vpMapPointMatches.size(); i<iend; i++)
     {
-        MapPoint* pMP=vpMapPointMatches[i];
+        std::shared_ptr<MapPoint> pMP=vpMapPointMatches[i];
         if(pMP)
         {
             if(!pMP->isBad())
@@ -908,7 +908,6 @@ void LocalMapping::KeyFrameCulling()
     const int Nd = 21;
     mpCurrentKeyFrame->UpdateBestCovisibles();
     vector<std::shared_ptr<KeyFrame>> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
-
     float redundant_th;
     if(!mbInertial)
         redundant_th = 0.9;
@@ -943,7 +942,7 @@ void LocalMapping::KeyFrameCulling()
 
         if((pKF->mnId==pKF->GetMap()->GetInitKFid()) || pKF->isBad())
             continue;
-        const vector<MapPoint*> vpMapPoints = pKF->GetMapPointMatches();
+        const vector<std::shared_ptr<MapPoint>> vpMapPoints = pKF->GetMapPointMatches();
 
         int nObs = 3;
         const int thObs=nObs;
@@ -951,7 +950,7 @@ void LocalMapping::KeyFrameCulling()
         int nMPs=0;
         for(size_t i=0, iend=vpMapPoints.size(); i<iend; i++)
         {
-            MapPoint* pMP = vpMapPoints[i];
+            std::shared_ptr<MapPoint> pMP = vpMapPoints[i];
             if(pMP)
             {
                 if(!pMP->isBad())
@@ -1376,11 +1375,11 @@ void LocalMapping::InitializeIMU(float priorG, float priorA, bool bFIBA)
     }
 
     // Correct MapPoints
-    const vector<MapPoint*> vpMPs = mpAtlas->GetCurrentMap()->GetAllMapPoints();
+    const vector<std::shared_ptr<MapPoint>> vpMPs = mpAtlas->GetCurrentMap()->GetAllMapPoints();
 
     for(size_t i=0; i<vpMPs.size(); i++)
     {
-        MapPoint* pMP = vpMPs[i];
+        std::shared_ptr<MapPoint> pMP = vpMPs[i];
 
         if(pMP->isBad())
             continue;

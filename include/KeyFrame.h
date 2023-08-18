@@ -39,6 +39,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 
+#include<iostream>
 
 namespace ORB_SLAM3
 {
@@ -199,6 +200,11 @@ public:
     KeyFrame();
     KeyFrame(Frame &F, Map* pMap, KeyFrameDatabase* pKFDB);
 
+    ~KeyFrame()
+    {
+        std::cout << "~~~~~~~~~~~~~~~~~~DELETEION~~~~~~~~~~~" << endl;
+    }
+
     // Pose functions
     void SetPose(const Sophus::SE3f &Tcw);
     void SetVelocity(const Eigen::Vector3f &Vw_);
@@ -250,14 +256,14 @@ public:
 
     // MapPoint observation functions
     int GetNumberMPs();
-    void AddMapPoint(MapPoint* pMP, const size_t &idx);
+    void AddMapPoint(std::shared_ptr<MapPoint> pMP, const size_t &idx);
     void EraseMapPointMatch(const int &idx);
-    void EraseMapPointMatch(MapPoint* pMP);
-    void ReplaceMapPointMatch(const int &idx, MapPoint* pMP);
-    std::set<MapPoint*> GetMapPoints();
-    std::vector<MapPoint*> GetMapPointMatches();
+    void EraseMapPointMatch(std::shared_ptr<MapPoint> pMP);
+    void ReplaceMapPointMatch(const int &idx, std::shared_ptr<MapPoint> pMP);
+    std::set<std::shared_ptr<MapPoint>> GetMapPoints();
+    std::vector<std::shared_ptr<MapPoint>> GetMapPointMatches();
     int TrackedMapPoints(const int &minObs);
-    MapPoint* GetMapPoint(const size_t &idx);
+    std::shared_ptr<MapPoint> GetMapPoint(const size_t &idx);
 
     // KeyPoint functions
     std::vector<size_t> GetFeaturesInArea(const float &x, const float  &y, const float  &r, const bool bRight = false) const;
@@ -295,11 +301,11 @@ public:
 
     IMU::Bias GetImuBias();
 
-    bool ProjectPointDistort(MapPoint* pMP, cv::Point2f &kp, float &u, float &v);
-    bool ProjectPointUnDistort(MapPoint* pMP, cv::Point2f &kp, float &u, float &v);
+    bool ProjectPointDistort(std::shared_ptr<MapPoint> pMP, cv::Point2f &kp, float &u, float &v);
+    bool ProjectPointUnDistort(std::shared_ptr<MapPoint> pMP, cv::Point2f &kp, float &u, float &v);
 
-    void PreSave(set<std::shared_ptr<KeyFrame>>& spKF,set<MapPoint*>& spMP, set<GeometricCamera*>& spCam);
-    void PostLoad(map<long unsigned int, std::shared_ptr<KeyFrame>>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid, map<unsigned int, GeometricCamera*>& mpCamId);
+    void PreSave(set<std::shared_ptr<KeyFrame>>& spKF,set<std::shared_ptr<MapPoint>>& spMP, set<GeometricCamera*>& spCam);
+    void PostLoad(map<long unsigned int, std::shared_ptr<KeyFrame>>& mpKFid, map<long unsigned int, std::shared_ptr<MapPoint>>& mpMPid, map<unsigned int, GeometricCamera*>& mpCamId);
 
 
     void SetORBVocabulary(ORBVocabulary* pORBVoc);
@@ -448,7 +454,7 @@ protected:
     IMU::Bias mImuBias;
 
     // MapPoints associated to keypoints
-    std::vector<MapPoint*> mvpMapPoints;
+    std::vector<std::shared_ptr<MapPoint>> mvpMapPoints;
     // For save relation without pointer, this is necessary for save/load function
     std::vector<long long int> mvBackupMapPointsId;
 

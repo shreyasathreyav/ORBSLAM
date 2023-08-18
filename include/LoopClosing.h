@@ -124,18 +124,18 @@ protected:
     //Methods to implement the new place recognition algorithm
     bool NewDetectCommonRegions();
     bool DetectAndReffineSim3FromLastKF(std::shared_ptr<KeyFrame> pCurrentKF, std::shared_ptr<KeyFrame> pMatchedKF, g2o::Sim3 &gScw, int &nNumProjMatches,
-                                        std::vector<MapPoint*> &vpMPs, std::vector<MapPoint*> &vpMatchedMPs);
+                                        std::vector<std::shared_ptr<MapPoint>> &vpMPs, std::vector<std::shared_ptr<MapPoint>> &vpMatchedMPs);
     bool DetectCommonRegionsFromBoW(std::vector<std::shared_ptr<KeyFrame>> &vpBowCand, std::shared_ptr<KeyFrame> &pMatchedKF, std::shared_ptr<KeyFrame> &pLastCurrentKF, g2o::Sim3 &g2oScw,
-                                     int &nNumCoincidences, std::vector<MapPoint*> &vpMPs, std::vector<MapPoint*> &vpMatchedMPs);
+                                     int &nNumCoincidences, std::vector<std::shared_ptr<MapPoint>> &vpMPs, std::vector<std::shared_ptr<MapPoint>> &vpMatchedMPs);
     bool DetectCommonRegionsFromLastKF(std::shared_ptr<KeyFrame> pCurrentKF, std::shared_ptr<KeyFrame> pMatchedKF, g2o::Sim3 &gScw, int &nNumProjMatches,
-                                            std::vector<MapPoint*> &vpMPs, std::vector<MapPoint*> &vpMatchedMPs);
+                                            std::vector<std::shared_ptr<MapPoint>> &vpMPs, std::vector<std::shared_ptr<MapPoint>> &vpMatchedMPs);
     int FindMatchesByProjection(std::shared_ptr<KeyFrame> pCurrentKF, std::shared_ptr<KeyFrame> pMatchedKFw, g2o::Sim3 &g2oScw,
-                                set<MapPoint*> &spMatchedMPinOrigin, vector<MapPoint*> &vpMapPoints,
-                                vector<MapPoint*> &vpMatchedMapPoints);
+                                set<std::shared_ptr<MapPoint>> &spMatchedMPinOrigin, vector<std::shared_ptr<MapPoint>> &vpMapPoints,
+                                vector<std::shared_ptr<MapPoint>> &vpMatchedMapPoints);
 
 
-    void SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap, vector<MapPoint*> &vpMapPoints);
-    void SearchAndFuse(const vector<std::shared_ptr<KeyFrame>> &vConectedKFs, vector<MapPoint*> &vpMapPoints);
+    void SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap, vector<std::shared_ptr<MapPoint>> &vpMapPoints);
+    void SearchAndFuse(const vector<std::shared_ptr<KeyFrame>> &vConectedKFs, vector<std::shared_ptr<MapPoint>> &vpMapPoints);
 
     void CorrectLoop();
 
@@ -178,8 +178,8 @@ protected:
     std::vector<ConsistentGroup> mvConsistentGroups;
     std::vector<std::shared_ptr<KeyFrame>> mvpEnoughConsistentCandidates;
     std::vector<std::shared_ptr<KeyFrame>> mvpCurrentConnectedKFs;
-    std::vector<MapPoint*> mvpCurrentMatchedPoints;
-    std::vector<MapPoint*> mvpLoopMapPoints;
+    std::vector<std::shared_ptr<MapPoint>> mvpCurrentMatchedPoints;
+    std::vector<std::shared_ptr<MapPoint>> mvpLoopMapPoints;
     cv::Mat mScw;
     g2o::Sim3 mg2oScw;
 
@@ -193,8 +193,8 @@ protected:
     g2o::Sim3 mg2oLoopSlw;
     g2o::Sim3 mg2oLoopScw;
     std::shared_ptr<KeyFrame> mpLoopMatchedKF;
-    std::vector<MapPoint*> mvpLoopMPs;
-    std::vector<MapPoint*> mvpLoopMatchedMPs;
+    std::vector<std::shared_ptr<MapPoint>> mvpLoopMPs;
+    std::vector<std::shared_ptr<MapPoint>> mvpLoopMatchedMPs;
     bool mbMergeDetected;
     int mnMergeNumCoincidences;
     int mnMergeNumNotFound;
@@ -203,8 +203,8 @@ protected:
     g2o::Sim3 mg2oMergeSmw;
     g2o::Sim3 mg2oMergeScw;
     std::shared_ptr<KeyFrame> mpMergeMatchedKF;
-    std::vector<MapPoint*> mvpMergeMPs;
-    std::vector<MapPoint*> mvpMergeMatchedMPs;
+    std::vector<std::shared_ptr<MapPoint>> mvpMergeMPs;
+    std::vector<std::shared_ptr<MapPoint>> mvpMergeMatchedMPs;
     std::vector<std::shared_ptr<KeyFrame>> mvpMergeConnectedKFs;
 
     g2o::Sim3 mSold_new;
