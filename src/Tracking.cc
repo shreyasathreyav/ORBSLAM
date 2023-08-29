@@ -1812,7 +1812,7 @@ namespace ORB_SLAM3
 
     void Tracking::Track()
     {
-
+        
         if (bStepByStep)
         {
             std::cout << "Tracking: Waiting to the next step" << std::endl;
@@ -2441,6 +2441,11 @@ namespace ORB_SLAM3
             // Create KeyFrame
             KeyFrame *pKFini = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
+            pKFini->ptr = this->refcountmax;
+
+            pKFini->ptr_mutex = this->mMutexrefcountmax;
+
+
             // Insert KeyFrame in the map
             mpAtlas->AddKeyFrame(pKFini);
 
@@ -2602,7 +2607,16 @@ namespace ORB_SLAM3
     {
         // Create KeyFrames
         KeyFrame *pKFini = new KeyFrame(mInitialFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
+
+        pKFini->ptr = this->refcountmax;
+
+        pKFini->ptr_mutex = this->mMutexrefcountmax;
+
         KeyFrame *pKFcur = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
+        pKFcur->ptr = this->refcountmax;
+
+        pKFcur->ptr_mutex = this->mMutexrefcountmax;
+
 
         if (mSensor == System::IMU_MONOCULAR)
             pKFini->mpImuPreintegrated = (IMU::Preintegrated *)(NULL);
@@ -3398,6 +3412,10 @@ namespace ORB_SLAM3
             return;
 
         KeyFrame *pKF = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
+        
+        pKF->ptr = this->refcountmax;
+
+        pKF->ptr_mutex = this->mMutexrefcountmax;
 
         if (mpAtlas->isImuInitialized()) //  || mpLocalMapper->IsInitializing())
             pKF->bImu = true;

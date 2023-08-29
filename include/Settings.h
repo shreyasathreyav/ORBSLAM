@@ -19,12 +19,11 @@
 #ifndef ORB_SLAM3_SETTINGS_H
 #define ORB_SLAM3_SETTINGS_H
 
-#define CASRF
-// #define RF
-
 
 // Flag to activate the measurement of time in each process (track,localmap, place recognition).
-#define REGISTER_TIMES
+//#define REGISTER_TIMES
+
+#define RF
 
 #include "CameraModels/GeometricCamera.h"
 
@@ -32,8 +31,60 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <memory>
+#include <mutex>
+
+#include<iostream>
+
+// namespace COUNT
+// {
+//     //KeyFrame
+//     static long long  keyFrame_kfrefCount_MAX;
+//     static long long  keyFrame_mprefCount_MAX;
+//     static long long  keyFrame_totalrefCount_MAX {};
+
+//     static long long  keyFrame_kfrefCount_MIN {INT_MAX};
+//     static long long  keyFrame_mprefCount_MIN {INT_MAX};
+//     static long long  keyFrame_totalrefCount_MIN {INT_MAX};
+
+//     static long long  keyFrame_kfrefCount_INTIAL {};
+//     static long long  keyFrame_mprefCount_INTIAL {};
+//     static long long  keyFrame_totalrefCount_INITAL {};    
+
+//     static long long  keyFrame_kfrefCount_FINAL {};
+//     static long long  keyFrame_mprefCount_FINAL {};
+//     static long long  keyFrame_totalrefCount_FINAL {};
+    
+//     //Mappoint
+//     static long long  mappoint_kfrefCount_MAX {INT_MIN};
+//     static long long  mappoint_mprefCount_MAX {INT_MIN};
+//     static long long  mappoint_totalrefCount_MAX {INT_MIN};
+
+//     static long long  mappoint_kfrefCount_MIN {INT_MAX};
+//     static long long  mappoint_mprefCount_MIN {INT_MAX};
+//     static long long  mappoint_totalrefCount_MIN {INT_MAX};
+
+//     static long long  mappoint_kfrefCount_INTIAL {};
+//     static long long  mappoint_mprefCount_INTIAL {};
+//     static long long  mappoint_totalrefCount_INTIAL {};
+
+//     static long long  mappoint_kfrefCount_FINAL {};
+//     static long long  mappoint_mprefCount_FINAL {};
+//     static long long  mappoint_totalrefCount_FINAL {};
+
+//     static std::mutex mMutex_kf_max;
+//     static std::mutex mMutex_mp_max;
+// };
+
+// namespace COUNT
+// {
+// };
+
+
 
 namespace ORB_SLAM3 {
+
+
 
     class System;
 
@@ -63,6 +114,7 @@ namespace ORB_SLAM3 {
         /*
          * Ostream operator overloading to dump settings to the terminal
          */
+    
         friend std::ostream &operator<<(std::ostream &output, const Settings &s);
 
         /*

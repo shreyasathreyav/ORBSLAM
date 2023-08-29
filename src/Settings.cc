@@ -126,6 +126,8 @@ namespace ORB_SLAM3 {
 
     Settings::Settings(const std::string &configFile, const int& sensor) :
     bNeedToUndistort_(false), bNeedToRectify_(false), bNeedToResize1_(false), bNeedToResize2_(false) {
+
+        std::cout << "@@@@@@@@@@@@@@@@@@@@@@ "  << this_thread::get_id() << std::endl;
         sensor_ = sensor;
 
         //Open settings file

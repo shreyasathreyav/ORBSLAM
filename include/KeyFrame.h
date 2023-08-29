@@ -197,6 +197,8 @@ namespace ORB_SLAM3
 
         std::mutex mMutexreferencecount;
 
+        std::mutex mMutex_kf_max;
+
         // Pose functions
         void SetPose(const Sophus::SE3f &Tcw);
         void SetVelocity(const Eigen::Vector3f &Vw_);
@@ -316,6 +318,10 @@ namespace ORB_SLAM3
         bool DeletionSafe;
         
         // CAS
+
+        int* ptr;
+
+        std::mutex* ptr_mutex;
 
         std::atomic<int> mReferencecount_msp_CAS;
 
@@ -456,6 +462,7 @@ namespace ORB_SLAM3
         // bool mbHasHessian;
         // cv::Mat mHessianPose;
         //  MapPoints associated to keypoints
+        std::vector<KeyFrame *> mvpOrderedConnectedKeyFrames;
         std::vector<MapPoint *> mvpMapPoints;
         // The following variables need to be accessed trough a mutex to be thread safe.
     protected:
@@ -491,7 +498,6 @@ namespace ORB_SLAM3
         std::vector<std::vector<std::vector<size_t>>> mGrid;
 
         std::map<KeyFrame *, int> mConnectedKeyFrameWeights;
-        std::vector<KeyFrame *> mvpOrderedConnectedKeyFrames;
         std::vector<int> mvOrderedWeights;
         // For save relation without pointer, this is necessary for save/load function
         std::map<long unsigned int, int> mBackupConnectedKeyFrameIdWeights;

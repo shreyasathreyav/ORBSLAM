@@ -444,28 +444,28 @@ namespace ORB_SLAM3
                 }
 #endif
             }
-            cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
-            float result = float(totaldeletion_mp) / float(mp_passed);
-            result = result * 100;
-            cout << "This is the size of the set : " << mp_passed << endl;
-            cout << "Percentage of deletion : " << result << endl;
-            cout << "========================================================" << endl
-                 << " MAP Points begingin" << endl
-                 << "========================================================" << endl;
-            cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
-            cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
-            // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
-            cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
+            // cout << "These are the total number of mappoints that become zero : " << totaldeletion_mp << endl;
+            // float result = float(totaldeletion_mp) / float(mp_passed);
+            // result = result * 100;
+            // cout << "This is the size of the set : " << mp_passed << endl;
+            // cout << "Percentage of deletion : " << result << endl;
+            // cout << "========================================================" << endl
+            //      << " MAP Points begingin" << endl
+            //      << "========================================================" << endl;
+            // cout << "# Total number of MapPoint to have passed the SetBadFlag : " << mp_passed << endl;
+            // cout << "# Total number of deleted MapPoint                       : " << totaldeletion_mp << endl;
+            // // cout << "# Current KeyFrame ID                                     : " << mpCurrentKeyFrame->mnId << endl;
+            // cout << "# Number of MapPoint within map                          : " << mpAtlas->MapPointsInMap() << endl;
 
             if (mp_passed != 0)
             {
 
-                float result = (float)totaldeletion_mp / (float)mp_passed;
+                // float result = (float)totaldeletion_mp / (float)mp_passed;
 
-                cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
+                // cout << "# Percentage of deletion                                  : " << result * 100 << "%" << endl;
 
-                result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
-                cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
+                // result = (float)totaldeletion_mp / (float)mpAtlas->MapPointsInMap();
+                // cout << "# Percentage of deletion (wrt kfs in map)                 : " << result * 100 << "%" << endl;
 
                 // result = (float)totaldeletion_mp / (float)mpCurrentKeyFrame->mnId;
                 // cout << "# Percentage of deletion (wrt kfs max mnid)               : " << result * 100 << "%" << endl;
@@ -1186,8 +1186,12 @@ namespace ORB_SLAM3
         // Check redundant keyframes (only local keyframes)
         // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
         // in at least other 3 keyframes (in the same or finer scale)
-        // We only consider close stereo points
+        // We only consider close stereo pointskeyFrame_kfrefCount_FINAL
         // cout << "KeyFrame Culling beginning" << endl;
+
+        // std::cout << "##########################"<< std::endl << "KF COUNT : " 
+        // << *(mpCurrentKeyFrame->ptr) << std::endl;
+
         const int Nd = 21;
         mpCurrentKeyFrame->UpdateBestCovisibles();
         vector<KeyFrame *> vpLocalKeyFrames = mpCurrentKeyFrame->GetVectorCovisibleKeyFrames();
@@ -1535,6 +1539,8 @@ namespace ORB_SLAM3
 #endif
 #ifdef RF
             {
+                std::cout << "######################" << std::endl
+                     <<  (*it)->mvpOrderedConnectedKeyFrames.size() << std::endl;
                 if ((*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_canonical == 0)
                 {
                     totaldeletion++;

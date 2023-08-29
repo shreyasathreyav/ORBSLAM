@@ -116,7 +116,8 @@ public:
 #endif
 
 public:
-
+    int* refcountmax;
+    std::mutex* mMutexrefcountmax;
     // Tracking states
     enum eTrackingState{
         SYSTEM_NOT_READY=-1,

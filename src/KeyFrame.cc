@@ -40,6 +40,9 @@ namespace ORB_SLAM3
                            DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
 
     {
+        // COUNT::keyFrame_kfrefCount_MIN = min((long long)mvpOrderedConnectedKeyFrames.size(), std::min(COUNT::keyFrame_kfrefCount_MIN, COUNT::keyFrame_kfrefCount_INTIAL));
+        // COUNT::keyFrame_mprefCount_MIN = min((long long int)mvpMapPoints.size(), std::min(COUNT::keyFrame_mprefCount_MIN, COUNT::keyFrame_mprefCount_INTIAL));
+        // COUNT::keyFrame_totalrefCount_INITAL = COUNT::keyFrame_mprefCount_INTIAL + COUNT::keyFrame_kfrefCount_INTIAL;
     }
 
     KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB) : bImu(pMap->isImuInitialized()), mnFrameId(F.mnId), mTimeStamp(F.mTimeStamp), mnGridCols(FRAME_GRID_COLS), mnGridRows(FRAME_GRID_ROWS),
@@ -119,6 +122,12 @@ namespace ORB_SLAM3
 #endif
             }
         }
+        
+        // COUNT::keyFrame_kfrefCount_INTIAL = mvpOrderedConnectedKeyFrames.size();
+
+        // COUNT::keyFrame_mprefCount_INTIAL = mvpOrderedConnectedKeyFrames.size();
+     
+        // COUNT::keyFrame_totalrefCount_INITAL = COUNT::keyFrame_mprefCount_INTIAL + COUNT::keyFrame_kfrefCount_INTIAL;
     }
 
     void KeyFrame::ComputeBoW()
@@ -294,7 +303,14 @@ namespace ORB_SLAM3
             }
 #endif
         }
-        mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
+        mvpOrderedConnectedKeyFrames = vector<KeyFrame*>(lKFs.begin(), lKFs.end());
+
+        {
+            unique_lock<mutex> lock(*(this->ptr_mutex));
+            *(this->ptr) = std::max(*(this->ptr),(int)mvpOrderedConnectedKeyFrames.size());         
+        }
+
+
 
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
@@ -921,8 +937,11 @@ void KeyFrame::UpdateConnections(bool upParent)
             }
 #endif
         }
-
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
+        {
+            unique_lock<mutex> lock(*(this->ptr_mutex));
+            *(this->ptr) = std::max(*(this->ptr),(int)mvpOrderedConnectedKeyFrames.size());
+        }
 
         for (auto i : mvpOrderedConnectedKeyFrames)
         {
