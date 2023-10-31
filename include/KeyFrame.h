@@ -37,7 +37,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
-
+#include "gc_cpp.h"
 
 namespace ORB_SLAM3
 {
@@ -49,7 +49,7 @@ class KeyFrameDatabase;
 
 class GeometricCamera;
 
-class KeyFrame
+class KeyFrame : public gc
 {
     friend class boost::serialization::access;
 
