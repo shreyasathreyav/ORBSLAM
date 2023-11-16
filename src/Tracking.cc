@@ -2441,6 +2441,13 @@ namespace ORB_SLAM3
             // Create KeyFrame
             KeyFrame *pKFini = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
+            // Inserting ids into keyframe
+            pKFini->thread_id_collection.insert(tracking_thread_id);
+            pKFini->thread_id_collection.insert(local_mapping_thread_id);
+            pKFini->thread_id_collection.insert(loop_closing_thread_id);
+
+            cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
+
             // Insert KeyFrame in the map
             mpAtlas->AddKeyFrame(pKFini);
 
@@ -2603,6 +2610,18 @@ namespace ORB_SLAM3
         // Create KeyFrames
         KeyFrame *pKFini = new KeyFrame(mInitialFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
         KeyFrame *pKFcur = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
+
+        // Inserting ids into keyframe
+        pKFini->thread_id_collection.insert(tracking_thread_id);
+        pKFini->thread_id_collection.insert(local_mapping_thread_id);
+        pKFini->thread_id_collection.insert(loop_closing_thread_id);
+
+        // Inserting ids into keyframe
+        pKFcur->thread_id_collection.insert(tracking_thread_id);
+        pKFcur->thread_id_collection.insert(local_mapping_thread_id);
+        pKFcur->thread_id_collection.insert(loop_closing_thread_id);
+
+        cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
 
         if (mSensor == System::IMU_MONOCULAR)
             pKFini->mpImuPreintegrated = (IMU::Preintegrated *)(NULL);
@@ -3399,6 +3418,13 @@ namespace ORB_SLAM3
 
         KeyFrame *pKF = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
+        // Inserting ids into keyframe
+        pKF->thread_id_collection.insert(tracking_thread_id);
+        pKF->thread_id_collection.insert(local_mapping_thread_id);
+        pKF->thread_id_collection.insert(loop_closing_thread_id);
+        // cout << mpLocalMapper->get_id() << endl;
+        // cout << "Inside tracking CreateNewKeyFrame; thread id here" << this_thread::get_id() << endl;
+
         if (mpAtlas->isImuInitialized()) //  || mpLocalMapper->IsInitializing())
             pKF->bImu = true;
 
@@ -4007,13 +4033,13 @@ namespace ORB_SLAM3
 
                     // } while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value));
                     int old_value, new_value;
-                        old_value = (itr)->mReferencecount_ockf_CAS;
+                    old_value = (itr)->mReferencecount_ockf_CAS;
+                    new_value = old_value - 1;
+                    while (!atomic_compare_exchange_strong(
+                        &((itr)->mReferencecount_ockf_CAS), &old_value, new_value))
+                    {
                         new_value = old_value - 1;
-                        while (!atomic_compare_exchange_strong(
-                            &((itr)->mReferencecount_ockf_CAS), &old_value, new_value))
-                        {
-                            new_value = old_value - 1;
-                        }
+                    }
                 }
 #endif
 #ifdef RF
@@ -4063,13 +4089,13 @@ namespace ORB_SLAM3
 
                 // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_mob_CAS), &old_value, new_value));
                 int old_value, new_value;
-                        old_value = (i)->mReferencecount_mob_CAS;
-                        new_value = old_value - 1;
-                        while (!atomic_compare_exchange_strong(
-                            &((i)->mReferencecount_mob_CAS), &old_value, new_value))
-                        {
-                            new_value = old_value - 1;
-                        }
+                old_value = (i)->mReferencecount_mob_CAS;
+                new_value = old_value - 1;
+                while (!atomic_compare_exchange_strong(
+                    &((i)->mReferencecount_mob_CAS), &old_value, new_value))
+                {
+                    new_value = old_value - 1;
+                }
             }
 #endif
 #ifdef RF

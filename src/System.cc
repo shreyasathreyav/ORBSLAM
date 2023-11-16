@@ -190,11 +190,14 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     cout << "Seq. Name: " << strSequence << endl;
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
                              mpAtlas, mpKeyFrameDatabase, strSettingsFile, mSensor, settings_, strSequence);
-
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(this, mpAtlas, mSensor==MONOCULAR || mSensor==IMU_MONOCULAR,
                                      mSensor==IMU_MONOCULAR || mSensor==IMU_STEREO || mSensor==IMU_RGBD, strSequence);
     mptLocalMapping = new thread(&ORB_SLAM3::LocalMapping::Run,mpLocalMapper);
+
+    cout << "This is the tracking thread id inside System.cc: " << this_thread::get_id() << endl;
+    cout << "This is the local mapping thread id inside System.cc: "<< mptLocalMapping->get_id() << endl;
+
     mpLocalMapper->mInitFr = initFr;
     if(settings_)
         mpLocalMapper->mThFarPoints = settings_->thFarPoints();
@@ -212,8 +215,25 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     // mSensor!=MONOCULAR && mSensor!=IMU_MONOCULAR
     mpLoopCloser = new LoopClosing(mpAtlas, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR, activeLC); // mSensor!=MONOCULAR);
     mptLoopClosing = new thread(&ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
+    cout << "This is the loop closing thread id inside System.cc: "<< mptLoopClosing->get_id() << endl;
 
+  
+    // This is where the thread ids are passed
+    tracking_thread_id = this_thread::get_id();
+    local_mapping_thread_id = mptLocalMapping->get_id();
+    loop_closing_thread_id = mptLoopClosing->get_id();
 
+    mpTracker->tracking_thread_id = tracking_thread_id;
+    mpTracker->local_mapping_thread_id = local_mapping_thread_id;
+    mpTracker->loop_closing_thread_id = loop_closing_thread_id;
+
+    // if(loop_closing_thread_id == loop_closing_thread_id){
+
+    //     cout << "This should never happen" << endl;
+    // }
+    // else{
+    //     cout << "This is expected behaviour" << endl;
+    // }
     //Set pointers between threads
     mpTracker->SetLocalMapper(mpLocalMapper);
     mpTracker->SetLoopClosing(mpLoopCloser);

@@ -95,7 +95,7 @@ namespace ORB_SLAM3
                                      const unsigned long nLoopKF,
                                      const bool bRobust)
     {
-        cout << "Inside Bundle Adjustment" << endl;
+        // cout << "Inside Bundle Adjustment" << endl;
         vector<bool> vbNotIncludedMP;
         vbNotIncludedMP.resize(vpMP.size());
 

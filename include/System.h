@@ -186,6 +186,11 @@ public:
 
     float GetImageScale();
 
+    // These are where the thread ids are stored
+    std::thread::id local_mapping_thread_id;
+    std::thread::id loop_closing_thread_id;
+    std::thread::id tracking_thread_id;
+
 #ifdef REGISTER_TIMES
     void InsertRectTime(double& time);
     void InsertResizeTime(double& time);

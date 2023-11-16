@@ -86,7 +86,7 @@ namespace ORB_SLAM3
     void LoopClosing::Run()
     {
         mbFinished = false;
-
+        cout << "This is the loop closing thread id inside LC: "<< this_thread::get_id() << endl;
         while (1)
         {
 
@@ -521,7 +521,7 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
-                        int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                        int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -540,7 +540,7 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
-                        int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                        int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -567,7 +567,7 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -586,7 +586,7 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -722,7 +722,7 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
-                        int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                        int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -973,7 +973,7 @@ namespace ORB_SLAM3
                                 {
 #ifdef CASRF
                                     {
-                                        int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                                        int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                                         while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                                         {
                                             new_value = old_value - 1;
@@ -999,7 +999,7 @@ namespace ORB_SLAM3
                     {
 #ifdef CASRF
                         {
-                            int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                            int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                             while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                             {
                                 new_value = old_value - 1;
@@ -1030,7 +1030,7 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -1400,6 +1400,7 @@ namespace ORB_SLAM3
             mnCorrectionGBA = mnNumCorrection;
 
             mpThreadGBA = new thread(&LoopClosing::RunGlobalBundleAdjustment, this, pLoopMap, mpCurrentKF->mnId);
+            cout << "This is the global bundle adjustment thread id: " << mpThreadGBA->get_id() << endl;
         }
 
         // Loop closed. Release Local Mapping.
@@ -1963,6 +1964,7 @@ namespace ORB_SLAM3
             mbFinishedGBA = false;
             mbStopGBA = false;
             mpThreadGBA = new thread(&LoopClosing::RunGlobalBundleAdjustment, this, pMergeMap, mpCurrentKF->mnId);
+            cout << "This is the global bundle adjustment thread id: " << mpThreadGBA->get_id() << endl;
         }
 
         mpMergeMatchedKF->AddMergeEdge(mpCurrentKF);

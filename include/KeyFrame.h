@@ -37,6 +37,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 
+#include <thread>
 namespace ORB_SLAM3
 {
 
@@ -311,6 +312,7 @@ namespace ORB_SLAM3
 
         bool bImu;
 
+        set<std::thread::id> thread_id_collection;
         // The following variables are accesed from only 1 thread or never change (no mutex needed).
     public:
         bool DeletionSafe;
