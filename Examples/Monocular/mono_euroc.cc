@@ -17,7 +17,7 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gc/gc.h>
+// #include <gc/gc.h>
 #include<iostream>
 #include<algorithm>
 #include<fstream>
@@ -26,7 +26,7 @@
 #include<opencv2/core/core.hpp>
 
 #include<System.h>
-#include "gc_cpp.h"
+// #include "gc_cpp.h"
 
 using namespace std;
 
