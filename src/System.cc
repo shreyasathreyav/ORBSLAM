@@ -252,7 +252,15 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     {
         mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile,settings_);
         mptViewer = new thread(&Viewer::Run, mpViewer);
-        mpTracker->SetViewer(mpViewer);
+        viewer_thread_id = mptViewer->get_id();
+        mpTracker->viewer_thread_id = viewer_thread_id;
+
+        // This is where the viewer thread id is passed 
+        // viewer_thread_id = mptViewer->get_id();
+        cout << "This is the viewer thread id: "<< mptViewer->get_id() << endl;
+
+        // Viewer thread id has been passed into the tracker thread
+        mpTracker->SetViewer(mpViewer); 
         mpLoopCloser->mpViewer = mpViewer;
         mpViewer->both = mpFrameDrawer->both;
     }

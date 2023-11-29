@@ -21,6 +21,7 @@
 #include "KeyFrame.h"
 #include <pangolin/pangolin.h>
 #include <mutex>
+#include <thread>
 
 namespace ORB_SLAM3
 {
@@ -328,7 +329,7 @@ namespace ORB_SLAM3
             for (size_t i = 0; i < vpKFs.size(); i++)
             {
                 // Covisibility Graph
-                // cout << " I am called" << endl;
+                // cout << " I am called : " << this_thread::get_id() << endl;
                 const vector<KeyFrame *> vCovKFs = vpKFs[i]->GetCovisiblesByWeight(100);
                 Eigen::Vector3f Ow = vpKFs[i]->GetCameraCenter();
                 if (!vCovKFs.empty())

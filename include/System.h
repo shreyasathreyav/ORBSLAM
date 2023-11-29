@@ -190,6 +190,7 @@ public:
     std::thread::id local_mapping_thread_id;
     std::thread::id loop_closing_thread_id;
     std::thread::id tracking_thread_id;
+    std::thread::id viewer_thread_id; 
 
 #ifdef REGISTER_TIMES
     void InsertRectTime(double& time);

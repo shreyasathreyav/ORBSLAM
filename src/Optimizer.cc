@@ -2457,7 +2457,6 @@ namespace ORB_SLAM3
             }
 
             // Covisibility graph edges
-            // cout << "Here" <<endl;
             const vector<KeyFrame *> vpConnectedKFs =
                 pKF->GetCovisiblesByWeight(minFeat);
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin();
@@ -2828,7 +2827,6 @@ namespace ORB_SLAM3
             }
 
             // Covisibility graph edges
-            // cout << "Here" << endl;
             const vector<KeyFrame *> vpConnectedKFs =
                 pKFi->GetCovisiblesByWeight(minFeat);
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin();
@@ -6573,7 +6571,6 @@ namespace ORB_SLAM3
             }
 
             // 1.3 Covisibility graph edges
-            // cout << "here" << endl;
             const vector<KeyFrame *> vpConnectedKFs =
                 pKF->GetCovisiblesByWeight(minFeat);
             for (vector<KeyFrame *>::const_iterator vit = vpConnectedKFs.begin();

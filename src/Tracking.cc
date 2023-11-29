@@ -2450,6 +2450,7 @@ namespace ORB_SLAM3
             pKFini->thread_id_collection_map[tracking_thread_id] = 0;
             pKFini->thread_id_collection_map[local_mapping_thread_id] = 0;
             pKFini->thread_id_collection_map[loop_closing_thread_id] = 0;
+            pKFini->thread_id_collection_map[viewer_thread_id] = 0;
 
             cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
 
@@ -2630,11 +2631,14 @@ namespace ORB_SLAM3
         pKFini->thread_id_collection_map[tracking_thread_id] = 0;
         pKFini->thread_id_collection_map[local_mapping_thread_id] = 0;
         pKFini->thread_id_collection_map[loop_closing_thread_id] = 0;
+        pKFini->thread_id_collection_map[viewer_thread_id] = 0;
 
         // Inserting threads and initial count of zero into the keyframe
         pKFcur->thread_id_collection_map[tracking_thread_id] = 0;
         pKFcur->thread_id_collection_map[local_mapping_thread_id] = 0;
         pKFcur->thread_id_collection_map[loop_closing_thread_id] = 0;
+        pKFcur->thread_id_collection_map[viewer_thread_id] = 0;
+
 
         cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
 
@@ -3444,6 +3448,8 @@ namespace ORB_SLAM3
         pKF->thread_id_collection_map[tracking_thread_id] = 0;
         pKF->thread_id_collection_map[local_mapping_thread_id] = 0;
         pKF->thread_id_collection_map[loop_closing_thread_id] = 0;
+        pKF->thread_id_collection_map[viewer_thread_id] = 0;
+
 
         if (mpAtlas->isImuInitialized()) //  || mpLocalMapper->IsInitializing())
             pKF->bImu = true;

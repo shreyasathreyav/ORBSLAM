@@ -254,8 +254,6 @@ namespace ORB_SLAM3
                     }
                     else
                     {
-                        cout << "This one is the culprit" << endl;
-
                         cout << "This is not good news" << endl;
                     }
                 }
@@ -325,8 +323,6 @@ namespace ORB_SLAM3
                 }
                 else
                 {
-                    cout << "This one is the culprit" << endl;
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -360,8 +356,6 @@ namespace ORB_SLAM3
                 }
                 else
                 {
-                    cout << "This one is the culprit" << endl;
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -410,8 +404,6 @@ namespace ORB_SLAM3
                 }
                 else
                 {
-                    cout << "This one is the culprit" << endl;
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -506,10 +498,6 @@ namespace ORB_SLAM3
                     }
                     else
                     {
-                        cout << "This one is the culprit" << endl;
-
-                        cout << this_thread::get_id() << endl;
-
                         cout << "This is not good news" << endl;
                     }
                 }
@@ -546,10 +534,6 @@ namespace ORB_SLAM3
                     }
                     else
                     {
-                        cout << "This one is the culprit" << endl;
-
-                        cout << this_thread::get_id() << endl;
-
                         cout << "This is not good news" << endl;
                     }
                 }
@@ -697,7 +681,6 @@ namespace ORB_SLAM3
                 }
                 else
                 {
-                    // covered until here
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1012,7 +995,6 @@ void KeyFrame::UpdateConnections(bool upParent)
                 }
                 else
                 {
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1034,7 +1016,6 @@ void KeyFrame::UpdateConnections(bool upParent)
                 }
                 else
                 {
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1076,8 +1057,6 @@ void KeyFrame::UpdateConnections(bool upParent)
                 }
                 else
                 {
-
-                    // covered uptil here
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1112,7 +1091,6 @@ void KeyFrame::UpdateConnections(bool upParent)
                 }
                 else
                 {
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1277,7 +1255,6 @@ void KeyFrame::SetBadFlag()
                 }
                 else
                 {
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1320,7 +1297,6 @@ void KeyFrame::SetBadFlag()
                 }
                 else
                 {
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1392,7 +1368,6 @@ void KeyFrame::SetBadFlag()
                                     }
                                     else
                                     {
-
                                         cout << "This is not good news" << endl;
                                     }
                                 }
@@ -1434,7 +1409,6 @@ void KeyFrame::SetBadFlag()
                         }
                         else
                         {
-
                             cout << "This is not good news" << endl;
                         }
                     }
@@ -1478,7 +1452,6 @@ void KeyFrame::SetBadFlag()
                         }
                         else
                         {
-
                             cout << "This is not good news" << endl;
                         }
                     }
@@ -1516,7 +1489,6 @@ void KeyFrame::SetBadFlag()
                     }
                     else
                     {
-
                         cout << "This is not good news" << endl;
                     }
                 }
@@ -1582,7 +1554,6 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
                 }
                 else
                 {
-
                     cout << "This is not good news" << endl;
                 }
             }
@@ -1626,7 +1597,6 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
             }
             else
             {
-
                 cout << "This is not good news" << endl;
             }
         }
