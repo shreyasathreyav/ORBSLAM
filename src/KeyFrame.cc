@@ -228,6 +228,17 @@ namespace ORB_SLAM3
                     {
                         new_value = old_value + 1;
                     }
+
+                    if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                    {
+
+                        pKF->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
 #ifdef RF
@@ -235,6 +246,20 @@ namespace ORB_SLAM3
                     unique_lock<mutex> lock(pKF->mMutexreferencecount);
                     pKF->mReferencecount_canonical++;
                 }
+                {
+                    if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                    {
+
+                        pKF->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+                        cout << "This one is the culprit" << endl;
+
+                        cout << "This is not good news" << endl;
+                    }
+                }
+
 #endif
                 mConnectedKeyFrameWeights[pKF] = weight;
             }
@@ -292,6 +317,20 @@ namespace ORB_SLAM3
                 i->mReferencecount_ockf--;
                 i->mReferencecount--;
             }
+            {
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This one is the culprit" << endl;
+
+                    cout << "This is not good news" << endl;
+                }
+            }
+
 #endif
         }
         mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
@@ -313,6 +352,20 @@ namespace ORB_SLAM3
                 i->mReferencecount_ockf++;
                 i->mReferencecount++;
             }
+            {
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This one is the culprit" << endl;
+
+                    cout << "This is not good news" << endl;
+                }
+            }
+
 #endif
         }
 
@@ -348,6 +401,19 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
                 itr->mReferencecount++;
                 itr->mReferencecount_ockf++;
+            }
+            {
+                if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                {
+
+                    itr->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This one is the culprit" << endl;
+
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -432,6 +498,21 @@ namespace ORB_SLAM3
                     itr->mReferencecount++;
                     itr->mReferencecount_ockf++;
                 }
+                {
+                    if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+                        cout << "This one is the culprit" << endl;
+
+                        cout << this_thread::get_id() << endl;
+
+                        cout << "This is not good news" << endl;
+                    }
+                }
 #endif
             }
             return mvpOrderedConnectedKeyFrames;
@@ -456,6 +537,21 @@ namespace ORB_SLAM3
                     unique_lock<mutex> lock(itr->mMutexreferencecount);
                     itr->mReferencecount++;
                     itr->mReferencecount_ockf++;
+                }
+                {
+                    if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+                        cout << "This one is the culprit" << endl;
+
+                        cout << this_thread::get_id() << endl;
+
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
             }
@@ -499,6 +595,21 @@ namespace ORB_SLAM3
                     unique_lock<mutex> lock(itr->mMutexreferencecount);
                     itr->mReferencecount++;
                     itr->mReferencecount_ockf++;
+                }
+                {
+                    if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+                        // Looks like this is the one
+                        cout << "This one is the culprit" << endl;
+                        cout << this_thread::get_id() << endl;
+
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
                 // itr->mReferencecount_canonical++;
@@ -578,6 +689,19 @@ namespace ORB_SLAM3
                 this->mReferencecount_mob--;
                 this->mReferencecount--;
             }
+            {
+                if (this->thread_id_collection_map.find(this_thread::get_id()) != this->thread_id_collection_map.end())
+                {
+
+                    this->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    // covered until here
+                    cout << "This is not good news" << endl;
+                }
+            }
+
 #endif
 
 // This is a decrement for mappoints
@@ -868,7 +992,7 @@ void KeyFrame::UpdateConnections(bool upParent)
         {
 #ifdef CASRF
             {
-                int old_value{it.first->mReferencecount_canonical_CAS}, new_value {old_value + 1};
+                int old_value{it.first->mReferencecount_canonical_CAS}, new_value{old_value + 1};
                 while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
@@ -880,6 +1004,18 @@ void KeyFrame::UpdateConnections(bool upParent)
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_canonical++;
             }
+            {
+                if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+                {
+
+                    it.first->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
         }
         unique_lock<mutex> lockCon(mMutexConnections);
@@ -890,6 +1026,19 @@ void KeyFrame::UpdateConnections(bool upParent)
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_canonical--;
             }
+            {
+                if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+                {
+
+                    it.first->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    cout << "This is not good news" << endl;
+                }
+            }
+
 #endif
 #ifdef CASRF
             int old_value{it.first->mReferencecount_canonical_CAS}, new_value{old_value - 1};
@@ -919,6 +1068,19 @@ void KeyFrame::UpdateConnections(bool upParent)
                 i->mReferencecount_ockf--;
                 i->mReferencecount--;
             }
+            {
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    // covered uptil here
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
         }
 
@@ -928,7 +1090,7 @@ void KeyFrame::UpdateConnections(bool upParent)
         {
 #ifdef CASRF
             {
-                int old_value {i->mReferencecount_ockf_CAS}, new_value {old_value + 1};
+                int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value + 1};
                 while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
@@ -941,6 +1103,18 @@ void KeyFrame::UpdateConnections(bool upParent)
                 unique_lock<mutex> lock(i->mMutexreferencecount);
                 i->mReferencecount_ockf++;
                 i->mReferencecount++;
+            }
+            {
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -1095,11 +1269,23 @@ void KeyFrame::SetBadFlag()
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_canonical--;
             }
+            {
+                if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+                {
+
+                    it.first->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
 
 #ifdef CASRF
             {
-                int old_value {it.first->mReferencecount_canonical_CAS}, new_value {old_value - 1};
+                int old_value{it.first->mReferencecount_canonical_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -1113,7 +1299,7 @@ void KeyFrame::SetBadFlag()
         {
 #ifdef CASRF
             {
-                int old_value {itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};                
+                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -1125,6 +1311,18 @@ void KeyFrame::SetBadFlag()
                 unique_lock<mutex> lock(itr->mMutexreferencecount);
                 itr->mReferencecount--;
                 itr->mReferencecount_ockf--;
+            }
+            {
+                if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                {
+
+                    itr->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -1171,7 +1369,7 @@ void KeyFrame::SetBadFlag()
 // // Increment for vpConnected[i]
 #ifdef CASRF
                                 {
-                                    int old_value {pP->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                                    int old_value{pP->mReferencecount_ockf_CAS}, new_value{old_value + 1};
                                     while (!atomic_compare_exchange_strong(&(pP->mReferencecount_ockf_CAS), &old_value, new_value))
                                     {
                                         new_value = old_value + 1;
@@ -1185,6 +1383,18 @@ void KeyFrame::SetBadFlag()
                                     // pP->mReferencecount_container++;
                                     pP->mReferencecount++;
                                     pP->mReferencecount_ockf++;
+                                }
+                                {
+                                    if (pP->thread_id_collection_map.find(this_thread::get_id()) != pP->thread_id_collection_map.end())
+                                    {
+
+                                        pP->thread_id_collection_map[this_thread::get_id()]++;
+                                    }
+                                    else
+                                    {
+
+                                        cout << "This is not good news" << endl;
+                                    }
                                 }
 #endif
                                 pP_tracker.push_back(pP);
@@ -1216,6 +1426,18 @@ void KeyFrame::SetBadFlag()
                         // itr->mReferencecount_ockf--;
                         // itr->mReferencecount--;
                     }
+                    {
+                        if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                        {
+
+                            itr->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+
+                            cout << "This is not good news" << endl;
+                        }
+                    }
 #endif
                 }
             }
@@ -1232,7 +1454,7 @@ void KeyFrame::SetBadFlag()
                 {
 #ifdef CASRF
                     {
-                        int old_value {itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                        int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -1248,6 +1470,19 @@ void KeyFrame::SetBadFlag()
                         itr->mReferencecount_ockf--;
                         // cout << "KF => " <<itr->mnId << " "<< itr->mReferencecount_ockf << endl;
                     }
+                    {
+                        if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                        {
+
+                            itr->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+
+                            cout << "This is not good news" << endl;
+                        }
+                    }
+
 #endif
                 }
                 break;
@@ -1256,7 +1491,7 @@ void KeyFrame::SetBadFlag()
             {
 #ifdef CASRF
                 {
-                    int old_value {itr->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -1272,6 +1507,18 @@ void KeyFrame::SetBadFlag()
                     itr->mReferencecount--;
                     itr->mReferencecount_ockf--;
                     // cout << "KF => "<<itr->mnId << " " << itr->mReferencecount_ockf << endl;
+                }
+                {
+                    if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
             }
@@ -1327,10 +1574,22 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
                 unique_lock<mutex> lock(pKF->mMutexreferencecount);
                 pKF->mReferencecount_canonical--;
             }
+            {
+                if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                {
+
+                    pKF->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
 #ifdef CASRF
             {
-                int old_value {pKF->mReferencecount_canonical_CAS}, new_value {old_value - 1};
+                int old_value{pKF->mReferencecount_canonical_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -1346,7 +1605,7 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
     {
 #ifdef CASRF
         {
-            int old_value {(*index)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+            int old_value{(*index)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
             while (!atomic_compare_exchange_strong(&((*index)->mReferencecount_ockf_CAS), &old_value, new_value))
             {
                 new_value = old_value - 1;
@@ -1358,6 +1617,18 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
             unique_lock<mutex> lock2((*index)->mMutexreferencecount);
             (*index)->mReferencecount--;
             (*index)->mReferencecount_ockf--;
+        }
+        {
+            if ((*index)->thread_id_collection_map.find(this_thread::get_id()) != (*index)->thread_id_collection_map.end())
+            {
+
+                (*index)->thread_id_collection_map[this_thread::get_id()]--;
+            }
+            else
+            {
+
+                cout << "This is not good news" << endl;
+            }
         }
 #endif
         mvpOrderedConnectedKeyFrames.erase(index);

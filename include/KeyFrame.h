@@ -38,6 +38,7 @@
 #include <boost/serialization/map.hpp>
 
 #include <thread>
+#include <unordered_map>
 namespace ORB_SLAM3
 {
 
@@ -312,7 +313,11 @@ namespace ORB_SLAM3
 
         bool bImu;
 
+        // This is to collect all the thread ids for testing
         set<std::thread::id> thread_id_collection;
+
+        // This is to create the key value pair to hold the reference count without exposing the native thread handle
+        unordered_map <std::thread::id,int> thread_id_collection_map;
         // The following variables are accesed from only 1 thread or never change (no mutex needed).
     public:
         bool DeletionSafe;

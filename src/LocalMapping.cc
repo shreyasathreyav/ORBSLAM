@@ -1541,6 +1541,7 @@ namespace ORB_SLAM3
                     auto something = it;
                     it = arr.erase(it);
                     delete *something;
+                    // cout << "Deletion is successful" << endl;
                     // cout << (*something)->mnId << endl;
                 }
                 else
