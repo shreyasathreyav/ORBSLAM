@@ -429,6 +429,7 @@ namespace ORB_SLAM3
                 }
 #endif
 #ifdef RF
+                // Have to complete the instrumentation for this in the final stop
                 {
                     if ((*it)->mReferencecount_canonicalmp == 0 && (*it)->mReferencecount_msp == 0 && (*it)->mReferencecount_lastframe == 0)
                     {
@@ -536,7 +537,7 @@ namespace ORB_SLAM3
                 return;
 #ifdef CASRF
             {
-                int old_value {vpNeighKFs[i]->mReferencecount_ockf_CAS} , new_value {old_value + 1};
+                int old_value{vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value{old_value + 1};
                 while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
@@ -550,6 +551,17 @@ namespace ORB_SLAM3
                 // vpNeighKFs[i]->mReferencecount_container++;
                 vpNeighKFs[i]->mReferencecount_ockf++;
                 vpNeighKFs[i]->mReferencecount++;
+            }
+            {
+                if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vpNeighKFs[i]->thread_id_collection_map.end())
+                {
+
+                    vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
 
@@ -568,7 +580,7 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
-                        int old_value {vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                        int old_value{vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -582,6 +594,17 @@ namespace ORB_SLAM3
                         // vpNeighKFs[i]->mReferencecount_container--;
                         vpNeighKFs[i]->mReferencecount_ockf--;
                         vpNeighKFs[i]->mReferencecount--;
+                    }
+                    {
+                        if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vpNeighKFs[i]->thread_id_collection_map.end())
+                        {
+
+                            vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
+                        }
                     }
 #endif
                     continue;
@@ -596,7 +619,7 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
-                        int old_value {vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                        int old_value{vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -610,6 +633,17 @@ namespace ORB_SLAM3
                         // vpNeighKFs[i]->mReferencecount_container--;
                         vpNeighKFs[i]->mReferencecount_ockf--;
                         vpNeighKFs[i]->mReferencecount--;
+                    }
+                    {
+                        if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vpNeighKFs[i]->thread_id_collection_map.end())
+                        {
+
+                            vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
+                        }
                     }
 #endif
                     continue;
@@ -873,7 +907,7 @@ namespace ORB_SLAM3
             }
 #ifdef CASRF
             {
-                int old_value {vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                int old_value{vpNeighKFs[i]->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(vpNeighKFs[i]->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -888,6 +922,17 @@ namespace ORB_SLAM3
                 vpNeighKFs[i]->mReferencecount_ockf--;
                 vpNeighKFs[i]->mReferencecount--;
             }
+            {
+                if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vpNeighKFs[i]->thread_id_collection_map.end())
+                {
+
+                    vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
         }
 
@@ -895,7 +940,7 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value {itr->mReferencecount_ockf_CAS} , new_value {old_value - 1};
+                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -910,6 +955,17 @@ namespace ORB_SLAM3
                 // cout << "Reference " << itr->mReferencecount_ockf <<endl;
                 itr->mReferencecount_ockf--;
                 itr->mReferencecount--;
+            }
+            {
+                if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                {
+
+                    itr->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -959,7 +1015,7 @@ namespace ORB_SLAM3
                 {
 #ifdef CASRF
                     {
-                        int old_value{itr->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                        int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                         while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                         {
                             new_value = old_value - 1;
@@ -975,6 +1031,17 @@ namespace ORB_SLAM3
                         itr->mReferencecount_ockf--;
                         itr->mReferencecount--;
                     }
+                    {
+                        if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                        {
+
+                            itr->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
+                        }
+                    }
 #endif
                 }
                 break;
@@ -983,7 +1050,7 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value {itr->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -997,6 +1064,17 @@ namespace ORB_SLAM3
                     // itr->mReferencecount_container--;
                     itr->mReferencecount_ockf--;
                     itr->mReferencecount--;
+                }
+                {
+                    if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
             }
@@ -1082,7 +1160,7 @@ namespace ORB_SLAM3
 
 #ifdef CASRF
             {
-                int old_value {itr->mReferencecount_ockf_CAS} , new_value {old_value - 1};
+                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -1098,6 +1176,17 @@ namespace ORB_SLAM3
                 itr->mReferencecount_ockf--;
                 itr->mReferencecount--;
                 // cout << itr->mReferencecount <<endl;
+            }
+            {
+                if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                {
+
+                    itr->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -1222,7 +1311,7 @@ namespace ORB_SLAM3
             count++;
 #ifdef CASRF
             {
-                int old_value {(*vit)->mReferencecount_ockf_CAS}, new_value {old_value + 1};
+                int old_value{(*vit)->mReferencecount_ockf_CAS}, new_value{old_value + 1};
                 while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value + 1;
@@ -1237,6 +1326,17 @@ namespace ORB_SLAM3
                 // (*vit)->mReferencecount_canonical++;
                 // (*vit)->mReferencecount_container++;
             }
+            {
+                if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+                {
+
+                    (*vit)->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
             KeyFrame *pKF = *vit;
 
@@ -1244,7 +1344,7 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value {(*vit)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{(*vit)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -1259,6 +1359,17 @@ namespace ORB_SLAM3
                     (*vit)->mReferencecount--;
                     // (*vit)->mReferencecount_canonical--;
                     // (*vit)->mReferencecount_container--;
+                }
+                {
+                    if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+                    {
+
+                        (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
                 continue;
@@ -1339,7 +1450,7 @@ namespace ORB_SLAM3
 // /pkf
 #ifdef CASRF
                         {
-                            int old_value {(*vit)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                            int old_value{(*vit)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                             while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value))
                             {
                                 new_value = old_value - 1;
@@ -1351,6 +1462,17 @@ namespace ORB_SLAM3
                             unique_lock<mutex> lock((*vit)->mMutexreferencecount);
                             (*vit)->mReferencecount_ockf--;
                             (*vit)->mReferencecount--;
+                        }
+                        {
+                            if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+                            {
+
+                                (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                            }
+                            else
+                            {
+                                cout << "This is not good news" << endl;
+                            }
                         }
 #endif
                         // (*vit)->mReferencecount_canonical--;
@@ -1363,7 +1485,7 @@ namespace ORB_SLAM3
 // /pkf
 #ifdef CASRF
                         {
-                            int old_value {(*vit)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                            int old_value{(*vit)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                             while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value))
                             {
                                 new_value = old_value - 1;
@@ -1375,6 +1497,17 @@ namespace ORB_SLAM3
                             unique_lock<mutex> lock((*vit)->mMutexreferencecount);
                             (*vit)->mReferencecount_ockf--;
                             (*vit)->mReferencecount--;
+                        }
+                        {
+                            if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+                            {
+
+                                (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                            }
+                            else
+                            {
+                                cout << "This is not good news" << endl;
+                            }
                         }
 #endif
                         // (*vit)->mReferencecount_canonical--;
@@ -1439,7 +1572,7 @@ namespace ORB_SLAM3
             {
 #ifdef CASRF
                 {
-                    int old_value {(*vit)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{(*vit)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -1455,6 +1588,17 @@ namespace ORB_SLAM3
                     // (*vit)->mReferencecount_canonical--;
                     // (*vit)->mReferencecount_container--;
                 }
+                {
+                    if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+                    {
+
+                        (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
+                }
 #endif
                 break;
             }
@@ -1463,7 +1607,7 @@ namespace ORB_SLAM3
 // /pkf
 #ifdef CASRF
                 {
-                    int old_value {(*vit)->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                    int old_value{(*vit)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                     while (!atomic_compare_exchange_strong(&((*vit)->mReferencecount_ockf_CAS), &old_value, new_value))
                     {
                         new_value = old_value - 1;
@@ -1477,6 +1621,16 @@ namespace ORB_SLAM3
                     (*vit)->mReferencecount_ockf--;
                     (*vit)->mReferencecount--;
                 }
+                if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+                {
+
+                    (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+
 #endif
                 // (*vit)->mReferencecount_canonical--;
                 // (*vit)->mReferencecount_container--;
@@ -1487,7 +1641,7 @@ namespace ORB_SLAM3
         {
 #ifdef CASRF
             {
-                int old_value {itr->mReferencecount_ockf_CAS}, new_value {old_value - 1};
+                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
                 while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
                     new_value = old_value - 1;
@@ -1503,6 +1657,15 @@ namespace ORB_SLAM3
                 // itr->mReferencecount_canonical--;
                 // itr->mReferencecount_container--;
                 // cout << "Reference count" << itr->mReferencecount_ockf << endl;
+            }
+            if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+            {
+
+                itr->thread_id_collection_map[this_thread::get_id()]--;
+            }
+            else
+            {
+                cout << "This is not good news" << endl;
             }
 #endif
             // cout << endl;
@@ -1534,6 +1697,7 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
+            // Have to complete this for t_count
             {
                 if ((*it)->mReferencecount_mob == 0 && (*it)->mReferencecount_ockf == 0 && (*it)->mReferencecount_canonical == 0)
                 {
