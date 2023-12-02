@@ -390,6 +390,17 @@ namespace ORB_SLAM3
                         i->mReferencecount_ockf--;
                         i->mReferencecount--;
                     }
+                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    {
+
+                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // cout << "This is being executed " << endl;
+                        // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
 #endif
                     // cout << i->mReferencecount_canonical << endl;
                 }

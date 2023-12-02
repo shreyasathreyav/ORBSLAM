@@ -541,6 +541,10 @@ namespace ORB_SLAM3
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
 #endif
                 }
                 for (auto i : vpMergeBowCand)
@@ -566,6 +570,10 @@ namespace ORB_SLAM3
                         i->thread_id_collection_map[this_thread::get_id()]--;
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
                     }
 #endif
                 }
@@ -601,6 +609,10 @@ namespace ORB_SLAM3
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
 #endif
             }
             for (auto i : vpMergeBowCand)
@@ -626,6 +638,10 @@ namespace ORB_SLAM3
                     i->thread_id_collection_map[this_thread::get_id()]--;
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
                 }
 #endif
             }
@@ -773,6 +789,10 @@ namespace ORB_SLAM3
                         i->thread_id_collection_map[this_thread::get_id()]--;
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
                     }
 #endif
                 }
@@ -1032,6 +1052,10 @@ namespace ORB_SLAM3
                                         // cout << "This is being executed " << endl;
                                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                                     }
+                                    else
+                                    {
+                                        cout << "This is not good news" << endl;
+                                    }
 #endif
                                 }
                             }
@@ -1064,6 +1088,10 @@ namespace ORB_SLAM3
                             i->thread_id_collection_map[this_thread::get_id()]--;
                             // cout << "This is being executed " << endl;
                             // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
                         }
 #endif
                     }
@@ -1103,6 +1131,10 @@ namespace ORB_SLAM3
                     i->thread_id_collection_map[this_thread::get_id()]--;
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
                 }
 #endif
             }

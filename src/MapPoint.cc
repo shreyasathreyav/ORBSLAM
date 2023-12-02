@@ -180,6 +180,17 @@ namespace ORB_SLAM3
                 pKF->mReferencecount_mob++;
                 pKF->mReferencecount++;
             }
+            if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+            {
+
+                pKF->thread_id_collection_map[this_thread::get_id()]++;
+                // cout << "This is being executed " << endl;
+                // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+            }
+            else
+            {
+                cout << "This is not good news" << endl;
+            }
 #endif
         }
 
@@ -240,6 +251,17 @@ namespace ORB_SLAM3
                     pKF->mReferencecount_mob--;
                     pKF->mReferencecount--;
                 }
+                if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                {
+
+                    pKF->thread_id_collection_map[this_thread::get_id()]--;
+                    // cout << "This is being executed " << endl;
+                    // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
 #endif
                 if (mpRefKF == pKF)
                     mpRefKF = mObservations.begin()->first;
@@ -289,6 +311,17 @@ namespace ORB_SLAM3
                 it.first->mReferencecount_mob++;
                 // it.first->mReferencecount++;
                 // it.first->mReferencecount_canonical++;
+            }
+            if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+            {
+
+                it.first->thread_id_collection_map[this_thread::get_id()]++;
+                // cout << "This is being executed " << endl;
+                // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+            }
+            else
+            {
+                cout << "This is not good news" << endl;
             }
 #endif
         }
@@ -362,6 +395,17 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_mob--;
                 it.first->mReferencecount--;
+            }
+            if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+            {
+
+                it.first->thread_id_collection_map[this_thread::get_id()]--;
+                // cout << "This is being executed " << endl;
+                // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+            }
+            else
+            {
+                cout << "This is not good news" << endl;
             }
 #endif
         }
@@ -467,6 +511,17 @@ namespace ORB_SLAM3
                 unique_lock<mutex> lock(it.first->mMutexreferencecount);
                 it.first->mReferencecount_mob--;
                 it.first->mReferencecount--;
+            }
+            if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+            {
+
+                it.first->thread_id_collection_map[this_thread::get_id()]--;
+                // cout << "This is being executed " << endl;
+                // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+            }
+            else
+            {
+                cout << "This is not good news" << endl;
             }
 #endif
         }
