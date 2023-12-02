@@ -20,6 +20,9 @@
 #include "ORBmatcher.h"
 
 #include <mutex>
+#include <thread>
+#include <pthread.h>
+
 
 namespace ORB_SLAM3
 {
