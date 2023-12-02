@@ -1662,6 +1662,8 @@ namespace ORB_SLAM3
             {
 
                 itr->thread_id_collection_map[this_thread::get_id()]--;
+                // cout << "This is being executed " << endl;
+                // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
             else
             {

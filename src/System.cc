@@ -252,6 +252,8 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     {
         mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile,settings_);
         mptViewer = new thread(&Viewer::Run, mpViewer);
+        pthread_t storex = mptViewer->native_handle();
+        cout << "This is the pthread id: " << storex << endl;
         viewer_thread_id = mptViewer->get_id();
         mpTracker->viewer_thread_id = viewer_thread_id;
 

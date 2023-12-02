@@ -86,7 +86,7 @@ namespace ORB_SLAM3
     void LoopClosing::Run()
     {
         mbFinished = false;
-        cout << "This is the loop closing thread id inside LC: "<< this_thread::get_id() << endl;
+        cout << "This is the loop closing thread id inside LC: " << this_thread::get_id() << endl;
         while (1)
         {
 
@@ -534,6 +534,13 @@ namespace ORB_SLAM3
                         i->mReferencecount--;
                         i->mReferencecount_ockf--;
                     }
+                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    {
+
+                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // cout << "This is being executed " << endl;
+                        // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                    }
 #endif
                 }
                 for (auto i : vpMergeBowCand)
@@ -552,6 +559,13 @@ namespace ORB_SLAM3
                         unique_lock<mutex>(i->mMutexreferencecount);
                         i->mReferencecount--;
                         i->mReferencecount_ockf--;
+                    }
+                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    {
+
+                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // cout << "This is being executed " << endl;
+                        // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
 #endif
                 }
@@ -580,6 +594,13 @@ namespace ORB_SLAM3
                     i->mReferencecount--;
                     i->mReferencecount_ockf--;
                 }
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]--;
+                    // cout << "This is being executed " << endl;
+                    // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                }
 #endif
             }
             for (auto i : vpMergeBowCand)
@@ -598,6 +619,13 @@ namespace ORB_SLAM3
                     unique_lock<mutex>(i->mMutexreferencecount);
                     i->mReferencecount--;
                     i->mReferencecount_ockf--;
+                }
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]--;
+                    // cout << "This is being executed " << endl;
+                    // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
 #endif
             }
@@ -738,6 +766,13 @@ namespace ORB_SLAM3
                             i->mReferencecount_ockf--;
                             i->mReferencecount--;
                         }
+                    }
+                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    {
+
+                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // cout << "This is being executed " << endl;
+                        // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
 #endif
                 }
@@ -990,6 +1025,13 @@ namespace ORB_SLAM3
                                             i->mReferencecount--;
                                         }
                                     }
+                                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                                    {
+
+                                        i->thread_id_collection_map[this_thread::get_id()]--;
+                                        // cout << "This is being executed " << endl;
+                                        // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                                    }
 #endif
                                 }
                             }
@@ -1015,6 +1057,13 @@ namespace ORB_SLAM3
                                 i->mReferencecount_ockf--;
                                 i->mReferencecount--;
                             }
+                        }
+                        if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                        {
+
+                            i->thread_id_collection_map[this_thread::get_id()]--;
+                            // cout << "This is being executed " << endl;
+                            // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                         }
 #endif
                     }
@@ -1047,6 +1096,13 @@ namespace ORB_SLAM3
                         i->mReferencecount--;
                         // cout << "MNID" << i->mnId << " " << i->mReferencecount_ockf << endl;
                     }
+                }
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]--;
+                    // cout << "This is being executed " << endl;
+                    // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
 #endif
             }
