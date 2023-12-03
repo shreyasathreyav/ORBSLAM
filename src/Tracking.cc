@@ -2639,7 +2639,6 @@ namespace ORB_SLAM3
         pKFcur->thread_id_collection_map[loop_closing_thread_id] = 0;
         pKFcur->thread_id_collection_map[viewer_thread_id] = 0;
 
-
         cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
 
         if (mSensor == System::IMU_MONOCULAR)
@@ -3450,7 +3449,6 @@ namespace ORB_SLAM3
         pKF->thread_id_collection_map[loop_closing_thread_id] = 0;
         pKF->thread_id_collection_map[viewer_thread_id] = 0;
 
-
         if (mpAtlas->isImuInitialized()) //  || mpLocalMapper->IsInitializing())
             pKF->bImu = true;
 
@@ -3852,6 +3850,17 @@ namespace ORB_SLAM3
                 // if (i->mReferencecount_canonical == 0)
                 // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
             }
+            {
+                if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
+                {
+
+                    (i)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
         }
         mvpLocalKeyFrames_obs_tracker_updatelocalKF.clear();
@@ -3885,6 +3894,17 @@ namespace ORB_SLAM3
                 i->mReferencecount_ockf--;
                 i->mReferencecount--;
                 // cout <<"MNID: "<< i->mnId <<"RC: "<< i->mReferencecount_ockf <<endl;
+            }
+            {
+                if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
+                {
+
+                    (i)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -3930,6 +3950,17 @@ namespace ORB_SLAM3
             {
                 unique_lock<mutex> lock(pKF->mMutexreferencecount);
                 pKF->mReferencecount_mob++;
+            }
+            {
+                if ((pKF)->thread_id_collection_map.find(this_thread::get_id()) != (pKF)->thread_id_collection_map.end())
+                {
+
+                    (pKF)->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
             mvpLocalKeyFrames_obs_tracker_updatelocalKF.push_back(pKF);
@@ -3979,6 +4010,17 @@ namespace ORB_SLAM3
                             // pNeighKF->mReferencecount_canonical++;
                             pNeighKF->mReferencecount_ockf++;
                             pNeighKF->mReferencecount++;
+                        }
+                        {
+                            if ((pNeighKF)->thread_id_collection_map.find(this_thread::get_id()) != (pNeighKF)->thread_id_collection_map.end())
+                            {
+
+                                (pNeighKF)->thread_id_collection_map[this_thread::get_id()]++;
+                            }
+                            else
+                            {
+                                cout << "This is not good news" << endl;
+                            }
                         }
 #endif
 
@@ -4043,6 +4085,17 @@ namespace ORB_SLAM3
                             itr->mReferencecount_ockf--;
                             itr->mReferencecount--;
                         }
+                        {
+                            if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                            {
+
+                                (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            }
+                            else
+                            {
+                                cout << "This is not good news" << endl;
+                            }
+                        }
 #endif
                     }
                     break;
@@ -4075,6 +4128,17 @@ namespace ORB_SLAM3
                     // itr->mReferencecount_container--;
                     itr->mReferencecount_ockf--;
                     itr->mReferencecount--;
+                }
+                {
+                    if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                    {
+
+                        (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
             }
@@ -4131,6 +4195,17 @@ namespace ORB_SLAM3
                 i->mReferencecount_mob--;
                 // if(i->mReferencecount_canonical != 0)
                 // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
+            }
+            {
+                if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
+                {
+
+                    (i)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
