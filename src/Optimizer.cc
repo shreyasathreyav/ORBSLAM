@@ -1291,6 +1291,17 @@ namespace ORB_SLAM3
                 // vNeighKFs[i]->mReferencecount_canonical++;
                 // vNeighKFs[i]->mReferencecount_container++;
             }
+            {
+                if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vNeighKFs[i]->thread_id_collection_map.end())
+                {
+
+                    vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
             // count = 2
 
@@ -1327,6 +1338,18 @@ namespace ORB_SLAM3
                     // vNeighKFs[i]->mReferencecount_canonical++;
                     // vNeighKFs[i]->mReferencecount_container++;
                 }
+                {
+                    if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vNeighKFs[i]->thread_id_collection_map.end())
+                    {
+
+                        vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
+                }
+
 #endif
 
                 // count = 3
@@ -1361,6 +1384,17 @@ namespace ORB_SLAM3
                 vNeighKFs[i]->mReferencecount--;
                 // vNeighKFs[i]->mReferencecount_canonical--;
                 // vNeighKFs[i]->mReferencecount_container--;
+            }
+            {
+                if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) != vNeighKFs[i]->thread_id_collection_map.end())
+                {
+
+                    vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
             // count = 2
@@ -1401,6 +1435,17 @@ namespace ORB_SLAM3
                 (*lit)->mReferencecount++;
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
+            }
+            {
+                if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+                {
+
+                    (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
             KeyFrame *pKFi = *lit;
@@ -1451,6 +1496,17 @@ namespace ORB_SLAM3
                 (*lit)->mReferencecount--;
                 // (*lit)->mReferencecount_canonical--;
                 // (*lit)->mReferencecount_container--;
+            }
+            {
+                if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+                {
+
+                    (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -1519,6 +1575,17 @@ namespace ORB_SLAM3
                     // (*itr)->mReferencecount_canonical--;
                     // (*itr)->mReferencecount_container--;
                 }
+                {
+                    if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) != (*itr)->thread_id_collection_map.end())
+                    {
+
+                        (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
+                }
 #endif
             }
 
@@ -1551,6 +1618,17 @@ namespace ORB_SLAM3
                     itr->mReferencecount--;
                     // itr->mReferencecount_canonical--;
                     // itr->mReferencecount_container--;
+                }
+                {
+                    if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                    {
+
+                        (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    }
+                    else
+                    {
+                        cout << "This is not good news" << endl;
+                    }
                 }
 #endif
             }
@@ -1620,6 +1698,17 @@ namespace ORB_SLAM3
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
+            {
+                if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+                {
+
+                    (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
 
             KeyFrame *pKFi = *lit;
@@ -1660,6 +1749,17 @@ namespace ORB_SLAM3
                 // (pKFi)->mReferencecount_canonical++;
                 // (pKFi)->mReferencecount_container++;
             }
+            {
+                if ((pKFi)->thread_id_collection_map.find(this_thread::get_id()) != (pKFi)->thread_id_collection_map.end())
+                {
+
+                    (pKFi)->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
 
             optimizer_tracker.push_back(pKFi);
@@ -1699,6 +1799,17 @@ namespace ORB_SLAM3
                 (*lit)->mReferencecount--;
                 // (*lit)->mReferencecount_canonical--;
                 // (*lit)->mReferencecount_container--;
+            }
+            {
+                if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+                {
+
+                    (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -1938,6 +2049,17 @@ namespace ORB_SLAM3
                         // itr->mReferencecount_canonical--;
                         // itr->mReferencecount_container--;
                     }
+                    {
+                        if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                        {
+
+                            (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
+                        }
+                    }
 #endif
                 }
                 for (std::list<KeyFrame *>::iterator itr = ++lLocalKeyFrames.begin();
@@ -1970,6 +2092,18 @@ namespace ORB_SLAM3
                         (*itr)->mReferencecount--;
                         (*itr)->mReferencecount_ockf--;
                     }
+                    {
+                        if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) != (*itr)->thread_id_collection_map.end())
+                        {
+
+                            (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
+                        }
+                    }
+
 #endif
                 }
                 for (auto itr : optimizer_tracker)
@@ -1999,6 +2133,17 @@ namespace ORB_SLAM3
                         // itr->mReferencecount_container--;
                         itr->mReferencecount_ockf--;
                         itr->mReferencecount--;
+                    }
+                    {
+                        if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                        {
+
+                            (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        }
+                        else
+                        {
+                            cout << "This is not good news" << endl;
+                        }
                     }
 #endif
                 }
@@ -2105,6 +2250,17 @@ namespace ORB_SLAM3
                 // (*lit)->mReferencecount_canonical++;
                 // (*lit)->mReferencecount_container++;
             }
+            {
+                if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+                {
+
+                    (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
 
             KeyFrame *pKFi = *lit;
@@ -2141,6 +2297,17 @@ namespace ORB_SLAM3
                 (*lit)->mReferencecount--;
                 // (*lit)->mReferencecount_canonical--;
                 // (*lit)->mReferencecount_container--;
+            }
+            {
+                if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+                {
+
+                    (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -2188,6 +2355,17 @@ namespace ORB_SLAM3
                 // (*itr)->mReferencecount_canonical--;
                 // (*itr)->mReferencecount_container--;
             }
+            {
+                if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) != (*itr)->thread_id_collection_map.end())
+                {
+
+                    (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
+            }
 #endif
         }
         for (auto itr : optimizer_tracker)
@@ -2217,6 +2395,17 @@ namespace ORB_SLAM3
                 // itr->mReferencecount_container--;
                 itr->mReferencecount_ockf--;
                 itr->mReferencecount--;
+            }
+            {
+                if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                {
+
+                    (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
         }
@@ -2252,6 +2441,17 @@ namespace ORB_SLAM3
                 //  (itr)->mReferencecount_canonical << endl;
                 //  << " " << (itr)->mReferencecount_ockf << " ockf " <<
                 //  (itr)->mReferencecount << endl;
+            }
+            {
+                if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+                {
+
+                    (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+                    cout << "This is not good news" << endl;
+                }
             }
 #endif
             // cout << endl;
