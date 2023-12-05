@@ -40,8 +40,8 @@ namespace ORB_SLAM3
     {
     }
 
-    int ORBmatcher::SearchByProjection(Frame &F, const vector<MapPoint*> &vpMapPoints, const float th, const bool bFarPoints, const float thFarPoints)
-    {
+int ORBmatcher::SearchByProjection(Frame &F, const vector<MapPoint*> &vpMapPoints, const float th, const bool bFarPoints, const float thFarPoints)
+{
         int nmatches=0, left = 0, right = 0;
 
         const bool bFactor = th!=1.0;
@@ -74,7 +74,7 @@ namespace ORB_SLAM3
                 if(!vIndices.empty()){
                     const cv::Mat MPdescriptor = pMP->GetDescriptor();
 
-                    int bestDist=256;
+     		    int bestDist=256;
                     int bestLevel= -1;
                     int bestDist2=256;
                     int bestLevel2 = -1;
