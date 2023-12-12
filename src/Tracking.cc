@@ -2481,6 +2481,13 @@ void Tracking::StereoInitialization()
                     Eigen::Vector3f x3D;
                     mCurrentFrame.UnprojectStereo(i, x3D);
                     MapPoint *pNewMP = new MapPoint(x3D, pKFini, mpAtlas->GetCurrentMap());
+
+                    // This is where the thread ids are populated into the mappoint
+                    pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+
                     pNewMP->AddObservation(pKFini, i);
                     pKFini->AddMapPoint(pNewMP, i);
                     pNewMP->ComputeDistinctiveDescriptors();
@@ -2501,6 +2508,12 @@ void Tracking::StereoInitialization()
                     Eigen::Vector3f x3D = mCurrentFrame.mvStereo3Dpoints[i];
 
                     MapPoint *pNewMP = new MapPoint(x3D, pKFini, mpAtlas->GetCurrentMap());
+
+                    // This is where the thread ids are populated into the mappoint
+                    pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
 
                     pNewMP->AddObservation(pKFini, i);
                     pNewMP->AddObservation(pKFini, rightIndex + mCurrentFrame.Nleft);
@@ -2676,6 +2689,12 @@ void Tracking::CreateInitialMapMonocular()
         Eigen::Vector3f worldPos;
         worldPos << mvIniP3D[i].x, mvIniP3D[i].y, mvIniP3D[i].z;
         MapPoint *pMP = new MapPoint(worldPos, pKFcur, mpAtlas->GetCurrentMap());
+
+        // This is where the thread ids are populated into the mappoint
+        pMP->thread_id_collection_map[tracking_thread_id] = 0;
+        pMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+        pMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+        pMP->thread_id_collection_map[viewer_thread_id] = 0;
 
         pKFini->AddMapPoint(pMP, i);
         pKFcur->AddMapPoint(pMP, mvIniMatches[i]);
@@ -3023,6 +3042,12 @@ void Tracking::UpdateLastFrame()
             }
 
             MapPoint *pNewMP = new MapPoint(x3D, mpAtlas->GetCurrentMap(), &mLastFrame, i);
+
+            // This is where the thread ids are populated into the mappoint
+            pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+            pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+            pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+            pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
 
             if (mLastFrame.mvpMapPoints[i])
             {
@@ -3569,6 +3594,12 @@ void Tracking::CreateNewKeyFrame()
                     }
 
                     MapPoint *pNewMP = new MapPoint(x3D, pKF, mpAtlas->GetCurrentMap());
+                    // This is where the thread ids are populated into the mappoint
+                    pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                    pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+
                     pNewMP->AddObservation(pKF, i);
 
                     // Check if it is a stereo observation in order to not
