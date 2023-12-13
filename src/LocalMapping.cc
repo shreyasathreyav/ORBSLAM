@@ -570,16 +570,16 @@ void LocalMapping::CreateNewMapPoints()
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
+        //     // vpNeighKFs[i]->mReferencecount_canonical++;
+        //     // vpNeighKFs[i]->mReferencecount_container++;
+        //     vpNeighKFs[i]->mReferencecount_ockf++;
+        //     vpNeighKFs[i]->mReferencecount++;
+        // }
         {
-            unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
-            // vpNeighKFs[i]->mReferencecount_canonical++;
-            // vpNeighKFs[i]->mReferencecount_container++;
-            vpNeighKFs[i]->mReferencecount_ockf++;
-            vpNeighKFs[i]->mReferencecount++;
-        }
-        {
-            if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                vpNeighKFs[i]->thread_id_collection_map.end())
+            // if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     vpNeighKFs[i]->thread_id_collection_map.end())
             {
 
                 vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
@@ -615,16 +615,16 @@ void LocalMapping::CreateNewMapPoints()
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
+                //     // vpNeighKFs[i]->mReferencecount_canonical--;
+                //     // vpNeighKFs[i]->mReferencecount_container--;
+                //     vpNeighKFs[i]->mReferencecount_ockf--;
+                //     vpNeighKFs[i]->mReferencecount--;
+                // }
                 {
-                    unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
-                    // vpNeighKFs[i]->mReferencecount_canonical--;
-                    // vpNeighKFs[i]->mReferencecount_container--;
-                    vpNeighKFs[i]->mReferencecount_ockf--;
-                    vpNeighKFs[i]->mReferencecount--;
-                }
-                {
-                    if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                        vpNeighKFs[i]->thread_id_collection_map.end())
+                    // if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     vpNeighKFs[i]->thread_id_collection_map.end())
                     {
 
                         vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
@@ -656,16 +656,16 @@ void LocalMapping::CreateNewMapPoints()
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
+                //     // vpNeighKFs[i]->mReferencecount_canonical--;
+                //     // vpNeighKFs[i]->mReferencecount_container--;
+                //     vpNeighKFs[i]->mReferencecount_ockf--;
+                //     vpNeighKFs[i]->mReferencecount--;
+                // }
                 {
-                    unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
-                    // vpNeighKFs[i]->mReferencecount_canonical--;
-                    // vpNeighKFs[i]->mReferencecount_container--;
-                    vpNeighKFs[i]->mReferencecount_ockf--;
-                    vpNeighKFs[i]->mReferencecount--;
-                }
-                {
-                    if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                        vpNeighKFs[i]->thread_id_collection_map.end())
+                    // if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     vpNeighKFs[i]->thread_id_collection_map.end())
                     {
 
                         vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
@@ -951,16 +951,16 @@ void LocalMapping::CreateNewMapPoints()
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
+        //     // vpNeighKFs[i]->mReferencecount_canonical--;
+        //     // vpNeighKFs[i]->mReferencecount_container--;
+        //     vpNeighKFs[i]->mReferencecount_ockf--;
+        //     vpNeighKFs[i]->mReferencecount--;
+        // }
         {
-            unique_lock<mutex>(vpNeighKFs[i]->mMutexreferencecount);
-            // vpNeighKFs[i]->mReferencecount_canonical--;
-            // vpNeighKFs[i]->mReferencecount_container--;
-            vpNeighKFs[i]->mReferencecount_ockf--;
-            vpNeighKFs[i]->mReferencecount--;
-        }
-        {
-            if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                vpNeighKFs[i]->thread_id_collection_map.end())
+            // if (vpNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     vpNeighKFs[i]->thread_id_collection_map.end())
             {
 
                 vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
@@ -985,16 +985,16 @@ void LocalMapping::CreateNewMapPoints()
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex>(itr->mMutexreferencecount);
+        //     // itr->mReferencecount_canonical--;
+        //     // itr->mReferencecount_container--;
+        //     // cout << "Reference " << itr->mReferencecount_ockf <<endl;
+        //     itr->mReferencecount_ockf--;
+        //     itr->mReferencecount--;
+        // }
         {
-            unique_lock<mutex>(itr->mMutexreferencecount);
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            // cout << "Reference " << itr->mReferencecount_ockf <<endl;
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
-        }
-        {
-            if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+            // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
             {
 
                 itr->thread_id_collection_map[this_thread::get_id()]--;
@@ -1062,17 +1062,17 @@ void LocalMapping::SearchInNeighbors()
                 }
 #endif
 #ifdef RF
-                {
+                // {
 
-                    unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    // itr->mReferencecount_canonical--;
-                    // itr->mReferencecount_container--;
-                    itr->mReferencecount_ockf--;
-                    itr->mReferencecount--;
-                }
+                //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+                //     // itr->mReferencecount_canonical--;
+                //     // itr->mReferencecount_container--;
+                //     itr->mReferencecount_ockf--;
+                //     itr->mReferencecount--;
+                // }
                 {
-                    if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
-                        itr->thread_id_collection_map.end())
+                    // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     itr->thread_id_collection_map.end())
                     {
 
                         itr->thread_id_collection_map[this_thread::get_id()]--;
@@ -1098,15 +1098,15 @@ void LocalMapping::SearchInNeighbors()
             }
 #endif
 #ifdef RF
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     // itr->mReferencecount_canonical--;
+            //     // itr->mReferencecount_container--;
+            //     itr->mReferencecount_ockf--;
+            //     itr->mReferencecount--;
+            // }
             {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                // itr->mReferencecount_canonical--;
-                // itr->mReferencecount_container--;
-                itr->mReferencecount_ockf--;
-                itr->mReferencecount--;
-            }
-            {
-                if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
                 {
 
                     itr->thread_id_collection_map[this_thread::get_id()]--;
@@ -1209,17 +1209,17 @@ void LocalMapping::SearchInNeighbors()
         }
 #endif
 #ifdef RF
-        {
+        // {
 
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
-            // cout << itr->mReferencecount <<endl;
-        }
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     // itr->mReferencecount_canonical--;
+        //     // itr->mReferencecount_container--;
+        //     itr->mReferencecount_ockf--;
+        //     itr->mReferencecount--;
+        //     // cout << itr->mReferencecount <<endl;
+        // }
         {
-            if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+            // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
             {
 
                 itr->thread_id_collection_map[this_thread::get_id()]--;
@@ -1360,15 +1360,15 @@ void LocalMapping::KeyFrameCulling()
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+        //     (*vit)->mReferencecount_ockf++;
+        //     (*vit)->mReferencecount++;
+        //     // (*vit)->mReferencecount_canonical++;
+        //     // (*vit)->mReferencecount_container++;
+        // }
         {
-            unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-            (*vit)->mReferencecount_ockf++;
-            (*vit)->mReferencecount++;
-            // (*vit)->mReferencecount_canonical++;
-            // (*vit)->mReferencecount_container++;
-        }
-        {
-            if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+            // if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
             {
 
                 (*vit)->thread_id_collection_map[this_thread::get_id()]++;
@@ -1393,17 +1393,17 @@ void LocalMapping::KeyFrameCulling()
             }
 #endif
 #ifdef RF
+            // {
+            //     // /pkf
+            //     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+            //     (*vit)->mReferencecount_ockf--;
+            //     (*vit)->mReferencecount--;
+            //     // (*vit)->mReferencecount_canonical--;
+            //     // (*vit)->mReferencecount_container--;
+            // }
             {
-                // /pkf
-                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                (*vit)->mReferencecount_ockf--;
-                (*vit)->mReferencecount--;
-                // (*vit)->mReferencecount_canonical--;
-                // (*vit)->mReferencecount_container--;
-            }
-            {
-                if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
-                    (*vit)->thread_id_collection_map.end())
+                // if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     (*vit)->thread_id_collection_map.end())
                 {
 
                     (*vit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1503,14 +1503,14 @@ void LocalMapping::KeyFrameCulling()
                     }
 #endif
 #ifdef RF
+                    // {
+                    //     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                    //     (*vit)->mReferencecount_ockf--;
+                    //     (*vit)->mReferencecount--;
+                    // }
                     {
-                        unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                        (*vit)->mReferencecount_ockf--;
-                        (*vit)->mReferencecount--;
-                    }
-                    {
-                        if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
-                            (*vit)->thread_id_collection_map.end())
+                        // if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
+                        //     (*vit)->thread_id_collection_map.end())
                         {
 
                             (*vit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1540,14 +1540,14 @@ void LocalMapping::KeyFrameCulling()
                     }
 #endif
 #ifdef RF
+                    // {
+                    //     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+                    //     (*vit)->mReferencecount_ockf--;
+                    //     (*vit)->mReferencecount--;
+                    // }
                     {
-                        unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                        (*vit)->mReferencecount_ockf--;
-                        (*vit)->mReferencecount--;
-                    }
-                    {
-                        if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
-                            (*vit)->thread_id_collection_map.end())
+                        // if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
+                        //     (*vit)->thread_id_collection_map.end())
                         {
 
                             (*vit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1629,17 +1629,17 @@ void LocalMapping::KeyFrameCulling()
             }
 #endif
 #ifdef RF
+            // {
+            //     // /pkf
+            //     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+            //     (*vit)->mReferencecount_ockf--;
+            //     (*vit)->mReferencecount--;
+            //     // (*vit)->mReferencecount_canonical--;
+            //     // (*vit)->mReferencecount_container--;
+            // }
             {
-                // /pkf
-                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                (*vit)->mReferencecount_ockf--;
-                (*vit)->mReferencecount--;
-                // (*vit)->mReferencecount_canonical--;
-                // (*vit)->mReferencecount_container--;
-            }
-            {
-                if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
-                    (*vit)->thread_id_collection_map.end())
+                // if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     (*vit)->thread_id_collection_map.end())
                 {
 
                     (*vit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1665,13 +1665,13 @@ void LocalMapping::KeyFrameCulling()
             }
 #endif
 #ifdef RF
-            {
+            // {
 
-                unique_lock<mutex> lock((*vit)->mMutexreferencecount);
-                (*vit)->mReferencecount_ockf--;
-                (*vit)->mReferencecount--;
-            }
-            if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
+            //     unique_lock<mutex> lock((*vit)->mMutexreferencecount);
+            //     (*vit)->mReferencecount_ockf--;
+            //     (*vit)->mReferencecount--;
+            // }
+            // if ((*vit)->thread_id_collection_map.find(this_thread::get_id()) != (*vit)->thread_id_collection_map.end())
             {
 
                 (*vit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1699,16 +1699,16 @@ void LocalMapping::KeyFrameCulling()
         }
 #endif
 #ifdef RF
-        {
-            // vpLocalKeyFrames
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            // cout << "Reference count" << itr->mReferencecount_ockf << endl;
-        }
-        if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+        // {
+        //     // vpLocalKeyFrames
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     itr->mReferencecount_ockf--;
+        //     itr->mReferencecount--;
+        //     // itr->mReferencecount_canonical--;
+        //     // itr->mReferencecount_container--;
+        //     // cout << "Reference count" << itr->mReferencecount_ockf << endl;
+        // }
+        // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
         {
 
             itr->thread_id_collection_map[this_thread::get_id()]--;

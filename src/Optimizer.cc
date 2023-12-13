@@ -1212,17 +1212,17 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     // pKFi++
+        //     unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
+        //     vNeighKFs[i]->mReferencecount_ockf++;
+        //     vNeighKFs[i]->mReferencecount++;
+        //     // vNeighKFs[i]->mReferencecount_canonical++;
+        //     // vNeighKFs[i]->mReferencecount_container++;
+        // }
         {
-            // pKFi++
-            unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
-            vNeighKFs[i]->mReferencecount_ockf++;
-            vNeighKFs[i]->mReferencecount++;
-            // vNeighKFs[i]->mReferencecount_canonical++;
-            // vNeighKFs[i]->mReferencecount_container++;
-        }
-        {
-            if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                vNeighKFs[i]->thread_id_collection_map.end())
+            // if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     vNeighKFs[i]->thread_id_collection_map.end())
             {
 
                 vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
@@ -1261,16 +1261,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
             }
 #endif
 #ifdef RF
+            // {
+            //     unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
+            //     vNeighKFs[i]->mReferencecount_ockf++;
+            //     vNeighKFs[i]->mReferencecount++;
+            //     // vNeighKFs[i]->mReferencecount_canonical++;
+            //     // vNeighKFs[i]->mReferencecount_container++;
+            // }
             {
-                unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
-                vNeighKFs[i]->mReferencecount_ockf++;
-                vNeighKFs[i]->mReferencecount++;
-                // vNeighKFs[i]->mReferencecount_canonical++;
-                // vNeighKFs[i]->mReferencecount_container++;
-            }
-            {
-                if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                    vNeighKFs[i]->thread_id_collection_map.end())
+                // if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     vNeighKFs[i]->thread_id_collection_map.end())
                 {
 
                     vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
@@ -1307,17 +1307,17 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     // pKFi--
+        //     unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
+        //     vNeighKFs[i]->mReferencecount_ockf--;
+        //     vNeighKFs[i]->mReferencecount--;
+        //     // vNeighKFs[i]->mReferencecount_canonical--;
+        //     // vNeighKFs[i]->mReferencecount_container--;
+        // }
         {
-            // pKFi--
-            unique_lock<mutex> lock(vNeighKFs[i]->mMutexreferencecount);
-            vNeighKFs[i]->mReferencecount_ockf--;
-            vNeighKFs[i]->mReferencecount--;
-            // vNeighKFs[i]->mReferencecount_canonical--;
-            // vNeighKFs[i]->mReferencecount_container--;
-        }
-        {
-            if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
-                vNeighKFs[i]->thread_id_collection_map.end())
+            // if (vNeighKFs[i]->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     vNeighKFs[i]->thread_id_collection_map.end())
             {
 
                 vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
@@ -1357,15 +1357,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+        //     (*lit)->mReferencecount_ockf++;
+        //     (*lit)->mReferencecount++;
+        //     // (*lit)->mReferencecount_canonical++;
+        //     // (*lit)->mReferencecount_container++;
+        // }
         {
-            unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-            (*lit)->mReferencecount_ockf++;
-            (*lit)->mReferencecount++;
-            // (*lit)->mReferencecount_canonical++;
-            // (*lit)->mReferencecount_container++;
-        }
-        {
-            if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+            // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
             {
 
                 (*lit)->thread_id_collection_map[this_thread::get_id()]++;
@@ -1416,15 +1416,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+        //     (*lit)->mReferencecount_ockf--;
+        //     (*lit)->mReferencecount--;
+        //     // (*lit)->mReferencecount_canonical--;
+        //     // (*lit)->mReferencecount_container--;
+        // }
         {
-            unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-            (*lit)->mReferencecount_ockf--;
-            (*lit)->mReferencecount--;
-            // (*lit)->mReferencecount_canonical--;
-            // (*lit)->mReferencecount_container--;
-        }
-        {
-            if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+            // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
             {
 
                 (*lit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1486,16 +1486,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
             }
 #endif
 #ifdef RF
+            // {
+            //     unique_lock<mutex> lock((*itr)->mMutexreferencecount);
+            //     (*itr)->mReferencecount_ockf--;
+            //     (*itr)->mReferencecount--;
+            //     // (*itr)->mReferencecount_canonical--;
+            //     // (*itr)->mReferencecount_container--;
+            // }
             {
-                unique_lock<mutex> lock((*itr)->mMutexreferencecount);
-                (*itr)->mReferencecount_ockf--;
-                (*itr)->mReferencecount--;
-                // (*itr)->mReferencecount_canonical--;
-                // (*itr)->mReferencecount_container--;
-            }
-            {
-                if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                    (*itr)->thread_id_collection_map.end())
+                // if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     (*itr)->thread_id_collection_map.end())
                 {
 
                     (*itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1530,16 +1530,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
             }
 #endif
 #ifdef RF
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     itr->mReferencecount_ockf--;
+            //     itr->mReferencecount--;
+            //     // itr->mReferencecount_canonical--;
+            //     // itr->mReferencecount_container--;
+            // }
             {
-                unique_lock<mutex> lock(itr->mMutexreferencecount);
-                itr->mReferencecount_ockf--;
-                itr->mReferencecount--;
-                // itr->mReferencecount_canonical--;
-                // itr->mReferencecount_container--;
-            }
-            {
-                if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                    (itr)->thread_id_collection_map.end())
+                // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     (itr)->thread_id_collection_map.end())
                 {
 
                     (itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1605,15 +1605,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+        //     (*lit)->mReferencecount_ockf++;
+        //     (*lit)->mReferencecount++;
+        //     // (*lit)->mReferencecount_canonical++;
+        //     // (*lit)->mReferencecount_container++;
+        // }
         {
-            unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-            (*lit)->mReferencecount_ockf++;
-            (*lit)->mReferencecount++;
-            // (*lit)->mReferencecount_canonical++;
-            // (*lit)->mReferencecount_container++;
-        }
-        {
-            if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+            // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
             {
 
                 (*lit)->thread_id_collection_map[this_thread::get_id()]++;
@@ -1654,15 +1654,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock(pKFi->mMutexreferencecount);
+        //     (pKFi)->mReferencecount_ockf++;
+        //     (pKFi)->mReferencecount++;
+        //     // (pKFi)->mReferencecount_canonical++;
+        //     // (pKFi)->mReferencecount_container++;
+        // }
         {
-            unique_lock<mutex> lock(pKFi->mMutexreferencecount);
-            (pKFi)->mReferencecount_ockf++;
-            (pKFi)->mReferencecount++;
-            // (pKFi)->mReferencecount_canonical++;
-            // (pKFi)->mReferencecount_container++;
-        }
-        {
-            if ((pKFi)->thread_id_collection_map.find(this_thread::get_id()) != (pKFi)->thread_id_collection_map.end())
+            // if ((pKFi)->thread_id_collection_map.find(this_thread::get_id()) != (pKFi)->thread_id_collection_map.end())
             {
 
                 (pKFi)->thread_id_collection_map[this_thread::get_id()]++;
@@ -1704,15 +1704,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+        //     (*lit)->mReferencecount_ockf--;
+        //     (*lit)->mReferencecount--;
+        //     // (*lit)->mReferencecount_canonical--;
+        //     // (*lit)->mReferencecount_container--;
+        // }
         {
-            unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-            (*lit)->mReferencecount_ockf--;
-            (*lit)->mReferencecount--;
-            // (*lit)->mReferencecount_canonical--;
-            // (*lit)->mReferencecount_container--;
-        }
-        {
-            if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+            // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
             {
 
                 (*lit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1935,16 +1935,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+                //     itr->mReferencecount--;
+                //     itr->mReferencecount_ockf--;
+                //     // itr->mReferencecount_canonical--;
+                //     // itr->mReferencecount_container--;
+                // }
                 {
-                    unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    itr->mReferencecount--;
-                    itr->mReferencecount_ockf--;
-                    // itr->mReferencecount_canonical--;
-                    // itr->mReferencecount_container--;
-                }
-                {
-                    if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                        (itr)->thread_id_collection_map.end())
+                    // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     (itr)->thread_id_collection_map.end())
                     {
 
                         (itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -1978,16 +1978,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex> lock((*itr)->mMutexreferencecount);
+                //     // (*itr)->mReferencecount_canonical--;
+                //     // (*itr)->mReferencecount_container--;
+                //     (*itr)->mReferencecount--;
+                //     (*itr)->mReferencecount_ockf--;
+                // }
                 {
-                    unique_lock<mutex> lock((*itr)->mMutexreferencecount);
-                    // (*itr)->mReferencecount_canonical--;
-                    // (*itr)->mReferencecount_container--;
-                    (*itr)->mReferencecount--;
-                    (*itr)->mReferencecount_ockf--;
-                }
-                {
-                    if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                        (*itr)->thread_id_collection_map.end())
+                    // if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     (*itr)->thread_id_collection_map.end())
                     {
 
                         (*itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -2021,16 +2021,16 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+                //     // itr->mReferencecount_canonical--;
+                //     // itr->mReferencecount_container--;
+                //     itr->mReferencecount_ockf--;
+                //     itr->mReferencecount--;
+                // }
                 {
-                    unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    // itr->mReferencecount_canonical--;
-                    // itr->mReferencecount_container--;
-                    itr->mReferencecount_ockf--;
-                    itr->mReferencecount--;
-                }
-                {
-                    if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                        (itr)->thread_id_collection_map.end())
+                    // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     (itr)->thread_id_collection_map.end())
                     {
 
                         (itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -2135,15 +2135,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+        //     (*lit)->mReferencecount_ockf++;
+        //     (*lit)->mReferencecount++;
+        //     // (*lit)->mReferencecount_canonical++;
+        //     // (*lit)->mReferencecount_container++;
+        // }
         {
-            unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-            (*lit)->mReferencecount_ockf++;
-            (*lit)->mReferencecount++;
-            // (*lit)->mReferencecount_canonical++;
-            // (*lit)->mReferencecount_container++;
-        }
-        {
-            if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+            // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
             {
 
                 (*lit)->thread_id_collection_map[this_thread::get_id()]++;
@@ -2181,15 +2181,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*lit)->mMutexreferencecount);
+        //     (*lit)->mReferencecount_ockf--;
+        //     (*lit)->mReferencecount--;
+        //     // (*lit)->mReferencecount_canonical--;
+        //     // (*lit)->mReferencecount_container--;
+        // }
         {
-            unique_lock<mutex> lock((*lit)->mMutexreferencecount);
-            (*lit)->mReferencecount_ockf--;
-            (*lit)->mReferencecount--;
-            // (*lit)->mReferencecount_canonical--;
-            // (*lit)->mReferencecount_container--;
-        }
-        {
-            if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
+            // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
             {
 
                 (*lit)->thread_id_collection_map[this_thread::get_id()]--;
@@ -2235,15 +2235,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock((*itr)->mMutexreferencecount);
+        //     (*itr)->mReferencecount--;
+        //     (*itr)->mReferencecount_ockf--;
+        //     // (*itr)->mReferencecount_canonical--;
+        //     // (*itr)->mReferencecount_container--;
+        // }
         {
-            unique_lock<mutex> lock((*itr)->mMutexreferencecount);
-            (*itr)->mReferencecount--;
-            (*itr)->mReferencecount_ockf--;
-            // (*itr)->mReferencecount_canonical--;
-            // (*itr)->mReferencecount_container--;
-        }
-        {
-            if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) != (*itr)->thread_id_collection_map.end())
+            // if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) != (*itr)->thread_id_collection_map.end())
             {
 
                 (*itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -2276,15 +2276,15 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     // itr->mReferencecount_canonical--;
+        //     // itr->mReferencecount_container--;
+        //     itr->mReferencecount_ockf--;
+        //     itr->mReferencecount--;
+        // }
         {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
-        }
-        {
-            if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+            // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
             {
 
                 (itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -2317,20 +2317,20 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool *pbStopFlag, Map *pMap
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     itr->mReferencecount_ockf--;
+        //     itr->mReferencecount--;
+        //     // itr->mReferencecount_canonical--;
+        //     // itr->mReferencecount_container--;
+        //     // cout << "KF " << itr->mnId
+        //     //  << " " << (itr)->mReferencecount_container << " Canonical " <<
+        //     //  (itr)->mReferencecount_canonical << endl;
+        //     //  << " " << (itr)->mReferencecount_ockf << " ockf " <<
+        //     //  (itr)->mReferencecount << endl;
+        // }
         {
-            unique_lock<mutex> lock(itr->mMutexreferencecount);
-            itr->mReferencecount_ockf--;
-            itr->mReferencecount--;
-            // itr->mReferencecount_canonical--;
-            // itr->mReferencecount_container--;
-            // cout << "KF " << itr->mnId
-            //  << " " << (itr)->mReferencecount_container << " Canonical " <<
-            //  (itr)->mReferencecount_canonical << endl;
-            //  << " " << (itr)->mReferencecount_ockf << " ockf " <<
-            //  (itr)->mReferencecount << endl;
-        }
-        {
-            if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
+            // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
             {
 
                 (itr)->thread_id_collection_map[this_thread::get_id()]--;

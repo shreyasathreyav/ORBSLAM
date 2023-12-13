@@ -3935,7 +3935,7 @@ void Tracking::UpdateLocalKeyFrames()
         //     // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
         // }
         {
-            if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
+            // if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
             {
 
                 (i)->thread_id_collection_map[this_thread::get_id()]--;
@@ -3979,7 +3979,7 @@ void Tracking::UpdateLocalKeyFrames()
         //     // cout <<"MNID: "<< i->mnId <<"RC: "<< i->mReferencecount_ockf <<endl;
         // }
         {
-            if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
+            // if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
             {
 
                 (i)->thread_id_collection_map[this_thread::get_id()]--;
@@ -4036,7 +4036,7 @@ void Tracking::UpdateLocalKeyFrames()
         //     pKF->mReferencecount_mob++;
         // }
         {
-            if ((pKF)->thread_id_collection_map.find(this_thread::get_id()) != (pKF)->thread_id_collection_map.end())
+            // if ((pKF)->thread_id_collection_map.find(this_thread::get_id()) != (pKF)->thread_id_collection_map.end())
             {
 
                 (pKF)->thread_id_collection_map[this_thread::get_id()]++;
@@ -4099,8 +4099,8 @@ void Tracking::UpdateLocalKeyFrames()
                     //     pNeighKF->mReferencecount++;
                     // }
                     {
-                        if ((pNeighKF)->thread_id_collection_map.find(this_thread::get_id()) !=
-                            (pNeighKF)->thread_id_collection_map.end())
+                        // if ((pNeighKF)->thread_id_collection_map.find(this_thread::get_id()) !=
+                        //     (pNeighKF)->thread_id_collection_map.end())
                         {
 
                             (pNeighKF)->thread_id_collection_map[this_thread::get_id()]++;
@@ -4175,8 +4175,8 @@ void Tracking::UpdateLocalKeyFrames()
                     //     itr->mReferencecount--;
                     // }
                     {
-                        if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                            (itr)->thread_id_collection_map.end())
+                        // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                        //     (itr)->thread_id_collection_map.end())
                         {
 
                             (itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -4219,8 +4219,8 @@ void Tracking::UpdateLocalKeyFrames()
             //     itr->mReferencecount--;
             // }
             {
-                if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
-                    (itr)->thread_id_collection_map.end())
+                // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     (itr)->thread_id_collection_map.end())
                 {
 
                     (itr)->thread_id_collection_map[this_thread::get_id()]--;
@@ -4287,7 +4287,7 @@ void Tracking::UpdateLocalKeyFrames()
         //     // cout << "KF =>" << i->mnId << " " << i->mReferencecount_canonical << endl;
         // }
         {
-            if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
+            // if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
             {
 
                 (i)->thread_id_collection_map[this_thread::get_id()]--;

@@ -734,16 +734,16 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame *> &
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex>(pBestKF->mMutexreferencecount);
+        //     // pBestKF->mReferencecount_canonical++;
+        //     // pBestKF->mReferencecount_container++;
+        //     pBestKF->mReferencecount_ockf++;
+        //     pBestKF->mReferencecount++;
+        // }
         {
-            unique_lock<mutex>(pBestKF->mMutexreferencecount);
-            // pBestKF->mReferencecount_canonical++;
-            // pBestKF->mReferencecount_container++;
-            pBestKF->mReferencecount_ockf++;
-            pBestKF->mReferencecount++;
-        }
-        {
-            if (pBestKF->thread_id_collection_map.find(this_thread::get_id()) !=
-                pBestKF->thread_id_collection_map.end())
+            // if (pBestKF->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     pBestKF->thread_id_collection_map.end())
             {
 
                 pBestKF->thread_id_collection_map[this_thread::get_id()]++;
@@ -771,15 +771,15 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame *> &
             }
 #endif
 #ifdef RF
+            // {
+            //     unique_lock<mutex>(itr->mMutexreferencecount);
+            //     // itr->mReferencecount_canonical--;
+            //     // itr->mReferencecount_container--;
+            //     itr->mReferencecount_ockf--;
+            //     itr->mReferencecount--;
+            // }
             {
-                unique_lock<mutex>(itr->mMutexreferencecount);
-                // itr->mReferencecount_canonical--;
-                // itr->mReferencecount_container--;
-                itr->mReferencecount_ockf--;
-                itr->mReferencecount--;
-            }
-            {
-                if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
                 {
 
                     itr->thread_id_collection_map[this_thread::get_id()]--;
@@ -821,16 +821,16 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame *> &
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex>(pKFi->mMutexreferencecount);
+                //     //     pKFi->mReferencecount_canonical++;
+                //     //     pKFi->mReferencecount++;
+                //     pKFi->mReferencecount_ockf++;
+                //     pKFi->mReferencecount++;
+                // }
                 {
-                    unique_lock<mutex>(pKFi->mMutexreferencecount);
-                    //     pKFi->mReferencecount_canonical++;
-                    //     pKFi->mReferencecount++;
-                    pKFi->mReferencecount_ockf++;
-                    pKFi->mReferencecount++;
-                }
-                {
-                    if (pKFi->thread_id_collection_map.find(this_thread::get_id()) !=
-                        pKFi->thread_id_collection_map.end())
+                    // if (pKFi->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     pKFi->thread_id_collection_map.end())
                     {
 
                         pKFi->thread_id_collection_map[this_thread::get_id()]++;
@@ -856,16 +856,16 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame *> &
                 }
 #endif
 #ifdef RF
+                // {
+                //     unique_lock<mutex>(pKFi->mMutexreferencecount);
+                //     //     pKFi->mReferencecount_canonical++;
+                //     pKFi->mReferencecount++;
+                //     pKFi->mReferencecount_ockf++;
+                //     //     pKFi->mReferencecount++;
+                // }
                 {
-                    unique_lock<mutex>(pKFi->mMutexreferencecount);
-                    //     pKFi->mReferencecount_canonical++;
-                    pKFi->mReferencecount++;
-                    pKFi->mReferencecount_ockf++;
-                    //     pKFi->mReferencecount++;
-                }
-                {
-                    if (pKFi->thread_id_collection_map.find(this_thread::get_id()) !=
-                        pKFi->thread_id_collection_map.end())
+                    // if (pKFi->thread_id_collection_map.find(this_thread::get_id()) !=
+                    //     pKFi->thread_id_collection_map.end())
                     {
 
                         pKFi->thread_id_collection_map[this_thread::get_id()]++;
@@ -895,19 +895,19 @@ void KeyFrameDatabase::DetectNBestCandidates(KeyFrame *pKF, vector<KeyFrame *> &
         }
 #endif
 #ifdef RF
+        // {
+        //     unique_lock<mutex>(itr.second->mMutexreferencecount);
+        //     // itr.second->mReferencecount_canonical--;
+        //     // itr.second->mReferencecount_container--;
+        //     itr.second->mReferencecount_ockf--;
+        //     itr.second->mReferencecount--;
+        //     // cout << "This is the canonical count" << itr.second->mnId << " " << itr.second->mReferencecount_canonical
+        //     // << endl; cout << "This is the ockf count" << itr.second->mnId << " " << itr.second->mReferencecount_ockf
+        //     // << endl;
+        // }
         {
-            unique_lock<mutex>(itr.second->mMutexreferencecount);
-            // itr.second->mReferencecount_canonical--;
-            // itr.second->mReferencecount_container--;
-            itr.second->mReferencecount_ockf--;
-            itr.second->mReferencecount--;
-            // cout << "This is the canonical count" << itr.second->mnId << " " << itr.second->mReferencecount_canonical
-            // << endl; cout << "This is the ockf count" << itr.second->mnId << " " << itr.second->mReferencecount_ockf
-            // << endl;
-        }
-        {
-            if (itr.second->thread_id_collection_map.find(this_thread::get_id()) !=
-                itr.second->thread_id_collection_map.end())
+            // if (itr.second->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     itr.second->thread_id_collection_map.end())
             {
 
                 itr.second->thread_id_collection_map[this_thread::get_id()]--;

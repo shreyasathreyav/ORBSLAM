@@ -188,7 +188,7 @@ void MapPoint::AddObservation(KeyFrame *pKF, int idx)
         //     pKF->mReferencecount_mob++;
         //     pKF->mReferencecount++;
         // }
-        if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+        // if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
         {
 
             pKF->thread_id_collection_map[this_thread::get_id()]++;
@@ -259,7 +259,7 @@ void MapPoint::EraseObservation(KeyFrame *pKF)
             //     pKF->mReferencecount_mob--;
             //     pKF->mReferencecount--;
             // }
-            if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+            // if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
             {
 
                 pKF->thread_id_collection_map[this_thread::get_id()]--;
@@ -320,7 +320,7 @@ std::map<KeyFrame *, std::tuple<int, int>> MapPoint::GetObservations(bool flag)
         //     // it.first->mReferencecount++;
         //     // it.first->mReferencecount_canonical++;
         // }
-        if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+        // if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
         {
 
             it.first->thread_id_collection_map[this_thread::get_id()]++;
@@ -404,7 +404,7 @@ void MapPoint::SetBadFlag()
         //     it.first->mReferencecount_mob--;
         //     it.first->mReferencecount--;
         // }
-        if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+        // if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
         {
 
             it.first->thread_id_collection_map[this_thread::get_id()]--;
@@ -520,7 +520,7 @@ void MapPoint::Replace(MapPoint *pMP)
         //     it.first->mReferencecount_mob--;
         //     it.first->mReferencecount--;
         // }
-        if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
+        // if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
         {
 
             it.first->thread_id_collection_map[this_thread::get_id()]--;

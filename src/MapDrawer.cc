@@ -386,13 +386,13 @@ void MapDrawer::DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph, const b
                 }
 #endif
 #ifdef RF
-                {
+                // {
 
-                    unique_lock<mutex> lock(i->mMutexreferencecount);
-                    i->mReferencecount_ockf--;
-                    i->mReferencecount--;
-                }
-                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                //     unique_lock<mutex> lock(i->mMutexreferencecount);
+                //     i->mReferencecount_ockf--;
+                //     i->mReferencecount--;
+                // }
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]--;

@@ -555,12 +555,12 @@ bool LoopClosing::NewDetectCommonRegions()
                 }
 #endif
 #ifdef RF
-                {
-                    unique_lock<mutex>(i->mMutexreferencecount);
-                    i->mReferencecount--;
-                    i->mReferencecount_ockf--;
-                }
-                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                // {
+                //     unique_lock<mutex>(i->mMutexreferencecount);
+                //     i->mReferencecount--;
+                //     i->mReferencecount_ockf--;
+                // }
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]--;
@@ -585,12 +585,12 @@ bool LoopClosing::NewDetectCommonRegions()
                 }
 #endif
 #ifdef RF
-                {
-                    unique_lock<mutex>(i->mMutexreferencecount);
-                    i->mReferencecount--;
-                    i->mReferencecount_ockf--;
-                }
-                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                // {
+                //     unique_lock<mutex>(i->mMutexreferencecount);
+                //     i->mReferencecount--;
+                //     i->mReferencecount_ockf--;
+                // }
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]--;
@@ -623,12 +623,12 @@ bool LoopClosing::NewDetectCommonRegions()
             }
 #endif
 #ifdef RF
-            {
-                unique_lock<mutex>(i->mMutexreferencecount);
-                i->mReferencecount--;
-                i->mReferencecount_ockf--;
-            }
-            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+            // {
+            //     unique_lock<mutex>(i->mMutexreferencecount);
+            //     i->mReferencecount--;
+            //     i->mReferencecount_ockf--;
+            // }
+            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
 
                 i->thread_id_collection_map[this_thread::get_id()]--;
@@ -653,12 +653,12 @@ bool LoopClosing::NewDetectCommonRegions()
             }
 #endif
 #ifdef RF
-            {
-                unique_lock<mutex>(i->mMutexreferencecount);
-                i->mReferencecount--;
-                i->mReferencecount_ockf--;
-            }
-            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+            // {
+            //     unique_lock<mutex>(i->mMutexreferencecount);
+            //     i->mReferencecount--;
+            //     i->mReferencecount_ockf--;
+            // }
+            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
 
                 i->thread_id_collection_map[this_thread::get_id()]--;
@@ -807,16 +807,16 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                 }
 #endif
 #ifdef RF
-                {
-                    unique_lock<mutex> lock(i->mMutexreferencecount);
-                    {
-                        // i->mReferencecount_canonical--;
-                        // i->mReferencecount_container--;
-                        i->mReferencecount_ockf--;
-                        i->mReferencecount--;
-                    }
-                }
-                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                // {
+                //     unique_lock<mutex> lock(i->mMutexreferencecount);
+                //     {
+                //         // i->mReferencecount_canonical--;
+                //         // i->mReferencecount_container--;
+                //         i->mReferencecount_ockf--;
+                //         i->mReferencecount--;
+                //     }
+                // }
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]--;
@@ -1085,17 +1085,17 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                                 }
 #endif
 #ifdef RF
-                                {
-                                    unique_lock<mutex> lock(i->mMutexreferencecount);
-                                    {
-                                        // i->mReferencecount_canonical--;
-                                        // i->mReferencecount_container--;
-                                        i->mReferencecount_ockf--;
-                                        i->mReferencecount--;
-                                    }
-                                }
-                                if (i->thread_id_collection_map.find(this_thread::get_id()) !=
-                                    i->thread_id_collection_map.end())
+                                // {
+                                //     unique_lock<mutex> lock(i->mMutexreferencecount);
+                                //     {
+                                //         // i->mReferencecount_canonical--;
+                                //         // i->mReferencecount_container--;
+                                //         i->mReferencecount_ockf--;
+                                //         i->mReferencecount--;
+                                //     }
+                                // }
+                                // if (i->thread_id_collection_map.find(this_thread::get_id()) !=
+                                //     i->thread_id_collection_map.end())
                                 {
 
                                     i->thread_id_collection_map[this_thread::get_id()]--;
@@ -1123,16 +1123,16 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                     }
 #endif
 #ifdef RF
-                    {
-                        unique_lock<mutex> lock(i->mMutexreferencecount);
-                        {
-                            // i->mReferencecount_canonical--;
-                            // i->mReferencecount_container--;
-                            i->mReferencecount_ockf--;
-                            i->mReferencecount--;
-                        }
-                    }
-                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    // {
+                    //     unique_lock<mutex> lock(i->mMutexreferencecount);
+                    //     {
+                    //         // i->mReferencecount_canonical--;
+                    //         // i->mReferencecount_container--;
+                    //         i->mReferencecount_ockf--;
+                    //         i->mReferencecount--;
+                    //     }
+                    // }
+                    // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
                         i->thread_id_collection_map[this_thread::get_id()]--;
@@ -1165,17 +1165,17 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
             }
 #endif
 #ifdef RF
-            {
-                unique_lock<mutex> lock(i->mMutexreferencecount);
-                {
-                    // i->mReferencecount_canonical--;
-                    // i->mReferencecount_container--;
-                    i->mReferencecount_ockf--;
-                    i->mReferencecount--;
-                    // cout << "MNID" << i->mnId << " " << i->mReferencecount_ockf << endl;
-                }
-            }
-            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+            // {
+            //     unique_lock<mutex> lock(i->mMutexreferencecount);
+            //     {
+            //         // i->mReferencecount_canonical--;
+            //         // i->mReferencecount_container--;
+            //         i->mReferencecount_ockf--;
+            //         i->mReferencecount--;
+            //         // cout << "MNID" << i->mnId << " " << i->mReferencecount_ockf << endl;
+            //     }
+            // }
+            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
 
                 i->thread_id_collection_map[this_thread::get_id()]--;
