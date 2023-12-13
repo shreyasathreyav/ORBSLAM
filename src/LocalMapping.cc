@@ -922,6 +922,10 @@ void LocalMapping::CreateNewMapPoints()
             if (bPointStereo)
                 countStereo++;
 
+            // This is where the thread ids and counts go into the mappoint
+            pMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+            pMP->thread_id_collection_map[tracking_thread_id] = 0;
+            pMP->thread_id_collection_map[loop_closing_thread_id] = 0;
             // Add a ++ here for pKF2
             pMP->AddObservation(mpCurrentKeyFrame, idx1);
             pMP->AddObservation(pKF2, idx2);

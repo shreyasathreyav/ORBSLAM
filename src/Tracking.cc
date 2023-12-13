@@ -3594,6 +3594,7 @@ void Tracking::CreateNewKeyFrame()
                     }
 
                     MapPoint *pNewMP = new MapPoint(x3D, pKF, mpAtlas->GetCurrentMap());
+
                     // This is where the thread ids are populated into the mappoint
                     pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
                     pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
