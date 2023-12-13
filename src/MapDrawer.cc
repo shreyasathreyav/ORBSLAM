@@ -197,21 +197,21 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
+            // {
 
-                unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-                i->mReferencecount_msp--;
-            }
-            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+            //     unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+            //     i->mReferencecount_msp--;
+            // }
+            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
 
                 i->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
+            // else
+            // {
 
-                cout << "This is not good for mappoints" << endl;
-            }
+            //     cout << "This is not good for mappoints" << endl;
+            // }
 #endif
         }
         for (auto i : vpRefMPs)
@@ -234,20 +234,20 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
-                unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-                i->mReferencecount_msp--;
-            }
-            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+            // {
+            //     unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+            //     i->mReferencecount_msp--;
+            // }
+            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
 
                 i->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
+            // else
+            // {
 
-                cout << "This is not good for mappoints" << endl;
-            }
+            //     cout << "This is not good for mappoints" << endl;
+            // }
 #endif
         }
     }
@@ -413,22 +413,22 @@ namespace ORB_SLAM3
                     //     i->mReferencecount--;
                     // }
                     // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    // {
+
+                    //     i->thread_id_collection_map[this_thread::get_id()]--;
+                    //     // cout << "This is being executed " << endl;
+                    //     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
+                    // }
+                    // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
                         i->thread_id_collection_map[this_thread::get_id()]--;
-                        // cout << "This is being executed " << endl;
-                        // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
-                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
-                    {
+                    // else
+                    // {
 
-                        i->thread_id_collection_map[this_thread::get_id()]--;
-                    }
-                    else
-                    {
-
-                        cout << "This is not good for mappoints" << endl;
-                    }
+                    //     cout << "This is not good for mappoints" << endl;
+                    // }
                     // else
                     // {
                     //     cout << "This is not good news" << endl;

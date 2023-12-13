@@ -125,20 +125,20 @@ namespace ORB_SLAM3
 
 #endif
 #ifdef RF
-        {
-            unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
-            pMP->mReferencecount_msp++;
-        }
-        if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
+        // {
+        //     unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
+        //     pMP->mReferencecount_msp++;
+        // }
+        // if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
         {
 
             pMP->thread_id_collection_map[this_thread::get_id()]++;
         }
-        else
-        {
+        // else
+        // {
 
-            cout << "This is not good for mappoints" << endl;
-        }
+        //     cout << "This is not good for mappoints" << endl;
+        // }
 #endif
         mspMapPoints.insert(pMP);
     }
@@ -176,22 +176,22 @@ namespace ORB_SLAM3
         }
 #endif
 #ifdef RF
-        {
-            unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
-            pMP->mReferencecount_msp--;
-            // if (pMP->mReferencecount_msp != 0)
-            //     cout << "REF MSP => " << pMP->mReferencecount_msp << endl;
-        }
+        // {
+        //     unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
+        //     pMP->mReferencecount_msp--;
+        //     // if (pMP->mReferencecount_msp != 0)
+        //     //     cout << "REF MSP => " << pMP->mReferencecount_msp << endl;
+        // }
         if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
         {
 
             pMP->thread_id_collection_map[this_thread::get_id()]--;
         }
-        else
-        {
+        // else
+        // {
 
-            cout << "This is not good for mappoints" << endl;
-        }
+        //     cout << "This is not good for mappoints" << endl;
+        // }
 #endif
         mspMapPoints.erase(pMP);
         // TODO: This only erase the pointer.
@@ -266,21 +266,21 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
+            // {
 
-                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-                it->mReferencecount_msp++;
-            }
-            if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
+            //     unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+            //     it->mReferencecount_msp++;
+            // }
+            // if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
             {
 
                 it->thread_id_collection_map[this_thread::get_id()]++;
             }
-            else
-            {
+            // else
+            // {
 
-                cout << "This is not good for mappoints" << endl;
-            }
+            //     cout << "This is not good for mappoints" << endl;
+            // }
 #endif
         }
 
@@ -304,20 +304,20 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
-                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-                it->mReferencecount_msp--;
-            }
-            if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
+            // {
+            //     unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+            //     it->mReferencecount_msp--;
+            // }
+            // if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
             {
 
                 it->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
+            // else
+            // {
 
-                cout << "This is not good for mappoints" << endl;
-            }
+            //     cout << "This is not good for mappoints" << endl;
+            // }
 #endif
         }
         mvpReferenceMapPoints = vpMPs;
@@ -377,21 +377,21 @@ namespace ORB_SLAM3
                 }
 #endif
 #ifdef RF
-                {
+                // {
 
-                    unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-                    i->mReferencecount_msp++;
-                }
+                //     unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+                //     i->mReferencecount_msp++;
+                // }
                 if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
+                // else
+                // {
 
-                    cout << "This is not good for mappoints" << endl;
-                }
+                //     cout << "This is not good for mappoints" << endl;
+                // }
 #endif
             }
         }
@@ -438,21 +438,21 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
+            // {
 
-                unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-                i->mReferencecount_msp++;
-            }
-            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+            //     unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+            //     i->mReferencecount_msp++;
+            // }
+            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
 
                 i->thread_id_collection_map[this_thread::get_id()]++;
             }
-            else
-            {
+            // else
+            // {
 
-                cout << "This is not good for mappoints" << endl;
-            }
+            //     cout << "This is not good for mappoints" << endl;
+            // }
 #endif
         }
         return mvpReferenceMapPoints;

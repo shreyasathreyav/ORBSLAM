@@ -578,23 +578,23 @@ namespace ORB_SLAM3
                         }
 #endif
 #ifdef RF
-                        {
-                            unique_lock<mutex> lock(itx->mMutexReferencecount_mp);
-                            itx->mReferencecount_canonicalmp--;
-                            // itx = static_cast<MapPoint *>(NULL);
-                        }
-                        if (itx->thread_id_collection_map.find(this_thread::get_id()) != itx->thread_id_collection_map.end())
+                        // {
+                        //     unique_lock<mutex> lock(itx->mMutexReferencecount_mp);
+                        //     itx->mReferencecount_canonicalmp--;
+                        //     // itx = static_cast<MapPoint *>(NULL);
+                        // }
+                        // if (itx->thread_id_collection_map.find(this_thread::get_id()) != itx->thread_id_collection_map.end())
                         {
 
                             itx->thread_id_collection_map[this_thread::get_id()]--;
                             itx = static_cast<MapPoint *>(NULL);
 
                         }
-                        else
-                        {
+                        // else
+                        // {
 
-                            cout << "This is not good for mappoints" << endl;
-                        }
+                        //     cout << "This is not good for mappoints" << endl;
+                        // }
 #endif
                     }
                 }

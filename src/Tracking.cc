@@ -2374,20 +2374,20 @@ namespace ORB_SLAM3
                     }
 #endif
 #ifdef RF
-                    {
-                        unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-                        i->mReferencecount_lastframe++;
-                    }
-                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    // {
+                    //     unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                    //     i->mReferencecount_lastframe++;
+                    // }
+                    // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
                         i->thread_id_collection_map[this_thread::get_id()]++;
                     }
-                    else
-                    {
+                    // else
+                    // {
 
-                        cout << "This is not good for mappoints" << endl;
-                    }
+                    //     cout << "This is not good for mappoints" << endl;
+                    // }
 #endif
                 }
             }
@@ -2415,20 +2415,20 @@ namespace ORB_SLAM3
                     }
 #endif
 #ifdef RF
-                    {
-                        unique_lock<mutex> lock(i->mMutexReferencecount_mp);
-                        i->mReferencecount_lastframe--;
-                    }
-                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                    // {
+                    //     unique_lock<mutex> lock(i->mMutexReferencecount_mp);
+                    //     i->mReferencecount_lastframe--;
+                    // }
+                    // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
                         i->thread_id_collection_map[this_thread::get_id()]--;
                     }
-                    else
-                    {
+                    // else
+                    // {
 
-                        cout << "This is not good for mappoints" << endl;
-                    }
+                    //     cout << "This is not good for mappoints" << endl;
+                    // }
 #endif
                 }
             }
@@ -2939,20 +2939,20 @@ namespace ORB_SLAM3
                         }
 #endif
 #ifdef RF
-                        {
-                            unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                            mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
-                        }
-                        if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
+                        // {
+                        //     unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                        //     mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                        // }
+                        // if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
                         {
 
                             mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
                         }
-                        else
-                        {
+                        // else
+                        // {
 
-                            cout << "This is not good for mappoints" << endl;
-                        }
+                        //     cout << "This is not good for mappoints" << endl;
+                        // }
 #endif
                     }
 #ifdef CASRF
@@ -2975,20 +2975,20 @@ namespace ORB_SLAM3
                     }
 #endif
 #ifdef RF
-                    {
-                        unique_lock<mutex> lock(pRep->mMutexReferencecount_mp);
-                        pRep->mReferencecount_lastframe++;
-                    }
-                    if (pRep->thread_id_collection_map.find(this_thread::get_id()) != pRep->thread_id_collection_map.end())
+                    // {
+                    //     unique_lock<mutex> lock(pRep->mMutexReferencecount_mp);
+                    //     pRep->mReferencecount_lastframe++;
+                    // }
+                    // if (pRep->thread_id_collection_map.find(this_thread::get_id()) != pRep->thread_id_collection_map.end())
                     {
 
                         pRep->thread_id_collection_map[this_thread::get_id()]++;
                     }
-                    else
-                    {
+                    // else
+                    // {
 
-                        cout << "This is not good for mappoints" << endl;
-                    }
+                    //     cout << "This is not good for mappoints" << endl;
+                    // }
 #endif
                     mLastFrame.mvpMapPoints[i] = pRep;
                 }
@@ -3148,21 +3148,21 @@ namespace ORB_SLAM3
                     }
 #endif
 #ifdef RF
-                    {
+                    // {
 
-                        unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                        mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
-                    }
-                    if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
+                    //     unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                    //     mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                    // }
+                    // if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
                     {
 
                         mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
                     }
-                    else
-                    {
+                    // else
+                    // {
 
-                        cout << "This is not good for mappoints" << endl;
-                    }
+                    //     cout << "This is not good for mappoints" << endl;
+                    // }
 #endif
                 }
 #ifdef CASRF
@@ -3185,20 +3185,20 @@ namespace ORB_SLAM3
                 }
 #endif
 #ifdef RF
-                {
-                    unique_lock<mutex> lock(pNewMP->mMutexReferencecount_mp);
-                    pNewMP->mReferencecount_lastframe++;
-                }
-                if (pNewMP->thread_id_collection_map.find(this_thread::get_id()) != pNewMP->thread_id_collection_map.end())
+                // {
+                //     unique_lock<mutex> lock(pNewMP->mMutexReferencecount_mp);
+                //     pNewMP->mReferencecount_lastframe++;
+                // }
+                // if (pNewMP->thread_id_collection_map.find(this_thread::get_id()) != pNewMP->thread_id_collection_map.end())
                 {
 
                     pNewMP->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
+                // else
+                // {
 
-                    cout << "This is not good for mappoints" << endl;
-                }
+                //     cout << "This is not good for mappoints" << endl;
+                // }
 #endif
                 mLastFrame.mvpMapPoints[i] = pNewMP;
 
@@ -3848,20 +3848,20 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
-                unique_lock(it->mMutexReferencecount_mp);
-                it->mReferencecount_msp--;
-            }
-            if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
+            // {
+            //     unique_lock(it->mMutexReferencecount_mp);
+            //     it->mReferencecount_msp--;
+            // }
+            // if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
             {
 
                 it->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
+            // else
+            // {
 
-                cout << "This is not good for mappoints" << endl;
-            }
+            //     cout << "This is not good for mappoints" << endl;
+            // }
 #endif
         }
 
@@ -3907,20 +3907,20 @@ namespace ORB_SLAM3
                     }
 #endif
 #ifdef RF
-                    {
-                        unique_lock<mutex>(pMP->mMutexReferencecount_mp);
-                        pMP->mReferencecount_msp++;
-                    }
-                    if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
+                    // {
+                    //     unique_lock<mutex>(pMP->mMutexReferencecount_mp);
+                    //     pMP->mReferencecount_msp++;
+                    // }
+                    // if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
                     {
 
                         pMP->thread_id_collection_map[this_thread::get_id()]++;
                     }
-                    else
-                    {
+                    // else
+                    // {
 
-                        cout << "This is not good for mappoints" << endl;
-                    }
+                    //     cout << "This is not good for mappoints" << endl;
+                    // }
 #endif
                     mvpLocalMapPoints.push_back(pMP);
                     check_container.push_back(pMP);
@@ -4006,20 +4006,20 @@ namespace ORB_SLAM3
                             }
 #endif
 #ifdef RF
-                            {
-                                unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
-                                mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
-                            }
-                            if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
+                            // {
+                            //     unique_lock<mutex> lock(mLastFrame.mvpMapPoints[i]->mMutexReferencecount_mp);
+                            //     mLastFrame.mvpMapPoints[i]->mReferencecount_lastframe--;
+                            // }
+                            // if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
                             {
 
                                 mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
                             }
-                            else
-                            {
+                            // else
+                            // {
 
-                                cout << "This is not good for mappoints" << endl;
-                            }
+                            //     cout << "This is not good for mappoints" << endl;
+                            // }
 #endif
                         }
 
