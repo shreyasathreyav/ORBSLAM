@@ -260,10 +260,10 @@ void KeyFrame::AddConnection(KeyFrame *pKF, const int &weight)
 
                     pKF->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 
 #endif
@@ -330,10 +330,10 @@ void KeyFrame::UpdateBestCovisibles()
 
                 i->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 
 #endif
@@ -412,10 +412,10 @@ vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
 
                 itr->thread_id_collection_map[this_thread::get_id()]++;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
     }
@@ -506,10 +506,10 @@ vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N)
 
                     itr->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
         }
@@ -596,14 +596,14 @@ vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w)
 
                     itr->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
-                    // Looks like this is the one
-                    cout << "This one is the culprit" << endl;
-                    cout << this_thread::get_id() << endl;
-
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     // Looks like this is the one
+                //     cout << "This one is the culprit" << endl;
+                //     cout << this_thread::get_id() << endl;
+                //
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
             // itr->mReferencecount_canonical++;
@@ -690,10 +690,10 @@ void KeyFrame::AddMapPoint(MapPoint *pMP, const size_t &idx)
 
                 this->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 
 #endif
@@ -1012,10 +1012,10 @@ void KeyFrame::UpdateConnections(bool upParent)
 
                     it.first->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
         }
@@ -1034,10 +1034,10 @@ void KeyFrame::UpdateConnections(bool upParent)
 
                     it.first->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 
 #endif
@@ -1075,10 +1075,10 @@ void KeyFrame::UpdateConnections(bool upParent)
 
                     i->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
         }
@@ -1109,10 +1109,10 @@ void KeyFrame::UpdateConnections(bool upParent)
 
                     i->thread_id_collection_map[this_thread::get_id()]++;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
         }
@@ -1275,10 +1275,10 @@ void KeyFrame::SetBadFlag()
 
                     it.first->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
 
@@ -1318,10 +1318,10 @@ void KeyFrame::SetBadFlag()
 
                     itr->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
         }
@@ -1392,10 +1392,10 @@ void KeyFrame::SetBadFlag()
 
                                         pP->thread_id_collection_map[this_thread::get_id()]++;
                                     }
-                                    else
-                                    {
-                                        cout << "This is not good news" << endl;
-                                    }
+                                    // else
+                                    // {
+                                    //     cout << "This is not good news" << endl;
+                                    // }
                                 }
 #endif
                                 pP_tracker.push_back(pP);
@@ -1434,10 +1434,10 @@ void KeyFrame::SetBadFlag()
 
                             itr->thread_id_collection_map[this_thread::get_id()]--;
                         }
-                        else
-                        {
-                            cout << "This is not good news" << endl;
-                        }
+                        // else
+                        // {
+                        //     cout << "This is not good news" << endl;
+                        // }
                     }
 #endif
                 }
@@ -1478,10 +1478,10 @@ void KeyFrame::SetBadFlag()
 
                             itr->thread_id_collection_map[this_thread::get_id()]--;
                         }
-                        else
-                        {
-                            cout << "This is not good news" << endl;
-                        }
+                        // else
+                        // {
+                        //     cout << "This is not good news" << endl;
+                        // }
                     }
 
 #endif
@@ -1516,10 +1516,10 @@ void KeyFrame::SetBadFlag()
 
                         itr->thread_id_collection_map[this_thread::get_id()]--;
                     }
-                    else
-                    {
-                        cout << "This is not good news" << endl;
-                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
                 }
 #endif
             }
@@ -1581,10 +1581,10 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
 
                     pKF->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
 #ifdef CASRF
@@ -1625,10 +1625,10 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
 
                 (*index)->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
         mvpOrderedConnectedKeyFrames.erase(index);

@@ -567,10 +567,10 @@ bool LoopClosing::NewDetectCommonRegions()
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
 #endif
             }
             for (auto i : vpMergeBowCand)
@@ -597,10 +597,10 @@ bool LoopClosing::NewDetectCommonRegions()
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
 #endif
             }
         }
@@ -635,10 +635,10 @@ bool LoopClosing::NewDetectCommonRegions()
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
 #endif
         }
         for (auto i : vpMergeBowCand)
@@ -665,10 +665,10 @@ bool LoopClosing::NewDetectCommonRegions()
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
 #endif
         }
     }
@@ -823,10 +823,10 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
 #endif
             }
             continue;
@@ -1102,10 +1102,10 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                                     // cout << "This is being executed " << endl;
                                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                                 }
-                                else
-                                {
-                                    cout << "This is not good news" << endl;
-                                }
+                                // else
+                                // {
+                                //     cout << "This is not good news" << endl;
+                                // }
 #endif
                             }
                         }
@@ -1139,10 +1139,10 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
-                    else
-                    {
-                        cout << "This is not good news" << endl;
-                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
 #endif
                 }
             }
@@ -1182,10 +1182,10 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame *> &vpBowCand,
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
 #endif
         }
     }

@@ -584,10 +584,10 @@ void LocalMapping::CreateNewMapPoints()
 
                 vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
 
@@ -629,10 +629,10 @@ void LocalMapping::CreateNewMapPoints()
 
                         vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
                     }
-                    else
-                    {
-                        cout << "This is not good news" << endl;
-                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
                 }
 #endif
                 continue;
@@ -670,10 +670,10 @@ void LocalMapping::CreateNewMapPoints()
 
                         vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
                     }
-                    else
-                    {
-                        cout << "This is not good news" << endl;
-                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
                 }
 #endif
                 continue;
@@ -965,10 +965,10 @@ void LocalMapping::CreateNewMapPoints()
 
                 vpNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
     }
@@ -999,10 +999,10 @@ void LocalMapping::CreateNewMapPoints()
 
                 itr->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
     }
@@ -1077,10 +1077,10 @@ void LocalMapping::SearchInNeighbors()
 
                         itr->thread_id_collection_map[this_thread::get_id()]--;
                     }
-                    else
-                    {
-                        cout << "This is not good news" << endl;
-                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
                 }
 #endif
             }
@@ -1111,10 +1111,10 @@ void LocalMapping::SearchInNeighbors()
 
                     itr->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
         }
@@ -1224,10 +1224,10 @@ void LocalMapping::SearchInNeighbors()
 
                 itr->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
     }
@@ -1373,10 +1373,10 @@ void LocalMapping::KeyFrameCulling()
 
                 (*vit)->thread_id_collection_map[this_thread::get_id()]++;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
         }
 #endif
         KeyFrame *pKF = *vit;
@@ -1408,10 +1408,10 @@ void LocalMapping::KeyFrameCulling()
 
                     (*vit)->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
             continue;
@@ -1515,10 +1515,10 @@ void LocalMapping::KeyFrameCulling()
 
                             (*vit)->thread_id_collection_map[this_thread::get_id()]--;
                         }
-                        else
-                        {
-                            cout << "This is not good news" << endl;
-                        }
+                        // else
+                        // {
+                        //     cout << "This is not good news" << endl;
+                        // }
                     }
 #endif
                     // (*vit)->mReferencecount_canonical--;
@@ -1552,10 +1552,10 @@ void LocalMapping::KeyFrameCulling()
 
                             (*vit)->thread_id_collection_map[this_thread::get_id()]--;
                         }
-                        else
-                        {
-                            cout << "This is not good news" << endl;
-                        }
+                        // else
+                        // {
+                        //     cout << "This is not good news" << endl;
+                        // }
                     }
 #endif
                     // (*vit)->mReferencecount_canonical--;
@@ -1644,10 +1644,10 @@ void LocalMapping::KeyFrameCulling()
 
                     (*vit)->thread_id_collection_map[this_thread::get_id()]--;
                 }
-                else
-                {
-                    cout << "This is not good news" << endl;
-                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
 #endif
             break;
@@ -1676,10 +1676,10 @@ void LocalMapping::KeyFrameCulling()
 
                 (*vit)->thread_id_collection_map[this_thread::get_id()]--;
             }
-            else
-            {
-                cout << "This is not good news" << endl;
-            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
 
 #endif
             // (*vit)->mReferencecount_canonical--;
@@ -1715,10 +1715,10 @@ void LocalMapping::KeyFrameCulling()
             // cout << "This is being executed " << endl;
             // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
         }
-        else
-        {
-            cout << "This is not good news" << endl;
-        }
+        // else
+        // {
+        //     cout << "This is not good news" << endl;
+        // }
 #endif
         // cout << endl;
     }
