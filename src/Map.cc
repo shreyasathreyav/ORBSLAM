@@ -24,210 +24,87 @@
 namespace ORB_SLAM3
 {
 
-long unsigned int Map::nNextId = 0;
+    long unsigned int Map::nNextId = 0;
 
-Map::Map()
-    : mnMaxKFid(0), mnBigChangeIdx(0), mbImuInitialized(false), mnMapChange(0),
-      mpFirstRegionKF(static_cast<KeyFrame *>(NULL)), mbFail(false), mIsInUse(false), mHasTumbnail(false), mbBad(false),
-      mnMapChangeNotified(0), mbIsInertial(false), mbIMU_BA1(false), mbIMU_BA2(false)
-{
-    mnId = nNextId++;
-    mThumbnail = static_cast<GLubyte *>(NULL);
-}
-
-Map::Map(int initKFid)
-    : mnInitKFid(initKFid), mnMaxKFid(initKFid), /*mnLastLoopKFid(initKFid),*/ mnBigChangeIdx(0), mIsInUse(false),
-      mHasTumbnail(false), mbBad(false), mbImuInitialized(false), mpFirstRegionKF(static_cast<KeyFrame *>(NULL)),
-      mnMapChange(0), mbFail(false), mnMapChangeNotified(0), mbIsInertial(false), mbIMU_BA1(false), mbIMU_BA2(false)
-{
-    mnId = nNextId++;
-    mThumbnail = static_cast<GLubyte *>(NULL);
-}
-
-Map::~Map()
-{
-    // TODO: erase all points from memory
-    mspMapPoints.clear();
-
-    // TODO: erase all keyframes from memory
-    mspKeyFrames.clear();
-
-    if (mThumbnail)
-        delete mThumbnail;
-    mThumbnail = static_cast<GLubyte *>(NULL);
-
-    mvpReferenceMapPoints.clear();
-    mvpKeyFrameOrigins.clear();
-}
-
-void Map::AddKeyFrame(KeyFrame *pKF)
-{
-    unique_lock<mutex> lock(mMutexMap);
-    if (mspKeyFrames.empty())
+    Map::Map()
+        : mnMaxKFid(0), mnBigChangeIdx(0), mbImuInitialized(false), mnMapChange(0),
+          mpFirstRegionKF(static_cast<KeyFrame *>(NULL)), mbFail(false), mIsInUse(false), mHasTumbnail(false), mbBad(false),
+          mnMapChangeNotified(0), mbIsInertial(false), mbIMU_BA1(false), mbIMU_BA2(false)
     {
-        cout << "First KF:" << pKF->mnId << "; Map init KF:" << mnInitKFid << endl;
-        mnInitKFid = pKF->mnId;
-        mpKFinitial = pKF;
-        mpKFlowerID = pKF;
+        mnId = nNextId++;
+        mThumbnail = static_cast<GLubyte *>(NULL);
     }
-    mspKeyFrames.insert(pKF);
 
+    Map::Map(int initKFid)
+        : mnInitKFid(initKFid), mnMaxKFid(initKFid), /*mnLastLoopKFid(initKFid),*/ mnBigChangeIdx(0), mIsInUse(false),
+          mHasTumbnail(false), mbBad(false), mbImuInitialized(false), mpFirstRegionKF(static_cast<KeyFrame *>(NULL)),
+          mnMapChange(0), mbFail(false), mnMapChangeNotified(0), mbIsInertial(false), mbIMU_BA1(false), mbIMU_BA2(false)
     {
-        unique_lock<mutex> lock(pKF->mMutexreferencecount);
-        pKF->mReferencecount_container++;
+        mnId = nNextId++;
+        mThumbnail = static_cast<GLubyte *>(NULL);
     }
-    // cout << "RF " << pKF->mReferencecount_container << endl;
 
-    // Do referece count
-
-    int old_value, new_value;
-    // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
-    do
+    Map::~Map()
     {
-        // old_value = pKF->mReferencecount_msp_CAS ;
-        new_value = old_value + 1;
-        // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
-        // bool check =  atomic_compare_exchange_strong(ptr, old_value, new_value);
+        // TODO: erase all points from memory
+        mspMapPoints.clear();
 
-    } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_msp_CAS), &old_value, new_value));
-    // cout << "CAS " << pKF->mReferencecount_msp_CAS << endl;
+        // TODO: erase all keyframes from memory
+        mspKeyFrames.clear();
 
-    if (pKF->mnId > mnMaxKFid)
-    {
-        mnMaxKFid = pKF->mnId;
+        if (mThumbnail)
+            delete mThumbnail;
+        mThumbnail = static_cast<GLubyte *>(NULL);
+
+        mvpReferenceMapPoints.clear();
+        mvpKeyFrameOrigins.clear();
     }
-    if (pKF->mnId < mpKFlowerID->mnId)
-    {
-        mpKFlowerID = pKF;
-    }
-}
 
-void Map::AddMapPoint(MapPoint *pMP)
-{
-    unique_lock<mutex> lock(mMutexMap);
-#ifdef CASRF
+    void Map::AddKeyFrame(KeyFrame *pKF)
     {
-        // int old_value, new_value;
-        // do
-        // {
-        //     new_value = old_value + 1;
+        unique_lock<mutex> lock(mMutexMap);
+        if (mspKeyFrames.empty())
+        {
+            cout << "First KF:" << pKF->mnId << "; Map init KF:" << mnInitKFid << endl;
+            mnInitKFid = pKF->mnId;
+            mpKFinitial = pKF;
+            mpKFlowerID = pKF;
+        }
+        mspKeyFrames.insert(pKF);
 
-        // } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
+        {
+            unique_lock<mutex> lock(pKF->mMutexreferencecount);
+            pKF->mReferencecount_container++;
+        }
+        // cout << "RF " << pKF->mReferencecount_container << endl;
+
+        // Do referece count
 
         int old_value, new_value;
-        old_value = pMP->mReferencecount_msp_CAS;
-        new_value = old_value + 1;
-        while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value))
+        // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+        do
         {
+            // old_value = pKF->mReferencecount_msp_CAS ;
             new_value = old_value + 1;
-        }
-    }
+            // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+            // bool check =  atomic_compare_exchange_strong(ptr, old_value, new_value);
 
-#endif
-#ifdef RF
-    {
-        unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
-        pMP->mReferencecount_msp++;
-    }
-#endif
-    mspMapPoints.insert(pMP);
-}
+        } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_msp_CAS), &old_value, new_value));
+        // cout << "CAS " << pKF->mReferencecount_msp_CAS << endl;
 
-void Map::SetImuInitialized()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mbImuInitialized = true;
-}
-
-bool Map::isImuInitialized()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mbImuInitialized;
-}
-
-void Map::EraseMapPoint(MapPoint *pMP)
-{
-    unique_lock<mutex> lock(mMutexMap);
-#ifdef CASRF
-    {
-        // int old_value, new_value;
-        // do
-        // {
-        //     new_value = old_value - 1;
-
-        // } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
-        int old_value, new_value;
-        old_value = pMP->mReferencecount_msp_CAS;
-        new_value = old_value - 1;
-        while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value))
+        if (pKF->mnId > mnMaxKFid)
         {
-            new_value = old_value - 1;
+            mnMaxKFid = pKF->mnId;
         }
-    }
-#endif
-#ifdef RF
-    {
-        unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
-        pMP->mReferencecount_msp--;
-        // if (pMP->mReferencecount_msp != 0)
-        //     cout << "REF MSP => " << pMP->mReferencecount_msp << endl;
-    }
-#endif
-    mspMapPoints.erase(pMP);
-    // TODO: This only erase the pointer.
-    // Delete the MapPoint
-}
-
-void Map::EraseKeyFrame(KeyFrame *pKF)
-{
-    unique_lock<mutex> lock(mMutexMap);
-
-    {
-        unique_lock<mutex> lock(pKF->mMutexreferencecount);
-        pKF->mReferencecount_container--;
-        // cout << "Reference counting value " << pKF->mReferencecount_container << endl;
-    }
-
-    int old_value, new_value;
-    // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
-    do
-    {
-        // old_value = pKF->mReferencecount_msp_CAS ;
-        new_value = old_value - 1;
-        // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
-        // bool check =  atomic_compare_exchange_strong(ptr, old_value, new_value);
-
-    } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_msp_CAS), &old_value, new_value));
-    // cout << "CAS " << pKF->mReferencecount_msp_CAS << endl;
-
-    mspKeyFrames.erase(pKF);
-
-    // do reference count
-
-    if (mspKeyFrames.size() > 0)
-    {
-        if (pKF->mnId == mpKFlowerID->mnId)
+        if (pKF->mnId < mpKFlowerID->mnId)
         {
-            vector<KeyFrame *> vpKFs = vector<KeyFrame *>(mspKeyFrames.begin(), mspKeyFrames.end());
-            sort(vpKFs.begin(), vpKFs.end(), KeyFrame::lId);
-            mpKFlowerID = vpKFs[0];
+            mpKFlowerID = pKF;
         }
     }
-    else
+
+    void Map::AddMapPoint(MapPoint *pMP)
     {
-        mpKFlowerID = 0;
-    }
-
-    // TODO: This only erase the pointer.
-    // Delete the MapPoint
-}
-
-void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
-{
-    unique_lock<mutex> lock(mMutexMap);
-
-    for (auto it : vpMPs)
-    {
+        unique_lock<mutex> lock(mMutexMap);
 #ifdef CASRF
         {
             // int old_value, new_value;
@@ -235,27 +112,52 @@ void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
             // {
             //     new_value = old_value + 1;
 
-            // } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+            // } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
+
             int old_value, new_value;
-            old_value = it->mReferencecount_msp_CAS;
+            old_value = pMP->mReferencecount_msp_CAS;
             new_value = old_value + 1;
-            while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value))
+            while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value))
             {
                 new_value = old_value + 1;
             }
         }
+
 #endif
 #ifdef RF
         {
+            unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
+            pMP->mReferencecount_msp++;
+        }
+        if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
+        {
 
-            unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-            it->mReferencecount_msp++;
+            pMP->thread_id_collection_map[this_thread::get_id()]++;
+        }
+        else
+        {
+
+            cout << "This is not good for mappoints" << endl;
         }
 #endif
+        mspMapPoints.insert(pMP);
     }
 
-    for (auto it : mvpReferenceMapPoints)
+    void Map::SetImuInitialized()
     {
+        unique_lock<mutex> lock(mMutexMap);
+        mbImuInitialized = true;
+    }
+
+    bool Map::isImuInitialized()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mbImuInitialized;
+    }
+
+    void Map::EraseMapPoint(MapPoint *pMP)
+    {
+        unique_lock<mutex> lock(mMutexMap);
 #ifdef CASRF
         {
             // int old_value, new_value;
@@ -263,11 +165,11 @@ void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
             // {
             //     new_value = old_value - 1;
 
-            // } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+            // } while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value));
             int old_value, new_value;
-            old_value = it->mReferencecount_msp_CAS;
+            old_value = pMP->mReferencecount_msp_CAS;
             new_value = old_value - 1;
-            while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value))
+            while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_msp_CAS), &old_value, new_value))
             {
                 new_value = old_value - 1;
             }
@@ -275,49 +177,248 @@ void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
 #endif
 #ifdef RF
         {
-            unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-            it->mReferencecount_msp--;
+            unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
+            pMP->mReferencecount_msp--;
+            // if (pMP->mReferencecount_msp != 0)
+            //     cout << "REF MSP => " << pMP->mReferencecount_msp << endl;
+        }
+        if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
+        {
+
+            pMP->thread_id_collection_map[this_thread::get_id()]--;
+        }
+        else
+        {
+
+            cout << "This is not good for mappoints" << endl;
         }
 #endif
+        mspMapPoints.erase(pMP);
+        // TODO: This only erase the pointer.
+        // Delete the MapPoint
     }
-    mvpReferenceMapPoints = vpMPs;
-}
 
-void Map::InformNewBigChange()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mnBigChangeIdx++;
-}
-
-int Map::GetLastBigChangeIdx()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mnBigChangeIdx;
-}
-
-vector<KeyFrame *> Map::GetAllKeyFrames()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return vector<KeyFrame *>(mspKeyFrames.begin(), mspKeyFrames.end());
-}
-
-vector<MapPoint *> Map::GetAllMapPoints()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    // {
-    //     for(auto i: mspMapPoints)
-    //     {
-    //         unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-    //         i->mReferencecount_msp++;
-    //     }
-    // }
-    return vector<MapPoint *>(mspMapPoints.begin(), mspMapPoints.end());
-}
-vector<MapPoint *> Map::GetAllMapPoints(bool flag)
-{
-    unique_lock<mutex> lock(mMutexMap);
+    void Map::EraseKeyFrame(KeyFrame *pKF)
     {
-        for (auto i : mspMapPoints)
+        unique_lock<mutex> lock(mMutexMap);
+
+        {
+            unique_lock<mutex> lock(pKF->mMutexreferencecount);
+            pKF->mReferencecount_container--;
+            // cout << "Reference counting value " << pKF->mReferencecount_container << endl;
+        }
+
+        int old_value, new_value;
+        // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+        do
+        {
+            // old_value = pKF->mReferencecount_msp_CAS ;
+            new_value = old_value - 1;
+            // std::atomic<int> *ptr = &(pKF->mReferencecount_msp_CAS);
+            // bool check =  atomic_compare_exchange_strong(ptr, old_value, new_value);
+
+        } while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_msp_CAS), &old_value, new_value));
+        // cout << "CAS " << pKF->mReferencecount_msp_CAS << endl;
+
+        mspKeyFrames.erase(pKF);
+
+        // do reference count
+
+        if (mspKeyFrames.size() > 0)
+        {
+            if (pKF->mnId == mpKFlowerID->mnId)
+            {
+                vector<KeyFrame *> vpKFs = vector<KeyFrame *>(mspKeyFrames.begin(), mspKeyFrames.end());
+                sort(vpKFs.begin(), vpKFs.end(), KeyFrame::lId);
+                mpKFlowerID = vpKFs[0];
+            }
+        }
+        else
+        {
+            mpKFlowerID = 0;
+        }
+
+        // TODO: This only erase the pointer.
+        // Delete the MapPoint
+    }
+
+    void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+
+        for (auto it : vpMPs)
+        {
+#ifdef CASRF
+            {
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value + 1;
+
+                // } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+                int old_value, new_value;
+                old_value = it->mReferencecount_msp_CAS;
+                new_value = old_value + 1;
+                while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value))
+                {
+                    new_value = old_value + 1;
+                }
+            }
+#endif
+#ifdef RF
+            {
+
+                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                it->mReferencecount_msp++;
+            }
+            if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
+            {
+
+                it->thread_id_collection_map[this_thread::get_id()]++;
+            }
+            else
+            {
+
+                cout << "This is not good for mappoints" << endl;
+            }
+#endif
+        }
+
+        for (auto it : mvpReferenceMapPoints)
+        {
+#ifdef CASRF
+            {
+                // int old_value, new_value;
+                // do
+                // {
+                //     new_value = old_value - 1;
+
+                // } while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value));
+                int old_value, new_value;
+                old_value = it->mReferencecount_msp_CAS;
+                new_value = old_value - 1;
+                while (!atomic_compare_exchange_strong(&(it->mReferencecount_msp_CAS), &old_value, new_value))
+                {
+                    new_value = old_value - 1;
+                }
+            }
+#endif
+#ifdef RF
+            {
+                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                it->mReferencecount_msp--;
+            }
+            if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
+            {
+
+                it->thread_id_collection_map[this_thread::get_id()]--;
+            }
+            else
+            {
+
+                cout << "This is not good for mappoints" << endl;
+            }
+#endif
+        }
+        mvpReferenceMapPoints = vpMPs;
+    }
+
+    void Map::InformNewBigChange()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mnBigChangeIdx++;
+    }
+
+    int Map::GetLastBigChangeIdx()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mnBigChangeIdx;
+    }
+
+    vector<KeyFrame *> Map::GetAllKeyFrames()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return vector<KeyFrame *>(mspKeyFrames.begin(), mspKeyFrames.end());
+    }
+
+    vector<MapPoint *> Map::GetAllMapPoints()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        // {
+        //     for(auto i: mspMapPoints)
+        //     {
+        //         unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+        //         i->mReferencecount_msp++;
+        //     }
+        // }
+        return vector<MapPoint *>(mspMapPoints.begin(), mspMapPoints.end());
+    }
+    vector<MapPoint *> Map::GetAllMapPoints(bool flag)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        {
+            for (auto i : mspMapPoints)
+            {
+#ifdef CASRF
+                {
+                    // int old_value, new_value;
+                    // do
+                    // {
+                    //     new_value = old_value + 1;
+
+                    // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
+                    int old_value, new_value;
+                    old_value = i->mReferencecount_msp_CAS;
+                    new_value = old_value + 1;
+                    while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value))
+                    {
+                        new_value = old_value + 1;
+                    }
+                }
+#endif
+#ifdef RF
+                {
+
+                    unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+                    i->mReferencecount_msp++;
+                }
+                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
+
+                    i->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                else
+                {
+
+                    cout << "This is not good for mappoints" << endl;
+                }
+#endif
+            }
+        }
+        return vector<MapPoint *>(mspMapPoints.begin(), mspMapPoints.end());
+    }
+
+    long unsigned int Map::MapPointsInMap()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mspMapPoints.size();
+    }
+
+    long unsigned int Map::KeyFramesInMap()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mspKeyFrames.size();
+    }
+
+    vector<MapPoint *> Map::GetReferenceMapPoints()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mvpReferenceMapPoints;
+    }
+    vector<MapPoint *> Map::GetReferenceMapPoints(bool flag)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        for (auto i : mvpReferenceMapPoints)
         {
 #ifdef CASRF
             {
@@ -342,374 +443,333 @@ vector<MapPoint *> Map::GetAllMapPoints(bool flag)
                 unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
                 i->mReferencecount_msp++;
             }
-#endif
-        }
-    }
-    return vector<MapPoint *>(mspMapPoints.begin(), mspMapPoints.end());
-}
-
-long unsigned int Map::MapPointsInMap()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mspMapPoints.size();
-}
-
-long unsigned int Map::KeyFramesInMap()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mspKeyFrames.size();
-}
-
-vector<MapPoint *> Map::GetReferenceMapPoints()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mvpReferenceMapPoints;
-}
-vector<MapPoint *> Map::GetReferenceMapPoints(bool flag)
-{
-    unique_lock<mutex> lock(mMutexMap);
-    for (auto i : mvpReferenceMapPoints)
-    {
-#ifdef CASRF
-        {
-            // int old_value, new_value;
-            // do
-            // {
-            //     new_value = old_value + 1;
-
-            // } while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value));
-            int old_value, new_value;
-            old_value = i->mReferencecount_msp_CAS;
-            new_value = old_value + 1;
-            while (!atomic_compare_exchange_strong(&(i->mReferencecount_msp_CAS), &old_value, new_value))
+            if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
             {
-                new_value = old_value + 1;
+
+                i->thread_id_collection_map[this_thread::get_id()]++;
             }
-        }
-#endif
-#ifdef RF
-        {
+            else
+            {
 
-            unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-            i->mReferencecount_msp++;
-        }
+                cout << "This is not good for mappoints" << endl;
+            }
 #endif
+        }
+        return mvpReferenceMapPoints;
     }
-    return mvpReferenceMapPoints;
-}
 
-long unsigned int Map::GetId()
-{
-    return mnId;
-}
-long unsigned int Map::GetInitKFid()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mnInitKFid;
-}
-
-void Map::SetInitKFid(long unsigned int initKFif)
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mnInitKFid = initKFif;
-}
-
-long unsigned int Map::GetMaxKFid()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mnMaxKFid;
-}
-
-KeyFrame *Map::GetOriginKF()
-{
-    return mpKFinitial;
-}
-
-void Map::SetCurrentMap()
-{
-    mIsInUse = true;
-}
-
-void Map::SetStoredMap()
-{
-    mIsInUse = false;
-}
-
-void Map::clear()
-{
-    // cout << "This function is actually called" << endl;
-    //    for(set<MapPoint*>::iterator sit=mspMapPoints.begin(), send=mspMapPoints.end(); sit!=send; sit++)
-    //        delete *sit;
-
-    for (set<KeyFrame *>::iterator sit = mspKeyFrames.begin(), send = mspKeyFrames.end(); sit != send; sit++)
+    long unsigned int Map::GetId()
     {
-        KeyFrame *pKF = *sit;
-        pKF->UpdateMap(static_cast<Map *>(NULL));
+        return mnId;
+    }
+    long unsigned int Map::GetInitKFid()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mnInitKFid;
+    }
+
+    void Map::SetInitKFid(long unsigned int initKFif)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mnInitKFid = initKFif;
+    }
+
+    long unsigned int Map::GetMaxKFid()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mnMaxKFid;
+    }
+
+    KeyFrame *Map::GetOriginKF()
+    {
+        return mpKFinitial;
+    }
+
+    void Map::SetCurrentMap()
+    {
+        mIsInUse = true;
+    }
+
+    void Map::SetStoredMap()
+    {
+        mIsInUse = false;
+    }
+
+    void Map::clear()
+    {
+        // cout << "This function is actually called" << endl;
+        //    for(set<MapPoint*>::iterator sit=mspMapPoints.begin(), send=mspMapPoints.end(); sit!=send; sit++)
         //        delete *sit;
-    }
 
-    mspMapPoints.clear();
-    mspKeyFrames.clear();
-    mnMaxKFid = mnInitKFid;
-    mbImuInitialized = false;
-    mvpReferenceMapPoints.clear();
-    mvpKeyFrameOrigins.clear();
-    mbIMU_BA1 = false;
-    mbIMU_BA2 = false;
-}
-
-bool Map::IsInUse()
-{
-    return mIsInUse;
-}
-
-void Map::SetBad()
-{
-    mbBad = true;
-}
-
-bool Map::IsBad()
-{
-    return mbBad;
-}
-
-void Map::ApplyScaledRotation(const Sophus::SE3f &T, const float s, const bool bScaledVel)
-{
-    unique_lock<mutex> lock(mMutexMap);
-
-    // Body position (IMU) of first keyframe is fixed to (0,0,0)
-    Sophus::SE3f Tyw = T;
-    Eigen::Matrix3f Ryw = Tyw.rotationMatrix();
-    Eigen::Vector3f tyw = Tyw.translation();
-
-    for (set<KeyFrame *>::iterator sit = mspKeyFrames.begin(); sit != mspKeyFrames.end(); sit++)
-    {
-        KeyFrame *pKF = *sit;
-        Sophus::SE3f Twc = pKF->GetPoseInverse();
-        Twc.translation() *= s;
-        Sophus::SE3f Tyc = Tyw * Twc;
-        Sophus::SE3f Tcy = Tyc.inverse();
-        pKF->SetPose(Tcy);
-        Eigen::Vector3f Vw = pKF->GetVelocity();
-        if (!bScaledVel)
-            pKF->SetVelocity(Ryw * Vw);
-        else
-            pKF->SetVelocity(Ryw * Vw * s);
-    }
-    for (set<MapPoint *>::iterator sit = mspMapPoints.begin(); sit != mspMapPoints.end(); sit++)
-    {
-        MapPoint *pMP = *sit;
-        pMP->SetWorldPos(s * Ryw * pMP->GetWorldPos() + tyw);
-        pMP->UpdateNormalAndDepth();
-    }
-    mnMapChange++;
-}
-
-void Map::SetInertialSensor()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mbIsInertial = true;
-}
-
-bool Map::IsInertial()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mbIsInertial;
-}
-
-void Map::SetIniertialBA1()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mbIMU_BA1 = true;
-}
-
-void Map::SetIniertialBA2()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mbIMU_BA2 = true;
-}
-
-bool Map::GetIniertialBA1()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mbIMU_BA1;
-}
-
-bool Map::GetIniertialBA2()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mbIMU_BA2;
-}
-
-void Map::ChangeId(long unsigned int nId)
-{
-    mnId = nId;
-}
-
-unsigned int Map::GetLowerKFID()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    if (mpKFlowerID)
-    {
-        return mpKFlowerID->mnId;
-    }
-    return 0;
-}
-
-int Map::GetMapChangeIndex()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mnMapChange;
-}
-
-void Map::IncreaseChangeIndex()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mnMapChange++;
-}
-
-int Map::GetLastMapChange()
-{
-    unique_lock<mutex> lock(mMutexMap);
-    return mnMapChangeNotified;
-}
-
-void Map::SetLastMapChange(int currentChangeId)
-{
-    unique_lock<mutex> lock(mMutexMap);
-    mnMapChangeNotified = currentChangeId;
-}
-
-void Map::PreSave(std::set<GeometricCamera *> &spCams)
-{
-    int nMPWithoutObs = 0;
-    for (MapPoint *pMPi : mspMapPoints)
-    {
-        if (!pMPi || pMPi->isBad())
-            continue;
-
-        if (pMPi->GetObservations().size() == 0)
+        for (set<KeyFrame *>::iterator sit = mspKeyFrames.begin(), send = mspKeyFrames.end(); sit != send; sit++)
         {
-            nMPWithoutObs++;
+            KeyFrame *pKF = *sit;
+            pKF->UpdateMap(static_cast<Map *>(NULL));
+            //        delete *sit;
         }
-        map<KeyFrame *, std::tuple<int, int>> mpObs = pMPi->GetObservations();
-        for (map<KeyFrame *, std::tuple<int, int>>::iterator it = mpObs.begin(), end = mpObs.end(); it != end; ++it)
+
+        mspMapPoints.clear();
+        mspKeyFrames.clear();
+        mnMaxKFid = mnInitKFid;
+        mbImuInitialized = false;
+        mvpReferenceMapPoints.clear();
+        mvpKeyFrameOrigins.clear();
+        mbIMU_BA1 = false;
+        mbIMU_BA2 = false;
+    }
+
+    bool Map::IsInUse()
+    {
+        return mIsInUse;
+    }
+
+    void Map::SetBad()
+    {
+        mbBad = true;
+    }
+
+    bool Map::IsBad()
+    {
+        return mbBad;
+    }
+
+    void Map::ApplyScaledRotation(const Sophus::SE3f &T, const float s, const bool bScaledVel)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+
+        // Body position (IMU) of first keyframe is fixed to (0,0,0)
+        Sophus::SE3f Tyw = T;
+        Eigen::Matrix3f Ryw = Tyw.rotationMatrix();
+        Eigen::Vector3f tyw = Tyw.translation();
+
+        for (set<KeyFrame *>::iterator sit = mspKeyFrames.begin(); sit != mspKeyFrames.end(); sit++)
         {
-            if (it->first->GetMap() != this || it->first->isBad())
+            KeyFrame *pKF = *sit;
+            Sophus::SE3f Twc = pKF->GetPoseInverse();
+            Twc.translation() *= s;
+            Sophus::SE3f Tyc = Tyw * Twc;
+            Sophus::SE3f Tcy = Tyc.inverse();
+            pKF->SetPose(Tcy);
+            Eigen::Vector3f Vw = pKF->GetVelocity();
+            if (!bScaledVel)
+                pKF->SetVelocity(Ryw * Vw);
+            else
+                pKF->SetVelocity(Ryw * Vw * s);
+        }
+        for (set<MapPoint *>::iterator sit = mspMapPoints.begin(); sit != mspMapPoints.end(); sit++)
+        {
+            MapPoint *pMP = *sit;
+            pMP->SetWorldPos(s * Ryw * pMP->GetWorldPos() + tyw);
+            pMP->UpdateNormalAndDepth();
+        }
+        mnMapChange++;
+    }
+
+    void Map::SetInertialSensor()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mbIsInertial = true;
+    }
+
+    bool Map::IsInertial()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mbIsInertial;
+    }
+
+    void Map::SetIniertialBA1()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mbIMU_BA1 = true;
+    }
+
+    void Map::SetIniertialBA2()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mbIMU_BA2 = true;
+    }
+
+    bool Map::GetIniertialBA1()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mbIMU_BA1;
+    }
+
+    bool Map::GetIniertialBA2()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mbIMU_BA2;
+    }
+
+    void Map::ChangeId(long unsigned int nId)
+    {
+        mnId = nId;
+    }
+
+    unsigned int Map::GetLowerKFID()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        if (mpKFlowerID)
+        {
+            return mpKFlowerID->mnId;
+        }
+        return 0;
+    }
+
+    int Map::GetMapChangeIndex()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mnMapChange;
+    }
+
+    void Map::IncreaseChangeIndex()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mnMapChange++;
+    }
+
+    int Map::GetLastMapChange()
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        return mnMapChangeNotified;
+    }
+
+    void Map::SetLastMapChange(int currentChangeId)
+    {
+        unique_lock<mutex> lock(mMutexMap);
+        mnMapChangeNotified = currentChangeId;
+    }
+
+    void Map::PreSave(std::set<GeometricCamera *> &spCams)
+    {
+        int nMPWithoutObs = 0;
+        for (MapPoint *pMPi : mspMapPoints)
+        {
+            if (!pMPi || pMPi->isBad())
+                continue;
+
+            if (pMPi->GetObservations().size() == 0)
             {
-                pMPi->EraseObservation(it->first);
+                nMPWithoutObs++;
+            }
+            map<KeyFrame *, std::tuple<int, int>> mpObs = pMPi->GetObservations();
+            for (map<KeyFrame *, std::tuple<int, int>>::iterator it = mpObs.begin(), end = mpObs.end(); it != end; ++it)
+            {
+                if (it->first->GetMap() != this || it->first->isBad())
+                {
+                    pMPi->EraseObservation(it->first);
+                }
             }
         }
+
+        // Saves the id of KF origins
+        mvBackupKeyFrameOriginsId.clear();
+        mvBackupKeyFrameOriginsId.reserve(mvpKeyFrameOrigins.size());
+        for (int i = 0, numEl = mvpKeyFrameOrigins.size(); i < numEl; ++i)
+        {
+            mvBackupKeyFrameOriginsId.push_back(mvpKeyFrameOrigins[i]->mnId);
+        }
+
+        // Backup of MapPoints
+        mvpBackupMapPoints.clear();
+        for (MapPoint *pMPi : mspMapPoints)
+        {
+            if (!pMPi || pMPi->isBad())
+                continue;
+
+            mvpBackupMapPoints.push_back(pMPi);
+            pMPi->PreSave(mspKeyFrames, mspMapPoints);
+        }
+
+        // Backup of KeyFrames
+        mvpBackupKeyFrames.clear();
+        for (KeyFrame *pKFi : mspKeyFrames)
+        {
+            if (!pKFi || pKFi->isBad())
+                continue;
+
+            mvpBackupKeyFrames.push_back(pKFi);
+            pKFi->PreSave(mspKeyFrames, mspMapPoints, spCams);
+        }
+
+        mnBackupKFinitialID = -1;
+        if (mpKFinitial)
+        {
+            mnBackupKFinitialID = mpKFinitial->mnId;
+        }
+
+        mnBackupKFlowerID = -1;
+        if (mpKFlowerID)
+        {
+            mnBackupKFlowerID = mpKFlowerID->mnId;
+        }
     }
 
-    // Saves the id of KF origins
-    mvBackupKeyFrameOriginsId.clear();
-    mvBackupKeyFrameOriginsId.reserve(mvpKeyFrameOrigins.size());
-    for (int i = 0, numEl = mvpKeyFrameOrigins.size(); i < numEl; ++i)
+    void Map::PostLoad(KeyFrameDatabase *pKFDB,
+                       ORBVocabulary *pORBVoc /*, map<long unsigned int, KeyFrame*>& mpKeyFrameId*/,
+                       map<unsigned int, GeometricCamera *> &mpCams)
     {
-        mvBackupKeyFrameOriginsId.push_back(mvpKeyFrameOrigins[i]->mnId);
+        std::copy(mvpBackupMapPoints.begin(), mvpBackupMapPoints.end(), std::inserter(mspMapPoints, mspMapPoints.begin()));
+        std::copy(mvpBackupKeyFrames.begin(), mvpBackupKeyFrames.end(), std::inserter(mspKeyFrames, mspKeyFrames.begin()));
+
+        map<long unsigned int, MapPoint *> mpMapPointId;
+        for (MapPoint *pMPi : mspMapPoints)
+        {
+            if (!pMPi || pMPi->isBad())
+                continue;
+
+            pMPi->UpdateMap(this);
+            mpMapPointId[pMPi->mnId] = pMPi;
+        }
+
+        map<long unsigned int, KeyFrame *> mpKeyFrameId;
+        for (KeyFrame *pKFi : mspKeyFrames)
+        {
+            if (!pKFi || pKFi->isBad())
+                continue;
+
+            pKFi->UpdateMap(this);
+            pKFi->SetORBVocabulary(pORBVoc);
+            pKFi->SetKeyFrameDatabase(pKFDB);
+            mpKeyFrameId[pKFi->mnId] = pKFi;
+        }
+
+        // References reconstruction between different instances
+        for (MapPoint *pMPi : mspMapPoints)
+        {
+            if (!pMPi || pMPi->isBad())
+                continue;
+
+            pMPi->PostLoad(mpKeyFrameId, mpMapPointId);
+        }
+
+        for (KeyFrame *pKFi : mspKeyFrames)
+        {
+            if (!pKFi || pKFi->isBad())
+                continue;
+
+            pKFi->PostLoad(mpKeyFrameId, mpMapPointId, mpCams);
+            pKFDB->add(pKFi);
+        }
+
+        if (mnBackupKFinitialID != -1)
+        {
+            mpKFinitial = mpKeyFrameId[mnBackupKFinitialID];
+        }
+
+        if (mnBackupKFlowerID != -1)
+        {
+            mpKFlowerID = mpKeyFrameId[mnBackupKFlowerID];
+        }
+
+        mvpKeyFrameOrigins.clear();
+        mvpKeyFrameOrigins.reserve(mvBackupKeyFrameOriginsId.size());
+        for (int i = 0; i < mvBackupKeyFrameOriginsId.size(); ++i)
+        {
+            mvpKeyFrameOrigins.push_back(mpKeyFrameId[mvBackupKeyFrameOriginsId[i]]);
+        }
+
+        mvpBackupMapPoints.clear();
     }
-
-    // Backup of MapPoints
-    mvpBackupMapPoints.clear();
-    for (MapPoint *pMPi : mspMapPoints)
-    {
-        if (!pMPi || pMPi->isBad())
-            continue;
-
-        mvpBackupMapPoints.push_back(pMPi);
-        pMPi->PreSave(mspKeyFrames, mspMapPoints);
-    }
-
-    // Backup of KeyFrames
-    mvpBackupKeyFrames.clear();
-    for (KeyFrame *pKFi : mspKeyFrames)
-    {
-        if (!pKFi || pKFi->isBad())
-            continue;
-
-        mvpBackupKeyFrames.push_back(pKFi);
-        pKFi->PreSave(mspKeyFrames, mspMapPoints, spCams);
-    }
-
-    mnBackupKFinitialID = -1;
-    if (mpKFinitial)
-    {
-        mnBackupKFinitialID = mpKFinitial->mnId;
-    }
-
-    mnBackupKFlowerID = -1;
-    if (mpKFlowerID)
-    {
-        mnBackupKFlowerID = mpKFlowerID->mnId;
-    }
-}
-
-void Map::PostLoad(KeyFrameDatabase *pKFDB,
-                   ORBVocabulary *pORBVoc /*, map<long unsigned int, KeyFrame*>& mpKeyFrameId*/,
-                   map<unsigned int, GeometricCamera *> &mpCams)
-{
-    std::copy(mvpBackupMapPoints.begin(), mvpBackupMapPoints.end(), std::inserter(mspMapPoints, mspMapPoints.begin()));
-    std::copy(mvpBackupKeyFrames.begin(), mvpBackupKeyFrames.end(), std::inserter(mspKeyFrames, mspKeyFrames.begin()));
-
-    map<long unsigned int, MapPoint *> mpMapPointId;
-    for (MapPoint *pMPi : mspMapPoints)
-    {
-        if (!pMPi || pMPi->isBad())
-            continue;
-
-        pMPi->UpdateMap(this);
-        mpMapPointId[pMPi->mnId] = pMPi;
-    }
-
-    map<long unsigned int, KeyFrame *> mpKeyFrameId;
-    for (KeyFrame *pKFi : mspKeyFrames)
-    {
-        if (!pKFi || pKFi->isBad())
-            continue;
-
-        pKFi->UpdateMap(this);
-        pKFi->SetORBVocabulary(pORBVoc);
-        pKFi->SetKeyFrameDatabase(pKFDB);
-        mpKeyFrameId[pKFi->mnId] = pKFi;
-    }
-
-    // References reconstruction between different instances
-    for (MapPoint *pMPi : mspMapPoints)
-    {
-        if (!pMPi || pMPi->isBad())
-            continue;
-
-        pMPi->PostLoad(mpKeyFrameId, mpMapPointId);
-    }
-
-    for (KeyFrame *pKFi : mspKeyFrames)
-    {
-        if (!pKFi || pKFi->isBad())
-            continue;
-
-        pKFi->PostLoad(mpKeyFrameId, mpMapPointId, mpCams);
-        pKFDB->add(pKFi);
-    }
-
-    if (mnBackupKFinitialID != -1)
-    {
-        mpKFinitial = mpKeyFrameId[mnBackupKFinitialID];
-    }
-
-    if (mnBackupKFlowerID != -1)
-    {
-        mpKFlowerID = mpKeyFrameId[mnBackupKFlowerID];
-    }
-
-    mvpKeyFrameOrigins.clear();
-    mvpKeyFrameOrigins.reserve(mvBackupKeyFrameOriginsId.size());
-    for (int i = 0; i < mvBackupKeyFrameOriginsId.size(); ++i)
-    {
-        mvpKeyFrameOrigins.push_back(mpKeyFrameId[mvBackupKeyFrameOriginsId[i]]);
-    }
-
-    mvpBackupMapPoints.clear();
-}
 
 } // namespace ORB_SLAM3

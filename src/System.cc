@@ -266,6 +266,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         cout << "This is the pthread id: " << storex << endl;
         viewer_thread_id = mptViewer->get_id();
         mpTracker->viewer_thread_id = viewer_thread_id;
+        mpLocalMapper->viewer_thread_id = viewer_thread_id;
 
         // This is where the viewer thread id is passed
         // viewer_thread_id = mptViewer->get_id();

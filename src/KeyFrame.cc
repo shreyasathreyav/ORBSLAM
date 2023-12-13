@@ -25,240 +25,322 @@
 namespace ORB_SLAM3
 {
 
-long unsigned int KeyFrame::nNextId = 0;
+    long unsigned int KeyFrame::nNextId = 0;
 
-KeyFrame::KeyFrame()
-    : mnFrameId(0), mTimeStamp(0), mnGridCols(FRAME_GRID_COLS), mnGridRows(FRAME_GRID_ROWS), mfGridElementWidthInv(0),
-      mfGridElementHeightInv(0), mnTrackReferenceForFrame(0), mnFuseTargetForKF(0), mnBALocalForKF(0),
-      mnBAFixedForKF(0), mnBALocalForMerge(0), mnLoopQuery(0), mnLoopWords(0), mnRelocQuery(0), mnRelocWords(0),
-      mnMergeQuery(0), mnMergeWords(0), mnBAGlobalForKF(0), fx(0), fy(0), cx(0), cy(0), invfx(0), invfy(0),
-      mnPlaceRecognitionQuery(0), mnPlaceRecognitionWords(0), mPlaceRecognitionScore(0), mbf(0), mb(0), mThDepth(0),
-      N(0), mvKeys(static_cast<vector<cv::KeyPoint>>(NULL)), mvKeysUn(static_cast<vector<cv::KeyPoint>>(NULL)),
-      mvuRight(static_cast<vector<float>>(NULL)), mvDepth(static_cast<vector<float>>(NULL)), mnScaleLevels(0),
-      mfScaleFactor(0), mfLogScaleFactor(0), mvScaleFactors(0), mvLevelSigma2(0), mvInvLevelSigma2(0), mnMinX(0),
-      mnMinY(0), mnMaxX(0), mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)),
-      mbFirstConnection(true), mpParent(NULL), mbNotErase(false), mbToBeErased(false), mbBad(false), mHalfBaseline(0),
-      mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0), NLeft(0), NRight(0), mnNumberOfOpt(0),
-      mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0),
-      mReferencecount_ockf(0), mReferencecount_mob(0), DeletionSafe(false), mReferencecount_msp_CAS(0),
-      mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
+    KeyFrame::KeyFrame()
+        : mnFrameId(0), mTimeStamp(0), mnGridCols(FRAME_GRID_COLS), mnGridRows(FRAME_GRID_ROWS), mfGridElementWidthInv(0),
+          mfGridElementHeightInv(0), mnTrackReferenceForFrame(0), mnFuseTargetForKF(0), mnBALocalForKF(0),
+          mnBAFixedForKF(0), mnBALocalForMerge(0), mnLoopQuery(0), mnLoopWords(0), mnRelocQuery(0), mnRelocWords(0),
+          mnMergeQuery(0), mnMergeWords(0), mnBAGlobalForKF(0), fx(0), fy(0), cx(0), cy(0), invfx(0), invfy(0),
+          mnPlaceRecognitionQuery(0), mnPlaceRecognitionWords(0), mPlaceRecognitionScore(0), mbf(0), mb(0), mThDepth(0),
+          N(0), mvKeys(static_cast<vector<cv::KeyPoint>>(NULL)), mvKeysUn(static_cast<vector<cv::KeyPoint>>(NULL)),
+          mvuRight(static_cast<vector<float>>(NULL)), mvDepth(static_cast<vector<float>>(NULL)), mnScaleLevels(0),
+          mfScaleFactor(0), mfLogScaleFactor(0), mvScaleFactors(0), mvLevelSigma2(0), mvInvLevelSigma2(0), mnMinX(0),
+          mnMinY(0), mnMaxX(0), mnMaxY(0), mPrevKF(static_cast<KeyFrame *>(NULL)), mNextKF(static_cast<KeyFrame *>(NULL)),
+          mbFirstConnection(true), mpParent(NULL), mbNotErase(false), mbToBeErased(false), mbBad(false), mHalfBaseline(0),
+          mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0), NLeft(0), NRight(0), mnNumberOfOpt(0),
+          mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0),
+          mReferencecount_ockf(0), mReferencecount_mob(0), DeletionSafe(false), mReferencecount_msp_CAS(0),
+          mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
 
-{
-}
-
-KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB)
-    : bImu(pMap->isImuInitialized()), mnFrameId(F.mnId), mTimeStamp(F.mTimeStamp), mnGridCols(FRAME_GRID_COLS),
-      mnGridRows(FRAME_GRID_ROWS), mfGridElementWidthInv(F.mfGridElementWidthInv),
-      mfGridElementHeightInv(F.mfGridElementHeightInv), mnTrackReferenceForFrame(0), mnFuseTargetForKF(0),
-      mnBALocalForKF(0), mnBAFixedForKF(0), mnBALocalForMerge(0), mnLoopQuery(0), mnLoopWords(0), mnRelocQuery(0),
-      mnRelocWords(0), mnBAGlobalForKF(0), mnPlaceRecognitionQuery(0), mnPlaceRecognitionWords(0),
-      mPlaceRecognitionScore(0), fx(F.fx), fy(F.fy), cx(F.cx), cy(F.cy), invfx(F.invfx), invfy(F.invfy), mbf(F.mbf),
-      mb(F.mb), mThDepth(F.mThDepth), N(F.N), mvKeys(F.mvKeys), mvKeysUn(F.mvKeysUn), mvuRight(F.mvuRight),
-      mvDepth(F.mvDepth), mDescriptors(F.mDescriptors.clone()), mBowVec(F.mBowVec), mFeatVec(F.mFeatVec),
-      mnScaleLevels(F.mnScaleLevels), mfScaleFactor(F.mfScaleFactor), mfLogScaleFactor(F.mfLogScaleFactor),
-      mvScaleFactors(F.mvScaleFactors), mvLevelSigma2(F.mvLevelSigma2), mvInvLevelSigma2(F.mvInvLevelSigma2),
-      mnMinX(F.mnMinX), mnMinY(F.mnMinY), mnMaxX(F.mnMaxX), mnMaxY(F.mnMaxY), mK_(F.mK_), mPrevKF(NULL), mNextKF(NULL),
-      mpImuPreintegrated(F.mpImuPreintegrated), mImuCalib(F.mImuCalib), mvpMapPoints(F.mvpMapPoints),
-      mpKeyFrameDB(pKFDB), mpORBvocabulary(F.mpORBvocabulary), mbFirstConnection(true), mpParent(NULL),
-      mDistCoef(F.mDistCoef), mbNotErase(false), mnDataset(F.mnDataset), mbToBeErased(false), mbBad(false),
-      mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile),
-      mnMergeCorrectedForKF(0), mpCamera(F.mpCamera), mpCamera2(F.mpCamera2), mvLeftToRightMatch(F.mvLeftToRightMatch),
-      mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()), mvKeysRight(F.mvKeysRight),
-      NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false),
-      mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0),
-      mReferencecount_mob(0), DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0),
-      mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
-{
-    mnId = nNextId++;
-
-    mGrid.resize(mnGridCols);
-    if (F.Nleft != -1)
-        mGridRight.resize(mnGridCols);
-    for (int i = 0; i < mnGridCols; i++)
     {
-        mGrid[i].resize(mnGridRows);
+    }
+
+    KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB)
+        : bImu(pMap->isImuInitialized()), mnFrameId(F.mnId), mTimeStamp(F.mTimeStamp), mnGridCols(FRAME_GRID_COLS),
+          mnGridRows(FRAME_GRID_ROWS), mfGridElementWidthInv(F.mfGridElementWidthInv),
+          mfGridElementHeightInv(F.mfGridElementHeightInv), mnTrackReferenceForFrame(0), mnFuseTargetForKF(0),
+          mnBALocalForKF(0), mnBAFixedForKF(0), mnBALocalForMerge(0), mnLoopQuery(0), mnLoopWords(0), mnRelocQuery(0),
+          mnRelocWords(0), mnBAGlobalForKF(0), mnPlaceRecognitionQuery(0), mnPlaceRecognitionWords(0),
+          mPlaceRecognitionScore(0), fx(F.fx), fy(F.fy), cx(F.cx), cy(F.cy), invfx(F.invfx), invfy(F.invfy), mbf(F.mbf),
+          mb(F.mb), mThDepth(F.mThDepth), N(F.N), mvKeys(F.mvKeys), mvKeysUn(F.mvKeysUn), mvuRight(F.mvuRight),
+          mvDepth(F.mvDepth), mDescriptors(F.mDescriptors.clone()), mBowVec(F.mBowVec), mFeatVec(F.mFeatVec),
+          mnScaleLevels(F.mnScaleLevels), mfScaleFactor(F.mfScaleFactor), mfLogScaleFactor(F.mfLogScaleFactor),
+          mvScaleFactors(F.mvScaleFactors), mvLevelSigma2(F.mvLevelSigma2), mvInvLevelSigma2(F.mvInvLevelSigma2),
+          mnMinX(F.mnMinX), mnMinY(F.mnMinY), mnMaxX(F.mnMaxX), mnMaxY(F.mnMaxY), mK_(F.mK_), mPrevKF(NULL), mNextKF(NULL),
+          mpImuPreintegrated(F.mpImuPreintegrated), mImuCalib(F.mImuCalib), mvpMapPoints(F.mvpMapPoints),
+          mpKeyFrameDB(pKFDB), mpORBvocabulary(F.mpORBvocabulary), mbFirstConnection(true), mpParent(NULL),
+          mDistCoef(F.mDistCoef), mbNotErase(false), mnDataset(F.mnDataset), mbToBeErased(false), mbBad(false),
+          mHalfBaseline(F.mb / 2), mpMap(pMap), mbCurrentPlaceRecognition(false), mNameFile(F.mNameFile),
+          mnMergeCorrectedForKF(0), mpCamera(F.mpCamera), mpCamera2(F.mpCamera2), mvLeftToRightMatch(F.mvLeftToRightMatch),
+          mvRightToLeftMatch(F.mvRightToLeftMatch), mTlr(F.GetRelativePoseTlr()), mvKeysRight(F.mvKeysRight),
+          NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false),
+          mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0),
+          mReferencecount_mob(0), DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0),
+          mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
+    {
+        mnId = nNextId++;
+
+        mGrid.resize(mnGridCols);
         if (F.Nleft != -1)
-            mGridRight[i].resize(mnGridRows);
-        for (int j = 0; j < mnGridRows; j++)
+            mGridRight.resize(mnGridCols);
+        for (int i = 0; i < mnGridCols; i++)
         {
-            mGrid[i][j] = F.mGrid[i][j];
+            mGrid[i].resize(mnGridRows);
             if (F.Nleft != -1)
+                mGridRight[i].resize(mnGridRows);
+            for (int j = 0; j < mnGridRows; j++)
             {
-                mGridRight[i][j] = F.mGridRight[i][j];
+                mGrid[i][j] = F.mGrid[i][j];
+                if (F.Nleft != -1)
+                {
+                    mGridRight[i][j] = F.mGridRight[i][j];
+                }
+            }
+        }
+
+        if (!F.HasVelocity())
+        {
+            mVw.setZero();
+            mbHasVelocity = false;
+        }
+        else
+        {
+            mVw = F.GetVelocity();
+            mbHasVelocity = true;
+        }
+
+        mImuBias = F.mImuBias;
+        SetPose(F.GetPose());
+
+        mnOriginMapId = pMap->GetId();
+
+        for (auto it : mvpMapPoints)
+        {
+
+            if (it != NULL)
+            {
+#ifdef CASRF
+                {
+                    int old_value{it->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(it->mReferencecount_canonicalmp_CAS), &old_value, new_value))
+                    {
+                        new_value = old_value + 1;
+                    }
+                }
+#endif
+#ifdef RF
+                {
+                    unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+                    it->mReferencecount_canonicalmp++;
+                }
+                {
+                    if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
+                    {
+
+                        it->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+
+                        cout << "This is not good for mappoints" << endl;
+                    }
+                }
+#endif
             }
         }
     }
 
-    if (!F.HasVelocity())
+    void KeyFrame::ComputeBoW()
     {
-        mVw.setZero();
-        mbHasVelocity = false;
+        if (mBowVec.empty() || mFeatVec.empty())
+        {
+            vector<cv::Mat> vCurrentDesc = Converter::toDescriptorVector(mDescriptors);
+            // Feature vector associate features with nodes in the 4th level (from leaves up)
+            // We assume the vocabulary tree has 6 levels, change the 4 otherwise
+            mpORBvocabulary->transform(vCurrentDesc, mBowVec, mFeatVec, 4);
+        }
     }
-    else
+
+    void KeyFrame::SetPose(const Sophus::SE3f &Tcw)
     {
-        mVw = F.GetVelocity();
+        unique_lock<mutex> lock(mMutexPose);
+
+        mTcw = Tcw;
+        mRcw = mTcw.rotationMatrix();
+        mTwc = mTcw.inverse();
+        mRwc = mTwc.rotationMatrix();
+
+        if (mImuCalib.mbIsSet) // TODO Use a flag instead of the OpenCV matrix
+        {
+            mOwb = mRwc * mImuCalib.mTcb.translation() + mTwc.translation();
+        }
+    }
+
+    void KeyFrame::SetVelocity(const Eigen::Vector3f &Vw)
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        mVw = Vw;
         mbHasVelocity = true;
     }
 
-    mImuBias = F.mImuBias;
-    SetPose(F.GetPose());
-
-    mnOriginMapId = pMap->GetId();
-
-    for (auto it : mvpMapPoints)
+    Sophus::SE3f KeyFrame::GetPose()
     {
+        unique_lock<mutex> lock(mMutexPose);
+        return mTcw;
+    }
 
-        if (it != NULL)
+    Sophus::SE3f KeyFrame::GetPoseInverse()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mTwc;
+    }
+
+    Eigen::Vector3f KeyFrame::GetCameraCenter()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mTwc.translation();
+    }
+
+    Eigen::Vector3f KeyFrame::GetImuPosition()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mOwb;
+    }
+
+    Eigen::Matrix3f KeyFrame::GetImuRotation()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return (mTwc * mImuCalib.mTcb).rotationMatrix();
+    }
+
+    Sophus::SE3f KeyFrame::GetImuPose()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mTwc * mImuCalib.mTcb;
+    }
+
+    Eigen::Matrix3f KeyFrame::GetRotation()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mRcw;
+    }
+
+    Eigen::Vector3f KeyFrame::GetTranslation()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mTcw.translation();
+    }
+
+    Eigen::Vector3f KeyFrame::GetVelocity()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mVw;
+    }
+
+    bool KeyFrame::isVelocitySet()
+    {
+        unique_lock<mutex> lock(mMutexPose);
+        return mbHasVelocity;
+    }
+
+    void KeyFrame::AddConnection(KeyFrame *pKF, const int &weight)
+    {
         {
-#ifdef CASRF
+            unique_lock<mutex> lock(mMutexConnections);
+            if (!mConnectedKeyFrameWeights.count(pKF))
             {
-                int old_value{it->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
-                while (!atomic_compare_exchange_strong(&(it->mReferencecount_canonicalmp_CAS), &old_value, new_value))
+                // canonical #1
+#ifdef CASRF
                 {
-                    new_value = old_value + 1;
+                    int old_value{pKF->mReferencecount_canonical_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
+                    {
+                        new_value = old_value + 1;
+                    }
+
+                    if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                    {
+
+                        pKF->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    else
+                    {
+
+                        cout << "This is not good news" << endl;
+                    }
                 }
-            }
 #endif
 #ifdef RF
-            {
-                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-                it->mReferencecount_canonicalmp++;
-            }
+                // {
+                //     unique_lock<mutex> lock(pKF->mMutexreferencecount);
+                //     pKF->mReferencecount_canonical++;
+                // }
+                {
+                    // if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                    {
+
+                        pKF->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
+                }
+
 #endif
+                mConnectedKeyFrameWeights[pKF] = weight;
+            }
+
+            else if (mConnectedKeyFrameWeights[pKF] != weight)
+            {
+
+                mConnectedKeyFrameWeights[pKF] = weight;
+            }
+            else
+                return;
         }
+
+        UpdateBestCovisibles();
     }
-}
 
-void KeyFrame::ComputeBoW()
-{
-    if (mBowVec.empty() || mFeatVec.empty())
-    {
-        vector<cv::Mat> vCurrentDesc = Converter::toDescriptorVector(mDescriptors);
-        // Feature vector associate features with nodes in the 4th level (from leaves up)
-        // We assume the vocabulary tree has 6 levels, change the 4 otherwise
-        mpORBvocabulary->transform(vCurrentDesc, mBowVec, mFeatVec, 4);
-    }
-}
-
-void KeyFrame::SetPose(const Sophus::SE3f &Tcw)
-{
-    unique_lock<mutex> lock(mMutexPose);
-
-    mTcw = Tcw;
-    mRcw = mTcw.rotationMatrix();
-    mTwc = mTcw.inverse();
-    mRwc = mTwc.rotationMatrix();
-
-    if (mImuCalib.mbIsSet) // TODO Use a flag instead of the OpenCV matrix
-    {
-        mOwb = mRwc * mImuCalib.mTcb.translation() + mTwc.translation();
-    }
-}
-
-void KeyFrame::SetVelocity(const Eigen::Vector3f &Vw)
-{
-    unique_lock<mutex> lock(mMutexPose);
-    mVw = Vw;
-    mbHasVelocity = true;
-}
-
-Sophus::SE3f KeyFrame::GetPose()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mTcw;
-}
-
-Sophus::SE3f KeyFrame::GetPoseInverse()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mTwc;
-}
-
-Eigen::Vector3f KeyFrame::GetCameraCenter()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mTwc.translation();
-}
-
-Eigen::Vector3f KeyFrame::GetImuPosition()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mOwb;
-}
-
-Eigen::Matrix3f KeyFrame::GetImuRotation()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return (mTwc * mImuCalib.mTcb).rotationMatrix();
-}
-
-Sophus::SE3f KeyFrame::GetImuPose()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mTwc * mImuCalib.mTcb;
-}
-
-Eigen::Matrix3f KeyFrame::GetRotation()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mRcw;
-}
-
-Eigen::Vector3f KeyFrame::GetTranslation()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mTcw.translation();
-}
-
-Eigen::Vector3f KeyFrame::GetVelocity()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mVw;
-}
-
-bool KeyFrame::isVelocitySet()
-{
-    unique_lock<mutex> lock(mMutexPose);
-    return mbHasVelocity;
-}
-
-void KeyFrame::AddConnection(KeyFrame *pKF, const int &weight)
-{
+    void KeyFrame::UpdateBestCovisibles()
     {
         unique_lock<mutex> lock(mMutexConnections);
-        if (!mConnectedKeyFrameWeights.count(pKF))
+        vector<pair<int, KeyFrame *>> vPairs;
+        vPairs.reserve(mConnectedKeyFrameWeights.size());
+        for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend = mConnectedKeyFrameWeights.end();
+             mit != mend; mit++)
+            vPairs.push_back(make_pair(mit->second, mit->first));
+
+        sort(vPairs.begin(), vPairs.end());
+        list<KeyFrame *> lKFs;
+        list<int> lWs;
+        for (size_t i = 0, iend = vPairs.size(); i < iend; i++)
         {
-            // canonical #1
+            if (!vPairs[i].second->isBad())
+            {
+
+                lKFs.push_front(vPairs[i].second);
+                lWs.push_front(vPairs[i].first);
+            }
+        }
+
+        // iterate through mvpockf and decrement
+
+        for (auto i : mvpOrderedConnectedKeyFrames)
+        {
 #ifdef CASRF
             {
-                int old_value{pKF->mReferencecount_canonical_CAS}, new_value{old_value + 1};
-                while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
+                int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
                 {
-                    new_value = old_value + 1;
-                }
-
-                if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
-                {
-
-                    pKF->thread_id_collection_map[this_thread::get_id()]++;
-                }
-                else
-                {
-
-                    cout << "This is not good news" << endl;
+                    new_value = old_value - 1;
                 }
             }
 #endif
 #ifdef RF
             // {
-            //     unique_lock<mutex> lock(pKF->mMutexreferencecount);
-            //     pKF->mReferencecount_canonical++;
+            //
+            //     unique_lock<mutex> lock(i->mMutexreferencecount);
+            //     i->mReferencecount_ockf--;
+            //     i->mReferencecount--;
             // }
             {
-                // if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
-                    pKF->thread_id_collection_map[this_thread::get_id()]++;
+                    i->thread_id_collection_map[this_thread::get_id()]--;
                 }
                 // else
                 // {
@@ -267,221 +349,57 @@ void KeyFrame::AddConnection(KeyFrame *pKF, const int &weight)
             }
 
 #endif
-            mConnectedKeyFrameWeights[pKF] = weight;
         }
+        mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
 
-        else if (mConnectedKeyFrameWeights[pKF] != weight)
+        for (auto i : mvpOrderedConnectedKeyFrames)
         {
-
-            mConnectedKeyFrameWeights[pKF] = weight;
-        }
-        else
-            return;
-    }
-
-    UpdateBestCovisibles();
-}
-
-void KeyFrame::UpdateBestCovisibles()
-{
-    unique_lock<mutex> lock(mMutexConnections);
-    vector<pair<int, KeyFrame *>> vPairs;
-    vPairs.reserve(mConnectedKeyFrameWeights.size());
-    for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend = mConnectedKeyFrameWeights.end();
-         mit != mend; mit++)
-        vPairs.push_back(make_pair(mit->second, mit->first));
-
-    sort(vPairs.begin(), vPairs.end());
-    list<KeyFrame *> lKFs;
-    list<int> lWs;
-    for (size_t i = 0, iend = vPairs.size(); i < iend; i++)
-    {
-        if (!vPairs[i].second->isBad())
-        {
-
-            lKFs.push_front(vPairs[i].second);
-            lWs.push_front(vPairs[i].first);
-        }
-    }
-
-    // iterate through mvpockf and decrement
-
-    for (auto i : mvpOrderedConnectedKeyFrames)
-    {
 #ifdef CASRF
-        {
-            int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value - 1};
-            while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
             {
-                new_value = old_value - 1;
+                int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
+                {
+                    new_value = old_value + 1;
+                }
             }
-        }
 #endif
 #ifdef RF
-        // {
-        //
-        //     unique_lock<mutex> lock(i->mMutexreferencecount);
-        //     i->mReferencecount_ockf--;
-        //     i->mReferencecount--;
-        // }
-        {
-            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
-            {
-
-                i->thread_id_collection_map[this_thread::get_id()]--;
-            }
-            // else
             // {
-            //     cout << "This is not good news" << endl;
+            //     unique_lock<mutex> lock(i->mMutexreferencecount);
+            //     i->mReferencecount_ockf++;
+            //     i->mReferencecount++;
             // }
-        }
-
-#endif
-    }
-    mvpOrderedConnectedKeyFrames = vector<KeyFrame *>(lKFs.begin(), lKFs.end());
-
-    for (auto i : mvpOrderedConnectedKeyFrames)
-    {
-#ifdef CASRF
-        {
-            int old_value{i->mReferencecount_ockf_CAS}, new_value{old_value + 1};
-            while (!atomic_compare_exchange_strong(&(i->mReferencecount_ockf_CAS), &old_value, new_value))
             {
-                new_value = old_value + 1;
-            }
-        }
-#endif
-#ifdef RF
-        // {
-        //     unique_lock<mutex> lock(i->mMutexreferencecount);
-        //     i->mReferencecount_ockf++;
-        //     i->mReferencecount++;
-        // }
-        {
-            // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
-            {
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                {
 
-                i->thread_id_collection_map[this_thread::get_id()]++;
+                    i->thread_id_collection_map[this_thread::get_id()]++;
+                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
             }
-            // else
-            // {
-            //     cout << "This is not good news" << endl;
-            // }
-        }
 
 #endif
+        }
+
+        mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
     }
 
-    mvOrderedWeights = vector<int>(lWs.begin(), lWs.end());
-}
-
-set<KeyFrame *> KeyFrame::GetConnectedKeyFrames()
-{
-    unique_lock<mutex> lock(mMutexConnections);
-    set<KeyFrame *> s;
-    for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(); mit != mConnectedKeyFrameWeights.end();
-         mit++)
-        s.insert(mit->first);
-    return s;
-}
-
-vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
-{
-    unique_lock<mutex> lock(mMutexConnections);
-    for (auto itr : mvpOrderedConnectedKeyFrames)
+    set<KeyFrame *> KeyFrame::GetConnectedKeyFrames()
     {
-#ifdef CASRF
-        {
-            int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
-            while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
-            {
-                new_value = old_value + 1;
-            }
-        }
-#endif
-#ifdef RF
-        //             {
-        //
-        //                 unique_lock<mutex> lock(itr->mMutexreferencecount);
-        //                 itr->mReferencecount++;
-        //                 itr->mReferencecount_ockf++;
-        //             }
-        {
-            // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
-            {
-
-                itr->thread_id_collection_map[this_thread::get_id()]++;
-            }
-            // else
-            // {
-            //     cout << "This is not good news" << endl;
-            // }
-        }
-#endif
+        unique_lock<mutex> lock(mMutexConnections);
+        set<KeyFrame *> s;
+        for (map<KeyFrame *, int>::iterator mit = mConnectedKeyFrameWeights.begin(); mit != mConnectedKeyFrameWeights.end();
+             mit++)
+            s.insert(mit->first);
+        return s;
     }
-    return mvpOrderedConnectedKeyFrames;
-}
-// vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)
-// {
-//     // unique_lock<mutex> lock(mMutexConnections);
-//     // for (auto itr : mvpOrderedConnectedKeyFrames)
-//     // {
-//     //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-//     //     itr->mReferencecount++;
-//     //     itr->mReferencecount_ockf++;
-//     // }
-//     // for (auto itr : mvpOrderedConnectedKeyFrames)
-//     // {
-//     //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-//     //     itr->mReferencecount_canonical++;
-//     //     itr->mReferencecount_container++;
-//     // }
-//     return mvpOrderedConnectedKeyFrames;
-// }
 
-// vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N, bool flag)
-// {
-//     unique_lock<mutex> lock(mMutexConnections);
-//     if ((int)mvpOrderedConnectedKeyFrames.size() < N)
-//     {
-//         // for (auto itr : mvpOrderedConnectedKeyFrames)
-//         // {
-//         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-//         //     itr->mReferencecount++;
-//         //     itr->mReferencecount_ockf++;
-//         // }
-//         // for (auto itr : mvpOrderedConnectedKeyFrames)
-//         // {
-//         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-//         //     itr->mReferencecount_canonical++;
-//         //     itr->mReferencecount_container++;
-//         // }
-//         return mvpOrderedConnectedKeyFrames;
-//     }
-//     else
-//     {
-//         vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
-//         // for (auto itr : arr)
-//         // {
-//         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-//         //     itr->mReferencecount++;
-//         //     itr->mReferencecount_ockf++;
-//         // }
-//         // for (auto itr : arr)
-//         // {
-//         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-//         //     itr->mReferencecount_canonical++;
-//         //     itr->mReferencecount_container++;
-//         // }
-//         return arr;
-//         // return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
-//     }
-// }
-vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N)
-{
-    unique_lock<mutex> lock(mMutexConnections);
-    if ((int)mvpOrderedConnectedKeyFrames.size() < N)
+    vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames()
     {
+        unique_lock<mutex> lock(mMutexConnections);
         for (auto itr : mvpOrderedConnectedKeyFrames)
         {
 #ifdef CASRF
@@ -494,12 +412,12 @@ vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N)
             }
 #endif
 #ifdef RF
-            // {
+            //             {
             //
-            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //     itr->mReferencecount++;
-            //     itr->mReferencecount_ockf++;
-            // }
+            //                 unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //                 itr->mReferencecount++;
+            //                 itr->mReferencecount_ockf++;
+            //             }
             {
                 // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
                 {
@@ -515,247 +433,377 @@ vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N)
         }
         return mvpOrderedConnectedKeyFrames;
     }
-    else
+    // vector<KeyFrame *> KeyFrame::GetVectorCovisibleKeyFrames(bool flag)
+    // {
+    //     // unique_lock<mutex> lock(mMutexConnections);
+    //     // for (auto itr : mvpOrderedConnectedKeyFrames)
+    //     // {
+    //     //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //     //     itr->mReferencecount++;
+    //     //     itr->mReferencecount_ockf++;
+    //     // }
+    //     // for (auto itr : mvpOrderedConnectedKeyFrames)
+    //     // {
+    //     //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //     //     itr->mReferencecount_canonical++;
+    //     //     itr->mReferencecount_container++;
+    //     // }
+    //     return mvpOrderedConnectedKeyFrames;
+    // }
+
+    // vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N, bool flag)
+    // {
+    //     unique_lock<mutex> lock(mMutexConnections);
+    //     if ((int)mvpOrderedConnectedKeyFrames.size() < N)
+    //     {
+    //         // for (auto itr : mvpOrderedConnectedKeyFrames)
+    //         // {
+    //         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //         //     itr->mReferencecount++;
+    //         //     itr->mReferencecount_ockf++;
+    //         // }
+    //         // for (auto itr : mvpOrderedConnectedKeyFrames)
+    //         // {
+    //         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //         //     itr->mReferencecount_canonical++;
+    //         //     itr->mReferencecount_container++;
+    //         // }
+    //         return mvpOrderedConnectedKeyFrames;
+    //     }
+    //     else
+    //     {
+    //         vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
+    //         // for (auto itr : arr)
+    //         // {
+    //         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //         //     itr->mReferencecount++;
+    //         //     itr->mReferencecount_ockf++;
+    //         // }
+    //         // for (auto itr : arr)
+    //         // {
+    //         //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //         //     itr->mReferencecount_canonical++;
+    //         //     itr->mReferencecount_container++;
+    //         // }
+    //         return arr;
+    //         // return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
+    //     }
+    // }
+    vector<KeyFrame *> KeyFrame::GetBestCovisibilityKeyFrames(const int &N)
     {
-        vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
-        for (auto itr : arr)
+        unique_lock<mutex> lock(mMutexConnections);
+        if ((int)mvpOrderedConnectedKeyFrames.size() < N)
         {
-#ifdef CASRF
+            for (auto itr : mvpOrderedConnectedKeyFrames)
             {
-                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
-                while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+#ifdef CASRF
                 {
-                    new_value = old_value + 1;
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+                    {
+                        new_value = old_value + 1;
+                    }
                 }
-            }
 #endif
 #ifdef RF
-            // {
-            //
-            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //     itr->mReferencecount++;
-            //     itr->mReferencecount_ockf++;
-            // }
-            {
-                // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
-                {
-
-                    itr->thread_id_collection_map[this_thread::get_id()]++;
-                }
-                // else
                 // {
-                //     cout << "This is not good news" << endl;
-                // }
-            }
-#endif
-        }
-        return arr;
-    }
-}
-
-vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w)
-{
-    unique_lock<mutex> lock(mMutexConnections);
-
-    if (mvpOrderedConnectedKeyFrames.empty())
-    {
-        return vector<KeyFrame *>();
-    }
-
-    vector<int>::iterator it = upper_bound(mvOrderedWeights.begin(), mvOrderedWeights.end(), w, KeyFrame::weightComp);
-
-    if (it == mvOrderedWeights.end() && mvOrderedWeights.back() < w)
-    {
-        return vector<KeyFrame *>();
-    }
-    else
-    {
-        int n = it - mvOrderedWeights.begin();
-        vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
-        for (auto itr : arr)
-        {
-#ifdef CASRF
-            {
-                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
-                while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
-                {
-                    new_value = old_value + 1;
-                }
-            }
-#endif
-#ifdef RF
-            // {
-            //
-            //      unique_lock<mutex> lock(itr->mMutexreferencecount);
-            //      itr->mReferencecount++;
-            //      itr->mReferencecount_ockf++;
-            //  }
-            {
-                // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
-                {
-
-                    itr->thread_id_collection_map[this_thread::get_id()]++;
-                }
-                // else
-                // {
-                //     // Looks like this is the one
-                //     cout << "This one is the culprit" << endl;
-                //     cout << this_thread::get_id() << endl;
                 //
+                //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+                //     itr->mReferencecount++;
+                //     itr->mReferencecount_ockf++;
+                // }
+                {
+                    // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
+                }
+#endif
+            }
+            return mvpOrderedConnectedKeyFrames;
+        }
+        else
+        {
+            vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + N);
+            for (auto itr : arr)
+            {
+#ifdef CASRF
+                {
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+                    {
+                        new_value = old_value + 1;
+                    }
+                }
+#endif
+#ifdef RF
+                // {
+                //
+                //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+                //     itr->mReferencecount++;
+                //     itr->mReferencecount_ockf++;
+                // }
+                {
+                    // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    // else
+                    // {
+                    //     cout << "This is not good news" << endl;
+                    // }
+                }
+#endif
+            }
+            return arr;
+        }
+    }
+
+    vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w)
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+
+        if (mvpOrderedConnectedKeyFrames.empty())
+        {
+            return vector<KeyFrame *>();
+        }
+
+        vector<int>::iterator it = upper_bound(mvOrderedWeights.begin(), mvOrderedWeights.end(), w, KeyFrame::weightComp);
+
+        if (it == mvOrderedWeights.end() && mvOrderedWeights.back() < w)
+        {
+            return vector<KeyFrame *>();
+        }
+        else
+        {
+            int n = it - mvOrderedWeights.begin();
+            vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
+            for (auto itr : arr)
+            {
+#ifdef CASRF
+                {
+                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+                    {
+                        new_value = old_value + 1;
+                    }
+                }
+#endif
+#ifdef RF
+                // {
+                //
+                //      unique_lock<mutex> lock(itr->mMutexreferencecount);
+                //      itr->mReferencecount++;
+                //      itr->mReferencecount_ockf++;
+                //  }
+                {
+                    // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                    {
+
+                        itr->thread_id_collection_map[this_thread::get_id()]++;
+                    }
+                    // else
+                    // {
+                    //     // Looks like this is the one
+                    //     cout << "This one is the culprit" << endl;
+                    //     cout << this_thread::get_id() << endl;
+                    //
+                    //     cout << "This is not good news" << endl;
+                    // }
+                }
+#endif
+                // itr->mReferencecount_canonical++;
+            }
+            return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
+        }
+    }
+    // vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w, bool flag)
+    // {
+    //     unique_lock<mutex> lock(mMutexConnections);
+
+    //     if (mvpOrderedConnectedKeyFrames.empty())
+    //     {
+    //         return vector<KeyFrame *>();
+    //     }
+
+    //     vector<int>::iterator it = upper_bound(mvOrderedWeights.begin(), mvOrderedWeights.end(), w,
+    //     KeyFrame::weightComp);
+
+    //     if (it == mvOrderedWeights.end() && mvOrderedWeights.back() < w)
+    //     {
+    //         return vector<KeyFrame *>();
+    //     }
+    //     else
+    //     {
+    //         int n = it - mvOrderedWeights.begin();
+    //         vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
+    //         for (auto itr : arr)
+    //         {
+    //             unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //             // itr->mReferencecount++;
+    //             // itr->mReferencecount_ockf++;
+    //             itr->mReferencecount_canonical++;
+    //         }
+    //         return arr;
+    //     }
+    // }
+
+    int KeyFrame::GetWeight(KeyFrame *pKF)
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+        if (mConnectedKeyFrameWeights.count(pKF))
+            return mConnectedKeyFrameWeights[pKF];
+        else
+            return 0;
+    }
+
+    int KeyFrame::GetNumberMPs()
+    {
+        unique_lock<mutex> lock(mMutexFeatures);
+        int numberMPs = 0;
+        for (size_t i = 0, iend = mvpMapPoints.size(); i < iend; i++)
+        {
+            if (!mvpMapPoints[i])
+                continue;
+            numberMPs++;
+        }
+        return numberMPs;
+    }
+
+    void KeyFrame::AddMapPoint(MapPoint *pMP, const size_t &idx)
+    {
+        unique_lock<mutex> lock(mMutexFeatures);
+        if (mvpMapPoints[idx] != NULL)
+        {
+#ifdef CASRF
+            {
+                int old_value{this->mReferencecount_mob_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(this->mReferencecount_mob_CAS), &old_value, new_value))
+                {
+                    new_value = old_value - 1;
+                }
+            }
+#endif
+#ifdef RF
+            // {
+            //     unique_lock<mutex> lock(this->mMutexreferencecount);
+            //     this->mReferencecount_mob--;
+            //     this->mReferencecount--;
+            // }
+            {
+                // if (this->thread_id_collection_map.find(this_thread::get_id()) != this->thread_id_collection_map.end())
+                {
+
+                    this->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                // else
+                // {
                 //     cout << "This is not good news" << endl;
                 // }
             }
-#endif
-            // itr->mReferencecount_canonical++;
-        }
-        return vector<KeyFrame *>(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
-    }
-}
-// vector<KeyFrame *> KeyFrame::GetCovisiblesByWeight(const int &w, bool flag)
-// {
-//     unique_lock<mutex> lock(mMutexConnections);
-
-//     if (mvpOrderedConnectedKeyFrames.empty())
-//     {
-//         return vector<KeyFrame *>();
-//     }
-
-//     vector<int>::iterator it = upper_bound(mvOrderedWeights.begin(), mvOrderedWeights.end(), w,
-//     KeyFrame::weightComp);
-
-//     if (it == mvOrderedWeights.end() && mvOrderedWeights.back() < w)
-//     {
-//         return vector<KeyFrame *>();
-//     }
-//     else
-//     {
-//         int n = it - mvOrderedWeights.begin();
-//         vector<KeyFrame *> arr(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.begin() + n);
-//         for (auto itr : arr)
-//         {
-//             unique_lock<mutex> lock(itr->mMutexreferencecount);
-//             // itr->mReferencecount++;
-//             // itr->mReferencecount_ockf++;
-//             itr->mReferencecount_canonical++;
-//         }
-//         return arr;
-//     }
-// }
-
-int KeyFrame::GetWeight(KeyFrame *pKF)
-{
-    unique_lock<mutex> lock(mMutexConnections);
-    if (mConnectedKeyFrameWeights.count(pKF))
-        return mConnectedKeyFrameWeights[pKF];
-    else
-        return 0;
-}
-
-int KeyFrame::GetNumberMPs()
-{
-    unique_lock<mutex> lock(mMutexFeatures);
-    int numberMPs = 0;
-    for (size_t i = 0, iend = mvpMapPoints.size(); i < iend; i++)
-    {
-        if (!mvpMapPoints[i])
-            continue;
-        numberMPs++;
-    }
-    return numberMPs;
-}
-
-void KeyFrame::AddMapPoint(MapPoint *pMP, const size_t &idx)
-{
-    unique_lock<mutex> lock(mMutexFeatures);
-    if (mvpMapPoints[idx] != NULL)
-    {
-#ifdef CASRF
-        {
-            int old_value{this->mReferencecount_mob_CAS}, new_value{old_value - 1};
-            while (!atomic_compare_exchange_strong(&(this->mReferencecount_mob_CAS), &old_value, new_value))
-            {
-                new_value = old_value - 1;
-            }
-        }
-#endif
-#ifdef RF
-        // {
-        //     unique_lock<mutex> lock(this->mMutexreferencecount);
-        //     this->mReferencecount_mob--;
-        //     this->mReferencecount--;
-        // }
-        {
-            // if (this->thread_id_collection_map.find(this_thread::get_id()) != this->thread_id_collection_map.end())
-            {
-
-                this->thread_id_collection_map[this_thread::get_id()]--;
-            }
-            // else
-            // {
-            //     cout << "This is not good news" << endl;
-            // }
-        }
 
 #endif
 
 // This is a decrement for mappoints
 #ifdef CASRF
-        {
-            int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
-            while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value,
-                                                   new_value))
             {
-                new_value = old_value - 1;
+                int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value,
+                                                       new_value))
+                {
+                    new_value = old_value - 1;
+                }
+            }
+#endif
+#ifdef RF
+            {
+                unique_lock<mutex> lock(mvpMapPoints[idx]->mMutexReferencecount_mp);
+                mvpMapPoints[idx]->mReferencecount_canonicalmp--;
+            }
+            {
+                if (mvpMapPoints[idx]->thread_id_collection_map.find(this_thread::get_id()) != mvpMapPoints[idx]->thread_id_collection_map.end())
+                {
+
+                    mvpMapPoints[idx]->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    cout << "This is not good for mappoints" << endl;
+                }
+            }
+#endif
+            mvpMapPoints[idx]->mObservations.erase(this);
+        }
+        // This is reference counting for mappoints - increment
+
+#ifdef CASRF
+        {
+            int old_value{pMP->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
+            while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value))
+            {
+                new_value = old_value + 1;
             }
         }
 #endif
 #ifdef RF
         {
-            unique_lock<mutex> lock(mvpMapPoints[idx]->mMutexReferencecount_mp);
-            mvpMapPoints[idx]->mReferencecount_canonicalmp--;
+            unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
+            pMP->mReferencecount_canonicalmp++;
         }
-#endif
-        mvpMapPoints[idx]->mObservations.erase(this);
-    }
-    // This is reference counting for mappoints - increment
-
-#ifdef CASRF
-    {
-        int old_value{pMP->mReferencecount_canonicalmp_CAS}, new_value{old_value + 1};
-        while (!atomic_compare_exchange_strong(&(pMP->mReferencecount_canonicalmp_CAS), &old_value, new_value))
         {
-            new_value = old_value + 1;
+            if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
+            {
+
+                pMP->thread_id_collection_map[this_thread::get_id()]++;
+            }
+            else
+            {
+
+                cout << "This is not good for mappoints" << endl;
+            }
+        }
+#endif
+        pMP->checker = true;
+        mvpMapPoints[idx] = pMP;
+    }
+
+    void KeyFrame::EraseMapPointMatch(const int &idx)
+    {
+        unique_lock<mutex> lock(mMutexFeatures);
+        {
+#ifdef CASRF
+            {int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
+        while (
+            !atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
+        {
+            new_value = old_value - 1;
         }
     }
 #endif
 #ifdef RF
     {
-        unique_lock<mutex> lock(pMP->mMutexReferencecount_mp);
-        pMP->mReferencecount_canonicalmp++;
+        unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
+        mvpMapPoints[idx]->mReferencecount_canonicalmp--;
     }
-#endif
-    pMP->checker = true;
-    mvpMapPoints[idx] = pMP;
-}
+    {
+        if (mvpMapPoints[idx]->thread_id_collection_map.find(this_thread::get_id()) != mvpMapPoints[idx]->thread_id_collection_map.end())
+        {
 
-void KeyFrame::EraseMapPointMatch(const int &idx)
-{
-    unique_lock<mutex> lock(mMutexFeatures);
-    {
-#ifdef CASRF
-        {int old_value{mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS}, new_value{old_value - 1};
-    while (
-        !atomic_compare_exchange_strong(&(mvpMapPoints[idx]->mReferencecount_canonicalmp_CAS), &old_value, new_value))
-    {
-        new_value = old_value - 1;
+            mvpMapPoints[idx]->thread_id_collection_map[this_thread::get_id()]--;
+        }
+        else
+        {
+
+            cout << "This is not good for mappoints" << endl;
+        }
     }
-}
-#endif
-#ifdef RF
-{
-    unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
-    mvpMapPoints[idx]->mReferencecount_canonicalmp--;
-}
 #endif
 } // namespace ORB_SLAM3
 mvpMapPoints[idx] = static_cast<MapPoint *>(NULL);
@@ -786,6 +834,18 @@ void KeyFrame::EraseMapPointMatch(MapPoint *pMP)
                 unique_lock<mutex> lock1(mvpMapPoints[leftIndex]->mMutexReferencecount_mp);
                 mvpMapPoints[leftIndex]->mReferencecount_canonicalmp--;
             }
+            {
+                if (mvpMapPoints[leftIndex]->thread_id_collection_map.find(this_thread::get_id()) != mvpMapPoints[leftIndex]->thread_id_collection_map.end())
+                {
+
+                    mvpMapPoints[leftIndex]->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                else
+                {
+
+                    cout << "This is not good for mappoints" << endl;
+                }
+            }
 #endif
             mvpMapPoints[leftIndex] = static_cast<MapPoint *>(NULL);
         }
@@ -807,6 +867,18 @@ void KeyFrame::EraseMapPointMatch(MapPoint *pMP)
 
         unique_lock<mutex> lock1(mvpMapPoints[rightIndex]->mMutexReferencecount_mp);
         mvpMapPoints[rightIndex]->mReferencecount_canonicalmp--;
+    }
+    {
+        if (mvpMapPoints[rightIndex]->thread_id_collection_map.find(this_thread::get_id()) != mvpMapPoints[rightIndex]->thread_id_collection_map.end())
+        {
+
+            mvpMapPoints[rightIndex]->thread_id_collection_map[this_thread::get_id()]--;
+        }
+        else
+        {
+
+            cout << "This is not good for mappoints" << endl;
+        }
     }
 #endif
 }
@@ -834,6 +906,19 @@ void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
         unique_lock<mutex> lock1(mvpMapPoints[idx]->mMutexReferencecount_mp);
         mvpMapPoints[idx]->mReferencecount_canonicalmp--;
     }
+    {
+        if (mvpMapPoints[idx]->thread_id_collection_map.find(this_thread::get_id()) != mvpMapPoints[idx]->thread_id_collection_map.end())
+        {
+
+            mvpMapPoints[idx]->thread_id_collection_map[this_thread::get_id()]--;
+        }
+        else
+        {
+
+            cout << "This is not good for mappoints" << endl;
+        }
+    }
+
 #endif
 // Increment for pMP
 #ifdef CASRF
@@ -849,6 +934,18 @@ void KeyFrame::ReplaceMapPointMatch(const int &idx, MapPoint *pMP)
     {
         unique_lock<mutex> lock1(pMP->mMutexReferencecount_mp);
         pMP->mReferencecount_canonicalmp++;
+    }
+    {
+        if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
+        {
+
+            pMP->thread_id_collection_map[this_thread::get_id()]++;
+        }
+        else
+        {
+
+            cout << "This is not good for mappoints" << endl;
+        }
     }
 #endif
     pMP->checker = true;
@@ -1274,28 +1371,138 @@ void KeyFrame::SetBadFlag()
                 {
 
                     it.first->thread_id_collection_map[this_thread::get_id()]--;
-                }
-                // else
-                // {
-                //     cout << "This is not good news" << endl;
-                // }
-            }
+        }
+        // else
+        // {
+        //     cout << "This is not good news" << endl;
+        // }
+    }
 #endif
 
 #ifdef CASRF
+    {
+        int old_value{it.first->mReferencecount_canonical_CAS}, new_value{old_value - 1};
+        while (
+            !atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
+        {
+            new_value = old_value - 1;
+        }
+    }
+#endif
+}
+mConnectedKeyFrameWeights.clear();
+
+for (auto itr : mvpOrderedConnectedKeyFrames)
+{
+#ifdef CASRF
+    {
+        int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+        while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+        {
+            new_value = old_value - 1;
+        }
+    }
+#endif
+#ifdef RF
+    // {
+    //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+    //     itr->mReferencecount--;
+    //     itr->mReferencecount_ockf--;
+    // }
+    {
+        // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+        {
+
+            itr->thread_id_collection_map[this_thread::get_id()]--;
+        }
+        // else
+        // {
+        //     cout << "This is not good news" << endl;
+        // }
+    }
+#endif
+}
+
+mvpOrderedConnectedKeyFrames.clear();
+
+// Update Spanning Tree
+set<KeyFrame *> sParentCandidates;
+if (mpParent)
+    sParentCandidates.insert(mpParent);
+
+// Assign at each iteration one children with a parent (the pair with highest covisibility weight)
+// Include that children as new parent candidate for the rest
+while (!mspChildrens.empty())
+{
+    bool bContinue = false;
+
+    int max = -1;
+    KeyFrame *pC;
+    KeyFrame *pP;
+    vector<KeyFrame *> pP_tracker;
+
+    for (set<KeyFrame *>::iterator sit = mspChildrens.begin(), send = mspChildrens.end(); sit != send; sit++)
+    {
+        KeyFrame *pKF = *sit;
+        if (pKF->isBad())
+            continue;
+
+        // Check if a parent candidate is connected to the keyframe
+        vector<KeyFrame *> vpConnected = pKF->GetVectorCovisibleKeyFrames();
+        for (size_t i = 0, iend = vpConnected.size(); i < iend; i++)
+        {
+            for (set<KeyFrame *>::iterator spcit = sParentCandidates.begin(), spcend = sParentCandidates.end();
+                 spcit != spcend; spcit++)
             {
-                int old_value{it.first->mReferencecount_canonical_CAS}, new_value{old_value - 1};
-                while (
-                    !atomic_compare_exchange_strong(&(it.first->mReferencecount_canonical_CAS), &old_value, new_value))
+
+                if (vpConnected[i]->mnId == (*spcit)->mnId)
                 {
-                    new_value = old_value - 1;
+                    int w = pKF->GetWeight(vpConnected[i]);
+                    if (w > max)
+                    {
+                        pC = pKF;
+
+                        pP = vpConnected[i];
+// // Increment for vpConnected[i]
+#ifdef CASRF
+                        {
+                            int old_value{pP->mReferencecount_ockf_CAS}, new_value{old_value + 1};
+                            while (!atomic_compare_exchange_strong(&(pP->mReferencecount_ockf_CAS), &old_value,
+                                                                   new_value))
+                            {
+                                new_value = old_value + 1;
+                            }
+                        }
+#endif
+#ifdef RF
+                        // {
+                        //     unique_lock<mutex> lock(vpConnected[i]->mMutexreferencecount);
+                        //     // pP->mReferencecount_canonical++;
+                        //     // pP->mReferencecount_container++;
+                        //     pP->mReferencecount++;
+                        //     pP->mReferencecount_ockf++;
+                        // }
+                        {
+                            // if (pP->thread_id_collection_map.find(this_thread::get_id()) !=
+                            //     pP->thread_id_collection_map.end())
+                            {
+
+                                pP->thread_id_collection_map[this_thread::get_id()]++;
+                            }
+                            // else
+                            // {
+                            //     cout << "This is not good news" << endl;
+                            // }
+                        }
+#endif
+                        pP_tracker.push_back(pP);
+                        max = w;
+                        bContinue = true;
+                    }
                 }
             }
-#endif
         }
-        mConnectedKeyFrameWeights.clear();
-
-        for (auto itr : mvpOrderedConnectedKeyFrames)
+        for (auto itr : vpConnected)
         {
 #ifdef CASRF
             {
@@ -1309,11 +1516,17 @@ void KeyFrame::SetBadFlag()
 #ifdef RF
             // {
             //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     // itr->mReferencecount_canonical--;
+            //     // itr->mReferencecount_container--;
             //     itr->mReferencecount--;
             //     itr->mReferencecount_ockf--;
+            //     // cout << "KF => " << itr->mReferencecount_canonical << endl;
+            //     // itr->mReferencecount_ockf--;
+            //     // itr->mReferencecount--;
             // }
             {
-                // if (itr->thread_id_collection_map.find(this_thread::get_id()) != itr->thread_id_collection_map.end())
+                // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     itr->thread_id_collection_map.end())
                 {
 
                     itr->thread_id_collection_map[this_thread::get_id()]--;
@@ -1325,229 +1538,113 @@ void KeyFrame::SetBadFlag()
             }
 #endif
         }
-
-        mvpOrderedConnectedKeyFrames.clear();
-
-        // Update Spanning Tree
-        set<KeyFrame *> sParentCandidates;
-        if (mpParent)
-            sParentCandidates.insert(mpParent);
-
-        // Assign at each iteration one children with a parent (the pair with highest covisibility weight)
-        // Include that children as new parent candidate for the rest
-        while (!mspChildrens.empty())
-        {
-            bool bContinue = false;
-
-            int max = -1;
-            KeyFrame *pC;
-            KeyFrame *pP;
-            vector<KeyFrame *> pP_tracker;
-
-            for (set<KeyFrame *>::iterator sit = mspChildrens.begin(), send = mspChildrens.end(); sit != send; sit++)
-            {
-                KeyFrame *pKF = *sit;
-                if (pKF->isBad())
-                    continue;
-
-                // Check if a parent candidate is connected to the keyframe
-                vector<KeyFrame *> vpConnected = pKF->GetVectorCovisibleKeyFrames();
-                for (size_t i = 0, iend = vpConnected.size(); i < iend; i++)
-                {
-                    for (set<KeyFrame *>::iterator spcit = sParentCandidates.begin(), spcend = sParentCandidates.end();
-                         spcit != spcend; spcit++)
-                    {
-
-                        if (vpConnected[i]->mnId == (*spcit)->mnId)
-                        {
-                            int w = pKF->GetWeight(vpConnected[i]);
-                            if (w > max)
-                            {
-                                pC = pKF;
-
-                                pP = vpConnected[i];
-// // Increment for vpConnected[i]
-#ifdef CASRF
-                                {
-                                    int old_value{pP->mReferencecount_ockf_CAS}, new_value{old_value + 1};
-                                    while (!atomic_compare_exchange_strong(&(pP->mReferencecount_ockf_CAS), &old_value,
-                                                                           new_value))
-                                    {
-                                        new_value = old_value + 1;
-                                    }
-                                }
-#endif
-#ifdef RF
-                                // {
-                                //     unique_lock<mutex> lock(vpConnected[i]->mMutexreferencecount);
-                                //     // pP->mReferencecount_canonical++;
-                                //     // pP->mReferencecount_container++;
-                                //     pP->mReferencecount++;
-                                //     pP->mReferencecount_ockf++;
-                                // }
-                                {
-                                    // if (pP->thread_id_collection_map.find(this_thread::get_id()) !=
-                                    //     pP->thread_id_collection_map.end())
-                                    {
-
-                                        pP->thread_id_collection_map[this_thread::get_id()]++;
-                                    }
-                                    // else
-                                    // {
-                                    //     cout << "This is not good news" << endl;
-                                    // }
-                                }
-#endif
-                                pP_tracker.push_back(pP);
-                                max = w;
-                                bContinue = true;
-                            }
-                        }
-                    }
-                }
-                for (auto itr : vpConnected)
-                {
-#ifdef CASRF
-                    {
-                        int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
-                        while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
-                        {
-                            new_value = old_value - 1;
-                        }
-                    }
-#endif
-#ifdef RF
-                    // {
-                    //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    //     // itr->mReferencecount_canonical--;
-                    //     // itr->mReferencecount_container--;
-                    //     itr->mReferencecount--;
-                    //     itr->mReferencecount_ockf--;
-                    //     // cout << "KF => " << itr->mReferencecount_canonical << endl;
-                    //     // itr->mReferencecount_ockf--;
-                    //     // itr->mReferencecount--;
-                    // }
-                    {
-                        // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
-                        //     itr->thread_id_collection_map.end())
-                        {
-
-                            itr->thread_id_collection_map[this_thread::get_id()]--;
-                        }
-                        // else
-                        // {
-                        //     cout << "This is not good news" << endl;
-                        // }
-                    }
-#endif
-                }
-            }
-
-            if (bContinue)
-            {
-                pC->ChangeParent(pP);
-                sParentCandidates.insert(pC);
-                mspChildrens.erase(pC);
-            }
-            else
-            {
-                for (auto itr : pP_tracker)
-                {
-#ifdef CASRF
-                    {
-                        int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
-                        while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
-                        {
-                            new_value = old_value - 1;
-                        }
-                    }
-#endif
-#ifdef RF
-                    // {
-                    //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-                    //     // itr->mReferencecount_canonical--;
-                    //     // itr->mReferencecount_container--;
-                    //     itr->mReferencecount--;
-                    //     itr->mReferencecount_ockf--;
-                    //     // cout << "KF => " <<itr->mnId << " "<< itr->mReferencecount_ockf << endl;
-                    // }
-                    {
-                        // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
-                        //     itr->thread_id_collection_map.end())
-                        {
-
-                            itr->thread_id_collection_map[this_thread::get_id()]--;
-                        }
-                        // else
-                        // {
-                        //     cout << "This is not good news" << endl;
-                        // }
-                    }
-
-#endif
-                }
-                break;
-            }
-            for (auto itr : pP_tracker)
-            {
-#ifdef CASRF
-                {
-                    int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
-                    while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
-                    {
-                        new_value = old_value - 1;
-                    }
-                }
-#endif
-#ifdef RF
-                // {
-
-                //     unique_lock<mutex> lock(itr->mMutexreferencecount);
-                //     // itr->mReferencecount_canonical--;
-                //     // itr->mReferencecount_container--;
-                //     itr->mReferencecount--;
-                //     itr->mReferencecount_ockf--;
-                //     // cout << "KF => "<<itr->mnId << " " << itr->mReferencecount_ockf << endl;
-                // }
-                {
-                    // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
-                    //     itr->thread_id_collection_map.end())
-                    {
-
-                        itr->thread_id_collection_map[this_thread::get_id()]--;
-                    }
-                    // else
-                    // {
-                    //     cout << "This is not good news" << endl;
-                    // }
-                }
-#endif
-            }
-        }
-
-        // If a children has no covisibility links with any parent candidate, assign to the original parent of this KF
-        if (!mspChildrens.empty())
-        {
-            for (set<KeyFrame *>::iterator sit = mspChildrens.begin(); sit != mspChildrens.end(); sit++)
-            {
-                (*sit)->ChangeParent(mpParent);
-            }
-        }
-
-        if (mpParent)
-        {
-            mpParent->EraseChild(this);
-            mTcp = mTcw * mpParent->GetPoseInverse();
-        }
-        mbBad = true;
     }
 
-    mpMap->EraseKeyFrame(this);
-    mpKeyFrameDB->erase(this);
+    if (bContinue)
+    {
+        pC->ChangeParent(pP);
+        sParentCandidates.insert(pC);
+        mspChildrens.erase(pC);
+    }
+    else
+    {
+        for (auto itr : pP_tracker)
+        {
+#ifdef CASRF
+            {
+                int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+                while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+                {
+                    new_value = old_value - 1;
+                }
+            }
+#endif
+#ifdef RF
+            // {
+            //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+            //     // itr->mReferencecount_canonical--;
+            //     // itr->mReferencecount_container--;
+            //     itr->mReferencecount--;
+            //     itr->mReferencecount_ockf--;
+            //     // cout << "KF => " <<itr->mnId << " "<< itr->mReferencecount_ockf << endl;
+            // }
+            {
+                // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
+                //     itr->thread_id_collection_map.end())
+                {
 
-    // if(mReferencecount_ockf < 0)
-    // cout << "KF => " << this->mnId <<  " " << mReferencecount_ockf << endl;
-    // cout << "SetBadFlag ends " << endl;
+                    itr->thread_id_collection_map[this_thread::get_id()]--;
+                }
+                // else
+                // {
+                //     cout << "This is not good news" << endl;
+                // }
+            }
+
+#endif
+        }
+        break;
+    }
+    for (auto itr : pP_tracker)
+    {
+#ifdef CASRF
+        {
+            int old_value{itr->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+            while (!atomic_compare_exchange_strong(&(itr->mReferencecount_ockf_CAS), &old_value, new_value))
+            {
+                new_value = old_value - 1;
+            }
+        }
+#endif
+#ifdef RF
+        // {
+
+        //     unique_lock<mutex> lock(itr->mMutexreferencecount);
+        //     // itr->mReferencecount_canonical--;
+        //     // itr->mReferencecount_container--;
+        //     itr->mReferencecount--;
+        //     itr->mReferencecount_ockf--;
+        //     // cout << "KF => "<<itr->mnId << " " << itr->mReferencecount_ockf << endl;
+        // }
+        {
+            // if (itr->thread_id_collection_map.find(this_thread::get_id()) !=
+            //     itr->thread_id_collection_map.end())
+            {
+
+                itr->thread_id_collection_map[this_thread::get_id()]--;
+            }
+            // else
+            // {
+            //     cout << "This is not good news" << endl;
+            // }
+        }
+#endif
+    }
+}
+
+// If a children has no covisibility links with any parent candidate, assign to the original parent of this KF
+if (!mspChildrens.empty())
+{
+    for (set<KeyFrame *>::iterator sit = mspChildrens.begin(); sit != mspChildrens.end(); sit++)
+    {
+        (*sit)->ChangeParent(mpParent);
+    }
+}
+
+if (mpParent)
+{
+    mpParent->EraseChild(this);
+    mTcp = mTcw * mpParent->GetPoseInverse();
+}
+mbBad = true;
+}
+
+mpMap->EraseKeyFrame(this);
+mpKeyFrameDB->erase(this);
+
+// if(mReferencecount_ockf < 0)
+// cout << "KF => " << this->mnId <<  " " << mReferencecount_ockf << endl;
+// cout << "SetBadFlag ends " << endl;
 }
 
 bool KeyFrame::isBad()
@@ -1580,62 +1677,62 @@ void KeyFrame::EraseConnection(KeyFrame *pKF)
                 {
 
                     pKF->thread_id_collection_map[this_thread::get_id()]--;
-                }
-                // else
-                // {
-                //     cout << "This is not good news" << endl;
-                // }
-            }
+        }
+        // else
+        // {
+        //     cout << "This is not good news" << endl;
+        // }
+    }
 #endif
 #ifdef CASRF
-            {
-                int old_value{pKF->mReferencecount_canonical_CAS}, new_value{old_value - 1};
-                while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
-                {
-                    new_value = old_value - 1;
-                }
-            }
-#endif
-            bUpdate = true;
+    {
+        int old_value{pKF->mReferencecount_canonical_CAS}, new_value{old_value - 1};
+        while (!atomic_compare_exchange_strong(&(pKF->mReferencecount_canonical_CAS), &old_value, new_value))
+        {
+            new_value = old_value - 1;
         }
     }
+#endif
+    bUpdate = true;
+}
+}
 
-    auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
-    if (index != mvpOrderedConnectedKeyFrames.end())
-    {
+auto index = std::find(mvpOrderedConnectedKeyFrames.begin(), mvpOrderedConnectedKeyFrames.end(), pKF);
+if (index != mvpOrderedConnectedKeyFrames.end())
+{
 #ifdef CASRF
+    {
+        int old_value{(*index)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
+        while (!atomic_compare_exchange_strong(&((*index)->mReferencecount_ockf_CAS), &old_value, new_value))
         {
-            int old_value{(*index)->mReferencecount_ockf_CAS}, new_value{old_value - 1};
-            while (!atomic_compare_exchange_strong(&((*index)->mReferencecount_ockf_CAS), &old_value, new_value))
-            {
-                new_value = old_value - 1;
-            }
+            new_value = old_value - 1;
         }
+    }
 #endif
 #ifdef RF
-        // {
-        //     unique_lock<mutex> lock2((*index)->mMutexreferencecount);
-        //     (*index)->mReferencecount--;
-        //     (*index)->mReferencecount_ockf--;
-        // }
+    // {
+    //     unique_lock<mutex> lock2((*index)->mMutexreferencecount);
+    //     (*index)->mReferencecount--;
+    //     (*index)->mReferencecount_ockf--;
+    // }
+    {
+        // if ((*index)->thread_id_collection_map.find(this_thread::get_id()) !=
+        //     (*index)->thread_id_collection_map.end())
         {
-            // if ((*index)->thread_id_collection_map.find(this_thread::get_id()) !=
-            //     (*index)->thread_id_collection_map.end())
-            {
 
-                (*index)->thread_id_collection_map[this_thread::get_id()]--;
-            }
-            // else
-            // {
-            //     cout << "This is not good news" << endl;
-            // }
+            (*index)->thread_id_collection_map[this_thread::get_id()]--;
         }
-#endif
-        mvpOrderedConnectedKeyFrames.erase(index);
+        // else
+        // {
+        //     cout << "This is not good news" << endl;
+        // }
     }
+#endif
+    mvpOrderedConnectedKeyFrames.erase(index);
+}
 
-    if (bUpdate)
-        UpdateBestCovisibles();
+if (bUpdate)
+    UpdateBestCovisibles();
 }
 
 vector<size_t> KeyFrame::GetFeaturesInArea(const float &x, const float &y, const float &r, const bool bRight) const
