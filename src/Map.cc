@@ -338,6 +338,11 @@ namespace ORB_SLAM3
     vector<KeyFrame *> Map::GetAllKeyFrames()
     {
         unique_lock<mutex> lock(mMutexMap);
+        for (auto i : mspKeyFrames)
+        {
+
+            i->thread_id_collection_map[this_thread::get_id()]++;
+        }
         return vector<KeyFrame *>(mspKeyFrames.begin(), mspKeyFrames.end());
     }
 
@@ -351,6 +356,11 @@ namespace ORB_SLAM3
         //         i->mReferencecount_msp++;
         //     }
         // }
+        for (auto i : mspMapPoints)
+        {
+
+            i->thread_id_collection_map[this_thread::get_id()]++;
+        }
         return vector<MapPoint *>(mspMapPoints.begin(), mspMapPoints.end());
     }
     vector<MapPoint *> Map::GetAllMapPoints(bool flag)
