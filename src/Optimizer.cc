@@ -100,6 +100,11 @@ namespace ORB_SLAM3
                                      bool *pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
     {
         // cout << "Inside Bundle Adjustment" << endl;
+        for (auto it : vpMP)
+        {
+
+            it->thread_id_collection_map[this_thread::get_id()]++;
+        }
         vector<bool> vbNotIncludedMP;
         vbNotIncludedMP.resize(vpMP.size());
 
@@ -441,6 +446,11 @@ namespace ORB_SLAM3
 
             // it->mReferencecount_canonical--;
             // cout << it->mnId << " " << it->mReferencecount_canonical << endl;
+        }
+        for (auto it : vpMP)
+        {
+
+            it->thread_id_collection_map[this_thread::get_id()]--;
         }
     }
 
