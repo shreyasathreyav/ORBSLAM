@@ -71,7 +71,7 @@ void LocalMapping::SetTracker(Tracking *pTracker)
 void LocalMapping::Run()
 {
     mbFinished = false;
-    cout << "This is the local mapping thread inside: " << std::this_thread::get_id() << endl;
+    // cout << "This is the local mapping thread inside: " << std::this_thread::get_id() << endl;
     while (1)
     {
         // Tracking will see that Local Mapping is busy
@@ -475,7 +475,7 @@ void LocalMapping::MapPointCulling()
                     {
 
                         totaldeletion_mp++;
-                        cout << "We have mappoint deletion" << endl;
+                        // cout << "We have mappoint deletion" << endl;
                         (*it)->pass_d = true;
                         auto something = it;
                         it = arr_mp.erase(it);
@@ -1798,7 +1798,7 @@ void LocalMapping::KeyFrameCulling()
                     it = arr.erase(it);
                     result = 0;
                     // cout << something->mnId << endl;
-                    cout << "Deleted keyframes successfully" << endl;
+                    // cout << "Deleted keyframes successfully" << endl;
                     delete *something;
                 }
                 // cout << "This is the final result for each keyframe: " << result << endl;
