@@ -233,6 +233,19 @@ namespace ORB_SLAM3
     // This is to create the key value pair to hold the reference count without exposing the native thread handle
     unordered_map<std::thread::id, int> thread_id_collection_map;
 
+    // Thread counts for switch
+    int tracking_count;
+    int local_mapping_count;
+    int loop_closing_count;
+    int viewer_count;
+
+    // Thread ids
+
+    std::thread::id tracking_thread_id;
+    std::thread::id local_mapping_thread_id;
+    std::thread::id loop_closing_thread_id;
+    std::thread::id viewer_thread_id;
+    
   protected:
     // Position in absolute coordinates
     Eigen::Vector3f mWorldPos;
@@ -272,10 +285,7 @@ namespace ORB_SLAM3
     std::mutex mMutexFeatures;
     std::mutex mMutexMap;
 
-    // Thread counts for switch
-    int tracking_count;
-    int local_mapping_count;
-    int loop_closing_count;
+
   };
 
 } // namespace ORB_SLAM3
