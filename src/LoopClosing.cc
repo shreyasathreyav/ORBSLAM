@@ -563,7 +563,28 @@ namespace ORB_SLAM3
                     // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
-                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // i->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == i->tracking_thread_id)
+                        {
+
+                            i->tracking_count--;
+                        }
+                        else if (checker_thread_id == i->local_mapping_thread_id)
+                        {
+
+                            i->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == i->loop_closing_thread_id)
+                        {
+
+                            i->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            i->viewer_count--;
+                        }
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
@@ -593,7 +614,28 @@ namespace ORB_SLAM3
                     // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
-                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // i->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == i->tracking_thread_id)
+                        {
+
+                            i->tracking_count--;
+                        }
+                        else if (checker_thread_id == i->local_mapping_thread_id)
+                        {
+
+                            i->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == i->loop_closing_thread_id)
+                        {
+
+                            i->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            i->viewer_count--;
+                        }
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
@@ -631,7 +673,28 @@ namespace ORB_SLAM3
                 // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
-                    i->thread_id_collection_map[this_thread::get_id()]--;
+                    // i->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == i->tracking_thread_id)
+                    {
+
+                        i->tracking_count--;
+                    }
+                    else if (checker_thread_id == i->local_mapping_thread_id)
+                    {
+
+                        i->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == i->loop_closing_thread_id)
+                    {
+
+                        i->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        i->viewer_count--;
+                    }
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
@@ -661,7 +724,28 @@ namespace ORB_SLAM3
                 // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
-                    i->thread_id_collection_map[this_thread::get_id()]--;
+                    // i->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == i->tracking_thread_id)
+                    {
+
+                        i->tracking_count--;
+                    }
+                    else if (checker_thread_id == i->local_mapping_thread_id)
+                    {
+
+                        i->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == i->loop_closing_thread_id)
+                    {
+
+                        i->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        i->viewer_count--;
+                    }
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
@@ -819,7 +903,28 @@ namespace ORB_SLAM3
                     // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
-                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // i->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == i->tracking_thread_id)
+                        {
+
+                            i->tracking_count--;
+                        }
+                        else if (checker_thread_id == i->local_mapping_thread_id)
+                        {
+
+                            i->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == i->loop_closing_thread_id)
+                        {
+
+                            i->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            i->viewer_count--;
+                        }
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
@@ -1098,7 +1203,28 @@ namespace ORB_SLAM3
                                     //     i->thread_id_collection_map.end())
                                     {
 
-                                        i->thread_id_collection_map[this_thread::get_id()]--;
+                                        // i->thread_id_collection_map[this_thread::get_id()]--;
+                                        std::thread::id checker_thread_id = this_thread::get_id();
+                                        if (checker_thread_id == i->tracking_thread_id)
+                                        {
+
+                                            i->tracking_count--;
+                                        }
+                                        else if (checker_thread_id == i->local_mapping_thread_id)
+                                        {
+
+                                            i->local_mapping_count--;
+                                        }
+                                        else if (checker_thread_id == i->loop_closing_thread_id)
+                                        {
+
+                                            i->loop_closing_count--;
+                                        }
+                                        else
+                                        {
+
+                                            i->viewer_count--;
+                                        }
                                         // cout << "This is being executed " << endl;
                                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                                     }
@@ -1135,7 +1261,28 @@ namespace ORB_SLAM3
                         // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                         {
 
-                            i->thread_id_collection_map[this_thread::get_id()]--;
+                            // i->thread_id_collection_map[this_thread::get_id()]--;
+                            std::thread::id checker_thread_id = this_thread::get_id();
+                            if (checker_thread_id == i->tracking_thread_id)
+                            {
+
+                                i->tracking_count--;
+                            }
+                            else if (checker_thread_id == i->local_mapping_thread_id)
+                            {
+
+                                i->local_mapping_count--;
+                            }
+                            else if (checker_thread_id == i->loop_closing_thread_id)
+                            {
+
+                                i->loop_closing_count--;
+                            }
+                            else
+                            {
+
+                                i->viewer_count--;
+                            }
                             // cout << "This is being executed " << endl;
                             // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                         }
@@ -1178,7 +1325,28 @@ namespace ORB_SLAM3
                 // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
-                    i->thread_id_collection_map[this_thread::get_id()]--;
+                    // i->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == i->tracking_thread_id)
+                    {
+
+                        i->tracking_count--;
+                    }
+                    else if (checker_thread_id == i->local_mapping_thread_id)
+                    {
+
+                        i->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == i->loop_closing_thread_id)
+                    {
+
+                        i->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        i->viewer_count--;
+                    }
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
@@ -2153,7 +2321,8 @@ namespace ORB_SLAM3
 
             i->thread_id_collection_map[this_thread::get_id()]--;
         }
-        for(auto i :vpCurrentMapMPs){
+        for (auto i : vpCurrentMapMPs)
+        {
 
             i->thread_id_collection_map[this_thread::get_id()]--;
         }

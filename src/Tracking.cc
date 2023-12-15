@@ -2381,7 +2381,28 @@ namespace ORB_SLAM3
                     // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
-                        i->thread_id_collection_map[this_thread::get_id()]++;
+                        // i->thread_id_collection_map[this_thread::get_id()]++;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == i->tracking_thread_id)
+                        {
+
+                            i->tracking_count++;
+                        }
+                        else if (checker_thread_id == i->local_mapping_thread_id)
+                        {
+
+                            i->local_mapping_count++;
+                        }
+                        else if (checker_thread_id == i->loop_closing_thread_id)
+                        {
+
+                            i->loop_closing_count++;
+                        }
+                        else
+                        {
+
+                            i->viewer_count++;
+                        }
                     }
                     // else
                     // {
@@ -2422,7 +2443,28 @@ namespace ORB_SLAM3
                     // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                     {
 
-                        i->thread_id_collection_map[this_thread::get_id()]--;
+                        // i->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == i->tracking_thread_id)
+                        {
+
+                            i->tracking_count--;
+                        }
+                        else if (checker_thread_id == i->local_mapping_thread_id)
+                        {
+
+                            i->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == i->loop_closing_thread_id)
+                        {
+
+                            i->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            i->viewer_count--;
+                        }
                     }
                     // else
                     // {
@@ -2511,15 +2553,20 @@ namespace ORB_SLAM3
             KeyFrame *pKFini = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
             // Inserting ids into keyframe
-            pKFini->thread_id_collection.insert(tracking_thread_id);
-            pKFini->thread_id_collection.insert(local_mapping_thread_id);
-            pKFini->thread_id_collection.insert(loop_closing_thread_id);
+            // pKFini->thread_id_collection.insert(tracking_thread_id);
+            // pKFini->thread_id_collection.insert(local_mapping_thread_id);
+            // pKFini->thread_id_collection.insert(loop_closing_thread_id);
 
             // Inserting threads and initial count of zero into the keyframe
-            pKFini->thread_id_collection_map[tracking_thread_id] = 0;
-            pKFini->thread_id_collection_map[local_mapping_thread_id] = 0;
-            pKFini->thread_id_collection_map[loop_closing_thread_id] = 0;
-            pKFini->thread_id_collection_map[viewer_thread_id] = 0;
+            // pKFini->thread_id_collection_map[tracking_thread_id] = 0;
+            // pKFini->thread_id_collection_map[local_mapping_thread_id] = 0;
+            // pKFini->thread_id_collection_map[loop_closing_thread_id] = 0;
+            // pKFini->thread_id_collection_map[viewer_thread_id] = 0;
+
+            pKFini->tracking_thread_id = tracking_thread_id;
+            pKFini->local_mapping_thread_id = local_mapping_thread_id;
+            pKFini->loop_closing_thread_id = loop_closing_thread_id;
+            pKFini->viewer_thread_id = viewer_thread_id;
 
             cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
 
@@ -2539,10 +2586,15 @@ namespace ORB_SLAM3
                         MapPoint *pNewMP = new MapPoint(x3D, pKFini, mpAtlas->GetCurrentMap());
 
                         // This is where the thread ids are populated into the mappoint
-                        pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+
+                        pNewMP->tracking_thread_id = tracking_thread_id;
+                        pNewMP->local_mapping_thread_id = local_mapping_thread_id;
+                        pNewMP->loop_closing_thread_id = loop_closing_thread_id;
+                        pNewMP->viewer_thread_id = viewer_thread_id;
 
                         pNewMP->AddObservation(pKFini, i);
                         pKFini->AddMapPoint(pNewMP, i);
@@ -2566,10 +2618,15 @@ namespace ORB_SLAM3
                         MapPoint *pNewMP = new MapPoint(x3D, pKFini, mpAtlas->GetCurrentMap());
 
                         // This is where the thread ids are populated into the mappoint
-                        pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+
+                        pNewMP->tracking_thread_id = tracking_thread_id;
+                        pNewMP->local_mapping_thread_id = local_mapping_thread_id;
+                        pNewMP->loop_closing_thread_id = loop_closing_thread_id;
+                        pNewMP->viewer_thread_id = viewer_thread_id;
 
                         pNewMP->AddObservation(pKFini, i);
                         pNewMP->AddObservation(pKFini, rightIndex + mCurrentFrame.Nleft);
@@ -2702,27 +2759,42 @@ namespace ORB_SLAM3
         KeyFrame *pKFini = new KeyFrame(mInitialFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
         KeyFrame *pKFcur = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
-        // Inserting ids into keyframe
-        pKFini->thread_id_collection.insert(tracking_thread_id);
-        pKFini->thread_id_collection.insert(local_mapping_thread_id);
-        pKFini->thread_id_collection.insert(loop_closing_thread_id);
+        pKFcur->tracking_thread_id = tracking_thread_id;
+        pKFcur->local_mapping_thread_id = local_mapping_thread_id;
+        pKFcur->loop_closing_thread_id = loop_closing_thread_id;
+        pKFcur->viewer_thread_id = viewer_thread_id;
 
-        // Inserting ids into keyframe
-        pKFcur->thread_id_collection.insert(tracking_thread_id);
-        pKFcur->thread_id_collection.insert(local_mapping_thread_id);
-        pKFcur->thread_id_collection.insert(loop_closing_thread_id);
+        pKFini->tracking_thread_id = tracking_thread_id;
+        pKFini->local_mapping_thread_id = local_mapping_thread_id;
+        pKFini->loop_closing_thread_id = loop_closing_thread_id;
+        pKFini->viewer_thread_id = viewer_thread_id;
 
-        // Inserting threads and initial count of zero into the keyframe
-        pKFini->thread_id_collection_map[tracking_thread_id] = 0;
-        pKFini->thread_id_collection_map[local_mapping_thread_id] = 0;
-        pKFini->thread_id_collection_map[loop_closing_thread_id] = 0;
-        pKFini->thread_id_collection_map[viewer_thread_id] = 0;
+        // pKFcur->tracking_thread_id = tracking_thread_id;
+        // pKFcur->local_mapping_thread_id = local_mapping_thread_id;
+        // pKFcur->loop_closing_thread_id = loop_closing_thread_id;
+        // pKFcur->viewer_thread_id = viewer_thread_id;
 
-        // Inserting threads and initial count of zero into the keyframe
-        pKFcur->thread_id_collection_map[tracking_thread_id] = 0;
-        pKFcur->thread_id_collection_map[local_mapping_thread_id] = 0;
-        pKFcur->thread_id_collection_map[loop_closing_thread_id] = 0;
-        pKFcur->thread_id_collection_map[viewer_thread_id] = 0;
+        // // Inserting ids into keyframe
+        // pKFini->thread_id_collection.insert(tracking_thread_id);
+        // pKFini->thread_id_collection.insert(local_mapping_thread_id);
+        // pKFini->thread_id_collection.insert(loop_closing_thread_id);
+
+        // // Inserting ids into keyframe
+        // pKFcur->thread_id_collection.insert(tracking_thread_id);
+        // pKFcur->thread_id_collection.insert(local_mapping_thread_id);
+        // pKFcur->thread_id_collection.insert(loop_closing_thread_id);
+
+        // // Inserting threads and initial count of zero into the keyframe
+        // pKFini->thread_id_collection_map[tracking_thread_id] = 0;
+        // pKFini->thread_id_collection_map[local_mapping_thread_id] = 0;
+        // pKFini->thread_id_collection_map[loop_closing_thread_id] = 0;
+        // pKFini->thread_id_collection_map[viewer_thread_id] = 0;
+
+        // // Inserting threads and initial count of zero into the keyframe
+        // pKFcur->thread_id_collection_map[tracking_thread_id] = 0;
+        // pKFcur->thread_id_collection_map[local_mapping_thread_id] = 0;
+        // pKFcur->thread_id_collection_map[loop_closing_thread_id] = 0;
+        // pKFcur->thread_id_collection_map[viewer_thread_id] = 0;
 
         cout << "Inside tracking; thread id here" << this_thread::get_id() << endl;
 
@@ -2747,10 +2819,15 @@ namespace ORB_SLAM3
             MapPoint *pMP = new MapPoint(worldPos, pKFcur, mpAtlas->GetCurrentMap());
 
             // This is where the thread ids are populated into the mappoint
-            pMP->thread_id_collection_map[tracking_thread_id] = 0;
-            pMP->thread_id_collection_map[local_mapping_thread_id] = 0;
-            pMP->thread_id_collection_map[loop_closing_thread_id] = 0;
-            pMP->thread_id_collection_map[viewer_thread_id] = 0;
+            // pMP->thread_id_collection_map[tracking_thread_id] = 0;
+            // pMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+            // pMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+            // pMP->thread_id_collection_map[viewer_thread_id] = 0;
+
+            pMP->tracking_thread_id = tracking_thread_id;
+            pMP->local_mapping_thread_id = local_mapping_thread_id;
+            pMP->loop_closing_thread_id = loop_closing_thread_id;
+            pMP->viewer_thread_id = viewer_thread_id;
 
             pKFini->AddMapPoint(pMP, i);
             pKFcur->AddMapPoint(pMP, mvIniMatches[i]);
@@ -2946,7 +3023,28 @@ namespace ORB_SLAM3
                         // if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
                         {
 
-                            mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
+                            // mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
+                            std::thread::id checker_thread_id = this_thread::get_id();
+                            if (checker_thread_id == mLastFrame.mvpMapPoints[i]->tracking_thread_id)
+                            {
+
+                                mLastFrame.mvpMapPoints[i]->tracking_count--;
+                            }
+                            else if (checker_thread_id == mLastFrame.mvpMapPoints[i]->local_mapping_thread_id)
+                            {
+
+                                mLastFrame.mvpMapPoints[i]->local_mapping_count--;
+                            }
+                            else if (checker_thread_id == mLastFrame.mvpMapPoints[i]->loop_closing_thread_id)
+                            {
+
+                                mLastFrame.mvpMapPoints[i]->loop_closing_count--;
+                            }
+                            else
+                            {
+
+                                mLastFrame.mvpMapPoints[i]->viewer_count--;
+                            }
                         }
                         // else
                         // {
@@ -2982,7 +3080,28 @@ namespace ORB_SLAM3
                     // if (pRep->thread_id_collection_map.find(this_thread::get_id()) != pRep->thread_id_collection_map.end())
                     {
 
-                        pRep->thread_id_collection_map[this_thread::get_id()]++;
+                        // pRep->thread_id_collection_map[this_thread::get_id()]++;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == pRep->tracking_thread_id)
+                        {
+
+                            pRep->tracking_count++;
+                        }
+                        else if (checker_thread_id == pRep->local_mapping_thread_id)
+                        {
+
+                            pRep->local_mapping_count++;
+                        }
+                        else if (checker_thread_id == pRep->loop_closing_thread_id)
+                        {
+
+                            pRep->loop_closing_count++;
+                        }
+                        else
+                        {
+
+                            pRep->viewer_count++;
+                        }
                     }
                     // else
                     // {
@@ -3120,10 +3239,15 @@ namespace ORB_SLAM3
                 MapPoint *pNewMP = new MapPoint(x3D, mpAtlas->GetCurrentMap(), &mLastFrame, i);
 
                 // This is where the thread ids are populated into the mappoint
-                pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
-                pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
-                pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
-                pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+                // pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                // pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                // pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                // pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+
+                pNewMP->tracking_thread_id = tracking_thread_id;
+                pNewMP->local_mapping_thread_id = local_mapping_thread_id;
+                pNewMP->loop_closing_thread_id = loop_closing_thread_id;
+                pNewMP->viewer_thread_id = viewer_thread_id;
 
                 if (mLastFrame.mvpMapPoints[i])
                 {
@@ -3156,7 +3280,28 @@ namespace ORB_SLAM3
                     // if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
                     {
 
-                        mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
+                        // mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == mLastFrame.mvpMapPoints[i]->tracking_thread_id)
+                        {
+
+                            mLastFrame.mvpMapPoints[i]->tracking_count--;
+                        }
+                        else if (checker_thread_id == mLastFrame.mvpMapPoints[i]->local_mapping_thread_id)
+                        {
+
+                            mLastFrame.mvpMapPoints[i]->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == mLastFrame.mvpMapPoints[i]->loop_closing_thread_id)
+                        {
+
+                            mLastFrame.mvpMapPoints[i]->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            mLastFrame.mvpMapPoints[i]->viewer_count--;
+                        }
                     }
                     // else
                     // {
@@ -3192,7 +3337,28 @@ namespace ORB_SLAM3
                 // if (pNewMP->thread_id_collection_map.find(this_thread::get_id()) != pNewMP->thread_id_collection_map.end())
                 {
 
-                    pNewMP->thread_id_collection_map[this_thread::get_id()]++;
+                    // pNewMP->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == pNewMP->tracking_thread_id)
+                    {
+
+                        pNewMP->tracking_count++;
+                    }
+                    else if (checker_thread_id == pNewMP->local_mapping_thread_id)
+                    {
+
+                        pNewMP->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == pNewMP->loop_closing_thread_id)
+                    {
+
+                        pNewMP->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        pNewMP->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -3599,18 +3765,23 @@ namespace ORB_SLAM3
 
         KeyFrame *pKF = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
-        // Inserting ids into keyframe
-        pKF->thread_id_collection.insert(tracking_thread_id);
-        pKF->thread_id_collection.insert(local_mapping_thread_id);
-        pKF->thread_id_collection.insert(loop_closing_thread_id);
-        // cout << mpLocalMapper->get_id() << endl;
-        // cout << "Inside tracking CreateNewKeyFrame; thread id here" << this_thread::get_id() << endl;
+        // // Inserting ids into keyframe
+        // pKF->thread_id_collection.insert(tracking_thread_id);
+        // pKF->thread_id_collection.insert(local_mapping_thread_id);
+        // pKF->thread_id_collection.insert(loop_closing_thread_id);
+        // // cout << mpLocalMapper->get_id() << endl;
+        // // cout << "Inside tracking CreateNewKeyFrame; thread id here" << this_thread::get_id() << endl;
 
-        // Inserting threads and initial count of zero into the keyframe
-        pKF->thread_id_collection_map[tracking_thread_id] = 0;
-        pKF->thread_id_collection_map[local_mapping_thread_id] = 0;
-        pKF->thread_id_collection_map[loop_closing_thread_id] = 0;
-        pKF->thread_id_collection_map[viewer_thread_id] = 0;
+        // // Inserting threads and initial count of zero into the keyframe
+        // pKF->thread_id_collection_map[tracking_thread_id] = 0;
+        // pKF->thread_id_collection_map[local_mapping_thread_id] = 0;
+        // pKF->thread_id_collection_map[loop_closing_thread_id] = 0;
+        // pKF->thread_id_collection_map[viewer_thread_id] = 0;
+
+        pKF->tracking_thread_id = tracking_thread_id;
+        pKF->local_mapping_thread_id = local_mapping_thread_id;
+        pKF->loop_closing_thread_id = loop_closing_thread_id;
+        pKF->viewer_thread_id = viewer_thread_id;
 
         if (mpAtlas->isImuInitialized()) //  || mpLocalMapper->IsInitializing())
             pKF->bImu = true;
@@ -3692,11 +3863,15 @@ namespace ORB_SLAM3
                         MapPoint *pNewMP = new MapPoint(x3D, pKF, mpAtlas->GetCurrentMap());
 
                         // This is where the thread ids are populated into the mappoint
-                        pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
-                        pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[tracking_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[local_mapping_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[loop_closing_thread_id] = 0;
+                        // pNewMP->thread_id_collection_map[viewer_thread_id] = 0;
 
+                        pNewMP->tracking_thread_id = tracking_thread_id;
+                        pNewMP->local_mapping_thread_id = local_mapping_thread_id;
+                        pNewMP->loop_closing_thread_id = loop_closing_thread_id;
+                        pNewMP->viewer_thread_id = viewer_thread_id;
                         pNewMP->AddObservation(pKF, i);
 
                         // Check if it is a stereo observation in order to not
@@ -3855,7 +4030,28 @@ namespace ORB_SLAM3
             // if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
             {
 
-                it->thread_id_collection_map[this_thread::get_id()]--;
+                // it->thread_id_collection_map[this_thread::get_id()]--;
+                std::thread::id checker_thread_id = this_thread::get_id();
+                if (checker_thread_id == it->tracking_thread_id)
+                {
+
+                    it->tracking_count--;
+                }
+                else if (checker_thread_id == it->local_mapping_thread_id)
+                {
+
+                    it->local_mapping_count--;
+                }
+                else if (checker_thread_id == it->loop_closing_thread_id)
+                {
+
+                    it->loop_closing_count--;
+                }
+                else
+                {
+
+                    it->viewer_count--;
+                }
             }
             // else
             // {
@@ -3914,7 +4110,28 @@ namespace ORB_SLAM3
                     // if (pMP->thread_id_collection_map.find(this_thread::get_id()) != pMP->thread_id_collection_map.end())
                     {
 
-                        pMP->thread_id_collection_map[this_thread::get_id()]++;
+                        // pMP->thread_id_collection_map[this_thread::get_id()]++;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == pMP->tracking_thread_id)
+                        {
+
+                            pMP->tracking_count++;
+                        }
+                        else if (checker_thread_id == pMP->local_mapping_thread_id)
+                        {
+
+                            pMP->local_mapping_count++;
+                        }
+                        else if (checker_thread_id == pMP->loop_closing_thread_id)
+                        {
+
+                            pMP->loop_closing_count++;
+                        }
+                        else
+                        {
+
+                            pMP->viewer_count++;
+                        }
                     }
                     // else
                     // {
@@ -4013,7 +4230,28 @@ namespace ORB_SLAM3
                             // if (mLastFrame.mvpMapPoints[i]->thread_id_collection_map.find(this_thread::get_id()) != mLastFrame.mvpMapPoints[i]->thread_id_collection_map.end())
                             {
 
-                                mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
+                                // mLastFrame.mvpMapPoints[i]->thread_id_collection_map[this_thread::get_id()]--;
+                                std::thread::id checker_thread_id = this_thread::get_id();
+                                if (checker_thread_id == mLastFrame.mvpMapPoints[i]->tracking_thread_id)
+                                {
+
+                                    mLastFrame.mvpMapPoints[i]->tracking_count--;
+                                }
+                                else if (checker_thread_id == mLastFrame.mvpMapPoints[i]->local_mapping_thread_id)
+                                {
+
+                                    mLastFrame.mvpMapPoints[i]->local_mapping_count--;
+                                }
+                                else if (checker_thread_id == mLastFrame.mvpMapPoints[i]->loop_closing_thread_id)
+                                {
+
+                                    mLastFrame.mvpMapPoints[i]->loop_closing_count--;
+                                }
+                                else
+                                {
+
+                                    mLastFrame.mvpMapPoints[i]->viewer_count--;
+                                }
                             }
                             // else
                             // {
@@ -4064,7 +4302,28 @@ namespace ORB_SLAM3
                 // if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
                 {
 
-                    (i)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (i)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == i->tracking_thread_id)
+                    {
+
+                        i->tracking_count--;
+                    }
+                    else if (checker_thread_id == i->local_mapping_thread_id)
+                    {
+
+                        i->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == i->loop_closing_thread_id)
+                    {
+
+                        i->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        i->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -4108,7 +4367,28 @@ namespace ORB_SLAM3
                 // if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
                 {
 
-                    (i)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (i)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == i->tracking_thread_id)
+                    {
+
+                        i->tracking_count--;
+                    }
+                    else if (checker_thread_id == i->local_mapping_thread_id)
+                    {
+
+                        i->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == i->loop_closing_thread_id)
+                    {
+
+                        i->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        i->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -4165,7 +4445,28 @@ namespace ORB_SLAM3
                 // if ((pKF)->thread_id_collection_map.find(this_thread::get_id()) != (pKF)->thread_id_collection_map.end())
                 {
 
-                    (pKF)->thread_id_collection_map[this_thread::get_id()]++;
+                    // (pKF)->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == pKF->tracking_thread_id)
+                    {
+
+                        pKF->tracking_count++;
+                    }
+                    else if (checker_thread_id == pKF->local_mapping_thread_id)
+                    {
+
+                        pKF->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == pKF->loop_closing_thread_id)
+                    {
+
+                        pKF->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        pKF->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -4229,7 +4530,29 @@ namespace ORB_SLAM3
                             //     (pNeighKF)->thread_id_collection_map.end())
                             {
 
-                                (pNeighKF)->thread_id_collection_map[this_thread::get_id()]++;
+                                // (pNeighKF)->thread_id_collection_map[this_thread::get_id()]++;
+
+                                std::thread::id checker_thread_id = this_thread::get_id();
+                                if (checker_thread_id == pNeighKF->tracking_thread_id)
+                                {
+
+                                    pNeighKF->tracking_count++;
+                                }
+                                else if (checker_thread_id == pNeighKF->local_mapping_thread_id)
+                                {
+
+                                    pNeighKF->local_mapping_count++;
+                                }
+                                else if (checker_thread_id == pNeighKF->loop_closing_thread_id)
+                                {
+
+                                    pNeighKF->loop_closing_count++;
+                                }
+                                else
+                                {
+
+                                    pNeighKF->viewer_count++;
+                                }
                             }
                             // else
                             // {
@@ -4305,7 +4628,28 @@ namespace ORB_SLAM3
                             //     (itr)->thread_id_collection_map.end())
                             {
 
-                                (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                                // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                                std::thread::id checker_thread_id = this_thread::get_id();
+                                if (checker_thread_id == itr->tracking_thread_id)
+                                {
+
+                                    itr->tracking_count--;
+                                }
+                                else if (checker_thread_id == itr->local_mapping_thread_id)
+                                {
+
+                                    itr->local_mapping_count--;
+                                }
+                                else if (checker_thread_id == itr->loop_closing_thread_id)
+                                {
+
+                                    itr->loop_closing_count--;
+                                }
+                                else
+                                {
+
+                                    itr->viewer_count--;
+                                }
                             }
                             // else
                             // {
@@ -4349,7 +4693,28 @@ namespace ORB_SLAM3
                     //     (itr)->thread_id_collection_map.end())
                     {
 
-                        (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == itr->tracking_thread_id)
+                        {
+
+                            itr->tracking_count--;
+                        }
+                        else if (checker_thread_id == itr->local_mapping_thread_id)
+                        {
+
+                            itr->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == itr->loop_closing_thread_id)
+                        {
+
+                            itr->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            itr->viewer_count--;
+                        }
                     }
                     // else
                     // {
@@ -4416,7 +4781,28 @@ namespace ORB_SLAM3
                 // if ((i)->thread_id_collection_map.find(this_thread::get_id()) != (i)->thread_id_collection_map.end())
                 {
 
-                    (i)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (i)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == i->tracking_thread_id)
+                    {
+
+                        i->tracking_count--;
+                    }
+                    else if (checker_thread_id == i->local_mapping_thread_id)
+                    {
+
+                        i->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == i->loop_closing_thread_id)
+                    {
+
+                        i->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        i->viewer_count--;
+                    }
                 }
                 // else
                 // {

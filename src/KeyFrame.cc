@@ -41,7 +41,7 @@ namespace ORB_SLAM3
           mbCurrentPlaceRecognition(false), mnMergeCorrectedForKF(0), NLeft(0), NRight(0), mnNumberOfOpt(0),
           mbHasVelocity(false), mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0),
           mReferencecount_ockf(0), mReferencecount_mob(0), DeletionSafe(false), mReferencecount_msp_CAS(0),
-          mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
+          mReferencecount_canonical_CAS(0), mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0),tracking_count(0),local_mapping_count(0),loop_closing_count(0),viewer_count(0)
 
     {
     }
@@ -67,7 +67,7 @@ namespace ORB_SLAM3
           NLeft(F.Nleft), NRight(F.Nright), mTrl(F.GetRelativePoseTrl()), mnNumberOfOpt(0), mbHasVelocity(false),
           mReferencecount_canonical(0), mReferencecount_container(0), mReferencecount(0), mReferencecount_ockf(0),
           mReferencecount_mob(0), DeletionSafe(false), mReferencecount_msp_CAS(0), mReferencecount_canonical_CAS(0),
-          mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0)
+          mReferencecount_ockf_CAS(0), mReferencecount_mob_CAS(0),tracking_count(0),local_mapping_count(0),loop_closing_count(0),viewer_count(0)
     {
         mnId = nNextId++;
 

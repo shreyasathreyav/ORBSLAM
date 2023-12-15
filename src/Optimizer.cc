@@ -85,7 +85,28 @@ namespace ORB_SLAM3
             // if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
             {
 
-                it->thread_id_collection_map[this_thread::get_id()]--;
+                // it->thread_id_collection_map[this_thread::get_id()]--;
+                std::thread::id checker_thread_id = this_thread::get_id();
+                if (checker_thread_id == it->tracking_thread_id)
+                {
+
+                    it->tracking_count--;
+                }
+                else if (checker_thread_id == it->local_mapping_thread_id)
+                {
+
+                    it->local_mapping_count--;
+                }
+                else if (checker_thread_id == it->loop_closing_thread_id)
+                {
+
+                    it->loop_closing_count--;
+                }
+                else
+                {
+
+                    it->viewer_count--;
+                }
             }
             // else
             // {
@@ -1245,7 +1266,28 @@ namespace ORB_SLAM3
                 //     vNeighKFs[i]->thread_id_collection_map.end())
                 {
 
-                    vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                    // vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == vNeighKFs[i]->tracking_thread_id)
+                    {
+
+                        vNeighKFs[i]->tracking_count++;
+                    }
+                    else if (checker_thread_id == vNeighKFs[i]->local_mapping_thread_id)
+                    {
+
+                        vNeighKFs[i]->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == vNeighKFs[i]->loop_closing_thread_id)
+                    {
+
+                        vNeighKFs[i]->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        vNeighKFs[i]->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -1293,7 +1335,28 @@ namespace ORB_SLAM3
                     //     vNeighKFs[i]->thread_id_collection_map.end())
                     {
 
-                        vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                        // vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]++;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == vNeighKFs[i]->tracking_thread_id)
+                        {
+
+                            vNeighKFs[i]->tracking_count++;
+                        }
+                        else if (checker_thread_id == vNeighKFs[i]->local_mapping_thread_id)
+                        {
+
+                            vNeighKFs[i]->local_mapping_count++;
+                        }
+                        else if (checker_thread_id == vNeighKFs[i]->loop_closing_thread_id)
+                        {
+
+                            vNeighKFs[i]->loop_closing_count++;
+                        }
+                        else
+                        {
+
+                            vNeighKFs[i]->viewer_count++;
+                        }
                     }
                     // else
                     // {
@@ -1340,7 +1403,28 @@ namespace ORB_SLAM3
                 //     vNeighKFs[i]->thread_id_collection_map.end())
                 {
 
-                    vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
+                    // vNeighKFs[i]->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == vNeighKFs[i]->tracking_thread_id)
+                    {
+
+                        vNeighKFs[i]->tracking_count--;
+                    }
+                    else if (checker_thread_id == vNeighKFs[i]->local_mapping_thread_id)
+                    {
+
+                        vNeighKFs[i]->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == vNeighKFs[i]->loop_closing_thread_id)
+                    {
+
+                        vNeighKFs[i]->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        vNeighKFs[i]->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -1388,7 +1472,28 @@ namespace ORB_SLAM3
                 // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
                 {
 
-                    (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                    // (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*lit)->tracking_thread_id)
+                    {
+
+                        (*lit)->tracking_count++;
+                    }
+                    else if (checker_thread_id == (*lit)->local_mapping_thread_id)
+                    {
+
+                        (*lit)->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == (*lit)->loop_closing_thread_id)
+                    {
+
+                        (*lit)->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        (*lit)->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -1447,7 +1552,28 @@ namespace ORB_SLAM3
                 // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
                 {
 
-                    (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*lit)->tracking_thread_id)
+                    {
+
+                        (*lit)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->local_mapping_thread_id)
+                    {
+
+                        (*lit)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->loop_closing_thread_id)
+                    {
+
+                        (*lit)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (*lit)->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -1518,7 +1644,28 @@ namespace ORB_SLAM3
                     //     (*itr)->thread_id_collection_map.end())
                     {
 
-                        (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        // (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == (*itr)->tracking_thread_id)
+                        {
+
+                            (*itr)->tracking_count--;
+                        }
+                        else if (checker_thread_id == (*itr)->local_mapping_thread_id)
+                        {
+
+                            (*itr)->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == (*itr)->loop_closing_thread_id)
+                        {
+
+                            (*itr)->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            (*itr)->viewer_count--;
+                        }
                     }
                     // else
                     // {
@@ -1562,7 +1709,28 @@ namespace ORB_SLAM3
                     //     (itr)->thread_id_collection_map.end())
                     {
 
-                        (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == (itr)->tracking_thread_id)
+                        {
+
+                            (itr)->tracking_count--;
+                        }
+                        else if (checker_thread_id == (itr)->local_mapping_thread_id)
+                        {
+
+                            (itr)->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == (itr)->loop_closing_thread_id)
+                        {
+
+                            (itr)->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            (itr)->viewer_count--;
+                        }
                     }
                     // else
                     // {
@@ -1636,7 +1804,28 @@ namespace ORB_SLAM3
                 // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
                 {
 
-                    (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                    // (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*lit)->tracking_thread_id)
+                    {
+
+                        (*lit)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->local_mapping_thread_id)
+                    {
+
+                        (*lit)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->loop_closing_thread_id)
+                    {
+
+                        (*lit)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (*lit)->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -1685,7 +1874,28 @@ namespace ORB_SLAM3
                 // if ((pKFi)->thread_id_collection_map.find(this_thread::get_id()) != (pKFi)->thread_id_collection_map.end())
                 {
 
-                    (pKFi)->thread_id_collection_map[this_thread::get_id()]++;
+                    // (pKFi)->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (pKFi)->tracking_thread_id)
+                    {
+
+                        (pKFi)->tracking_count++;
+                    }
+                    else if (checker_thread_id == (pKFi)->local_mapping_thread_id)
+                    {
+
+                        (pKFi)->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == (pKFi)->loop_closing_thread_id)
+                    {
+
+                        (pKFi)->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        (pKFi)->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -1735,7 +1945,28 @@ namespace ORB_SLAM3
                 // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
                 {
 
-                    (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*lit)->tracking_thread_id)
+                    {
+
+                        (*lit)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->local_mapping_thread_id)
+                    {
+
+                        (*lit)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->loop_closing_thread_id)
+                    {
+
+                        (*lit)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (*lit)->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -1967,7 +2198,28 @@ namespace ORB_SLAM3
                         //     (itr)->thread_id_collection_map.end())
                         {
 
-                            (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            std::thread::id checker_thread_id = this_thread::get_id();
+                            if (checker_thread_id == (itr)->tracking_thread_id)
+                            {
+
+                                (itr)->tracking_count--;
+                            }
+                            else if (checker_thread_id == (itr)->local_mapping_thread_id)
+                            {
+
+                                (itr)->local_mapping_count--;
+                            }
+                            else if (checker_thread_id == (itr)->loop_closing_thread_id)
+                            {
+
+                                (itr)->loop_closing_count--;
+                            }
+                            else
+                            {
+
+                                (itr)->viewer_count--;
+                            }
                         }
                         // else
                         // {
@@ -2010,7 +2262,28 @@ namespace ORB_SLAM3
                         //     (*itr)->thread_id_collection_map.end())
                         {
 
-                            (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            // (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            std::thread::id checker_thread_id = this_thread::get_id();
+                            if (checker_thread_id == (*itr)->tracking_thread_id)
+                            {
+
+                                (*itr)->tracking_count--;
+                            }
+                            else if (checker_thread_id == (*itr)->local_mapping_thread_id)
+                            {
+
+                                (*itr)->local_mapping_count--;
+                            }
+                            else if (checker_thread_id == (*itr)->loop_closing_thread_id)
+                            {
+
+                                (*itr)->loop_closing_count--;
+                            }
+                            else
+                            {
+
+                                (*itr)->viewer_count--;
+                            }
                         }
                         // else
                         // {
@@ -2053,7 +2326,28 @@ namespace ORB_SLAM3
                         //     (itr)->thread_id_collection_map.end())
                         {
 
-                            (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                            std::thread::id checker_thread_id = this_thread::get_id();
+                            if (checker_thread_id == (itr)->tracking_thread_id)
+                            {
+
+                                (itr)->tracking_count--;
+                            }
+                            else if (checker_thread_id == (itr)->local_mapping_thread_id)
+                            {
+
+                                (itr)->local_mapping_count--;
+                            }
+                            else if (checker_thread_id == (itr)->loop_closing_thread_id)
+                            {
+
+                                (itr)->loop_closing_count--;
+                            }
+                            else
+                            {
+
+                                (itr)->viewer_count--;
+                            }
                         }
                         // else
                         // {
@@ -2166,7 +2460,28 @@ namespace ORB_SLAM3
                 // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
                 {
 
-                    (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                    // (*lit)->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*lit)->tracking_thread_id)
+                    {
+
+                        (*lit)->tracking_count++;
+                    }
+                    else if (checker_thread_id == (*lit)->local_mapping_thread_id)
+                    {
+
+                        (*lit)->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == (*lit)->loop_closing_thread_id)
+                    {
+
+                        (*lit)->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        (*lit)->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -2212,7 +2527,28 @@ namespace ORB_SLAM3
                 // if ((*lit)->thread_id_collection_map.find(this_thread::get_id()) != (*lit)->thread_id_collection_map.end())
                 {
 
-                    (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (*lit)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*lit)->tracking_thread_id)
+                    {
+
+                        (*lit)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->local_mapping_thread_id)
+                    {
+
+                        (*lit)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (*lit)->loop_closing_thread_id)
+                    {
+
+                        (*lit)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (*lit)->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -2266,7 +2602,28 @@ namespace ORB_SLAM3
                 // if ((*itr)->thread_id_collection_map.find(this_thread::get_id()) != (*itr)->thread_id_collection_map.end())
                 {
 
-                    (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (*itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*itr)->tracking_thread_id)
+                    {
+
+                        (*itr)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (*itr)->local_mapping_thread_id)
+                    {
+
+                        (*itr)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (*itr)->loop_closing_thread_id)
+                    {
+
+                        (*itr)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (*itr)->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -2307,7 +2664,29 @@ namespace ORB_SLAM3
                 // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
                 {
 
-                    (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (itr)->tracking_thread_id)
+                    {
+
+                        (itr)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (itr)->local_mapping_thread_id)
+                    {
+
+                        (itr)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (itr)->loop_closing_thread_id)
+                    {
+
+                        (itr)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (itr)->viewer_count--;
+                    }
                 }
                 // else
                 // {
@@ -2353,7 +2732,29 @@ namespace ORB_SLAM3
                 // if ((itr)->thread_id_collection_map.find(this_thread::get_id()) != (itr)->thread_id_collection_map.end())
                 {
 
-                    (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    // (itr)->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (itr)->tracking_thread_id)
+                    {
+
+                        (itr)->tracking_count--;
+                    }
+                    else if (checker_thread_id == (itr)->local_mapping_thread_id)
+                    {
+
+                        (itr)->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == (itr)->loop_closing_thread_id)
+                    {
+
+                        (itr)->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        (itr)->viewer_count--;
+                    }
                 }
                 // else
                 // {

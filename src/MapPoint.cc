@@ -35,7 +35,7 @@ namespace ORB_SLAM3
           mnFuseCandidateForKF(0), mnLoopPointForKF(0), mnCorrectedByKF(0), mnCorrectedReference(0), mnBAGlobalForKF(0),
           mnVisible(1), mnFound(1), mbBad(false), mpReplaced(static_cast<MapPoint *>(NULL)), checker(false),
           mReferencecount_canonicalmp(0), pass_d(false), mReferencecount_msp(0), mReferencecount_lastframe(0),
-          mReferencecount_msp_CAS(0), mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
+          mReferencecount_msp_CAS(0), mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0), tracking_count(0), local_mapping_count(0), loop_closing_count(0), viewer_count(0)
     {
         mpReplaced = static_cast<MapPoint *>(NULL);
     }
@@ -47,7 +47,7 @@ namespace ORB_SLAM3
           mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
           mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false),
           mReferencecount_msp(0), mReferencecount_lastframe(0), mReferencecount_msp_CAS(0),
-          mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
+          mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0), tracking_count(0), local_mapping_count(0), loop_closing_count(0), viewer_count(0)
     {
         SetWorldPos(Pos);
 
@@ -68,7 +68,7 @@ namespace ORB_SLAM3
           mpReplaced(static_cast<MapPoint *>(NULL)), mfMinDistance(0), mfMaxDistance(0), mpMap(pMap),
           mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0), pass_d(false),
           mReferencecount_msp(0), mReferencecount_lastframe(0), mReferencecount_msp_CAS(0),
-          mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
+          mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0), tracking_count(0), local_mapping_count(0), loop_closing_count(0), viewer_count(0)
     {
         mInvDepth = invDepth;
         mInitU = (double)uv_init.x;
@@ -89,7 +89,7 @@ namespace ORB_SLAM3
           mnBAGlobalForKF(0), mpRefKF(static_cast<KeyFrame *>(NULL)), mnVisible(1), mnFound(1), mbBad(false),
           mpReplaced(NULL), mpMap(pMap), mnOriginMapId(pMap->GetId()), checker(false), mReferencecount_canonicalmp(0),
           pass_d(false), mReferencecount_msp(0), mReferencecount_lastframe(0), mReferencecount_msp_CAS(0),
-          mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0)
+          mReferencecount_lastframe_CAS(0), mReferencecount_canonicalmp_CAS(0), tracking_count(0), local_mapping_count(0), loop_closing_count(0), viewer_count(0)
     {
 
         SetWorldPos(Pos);
@@ -191,7 +191,28 @@ namespace ORB_SLAM3
             // if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
             {
 
-                pKF->thread_id_collection_map[this_thread::get_id()]++;
+                // pKF->thread_id_collection_map[this_thread::get_id()]++;
+                std::thread::id checker_thread_id = this_thread::get_id();
+                if (checker_thread_id == pKF->tracking_thread_id)
+                {
+
+                    pKF->tracking_count++;
+                }
+                else if (checker_thread_id == pKF->local_mapping_thread_id)
+                {
+
+                    pKF->local_mapping_count++;
+                }
+                else if (checker_thread_id == pKF->loop_closing_thread_id)
+                {
+
+                    pKF->loop_closing_count++;
+                }
+                else
+                {
+
+                    pKF->viewer_count++;
+                }
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
@@ -262,7 +283,28 @@ namespace ORB_SLAM3
                 // if (pKF->thread_id_collection_map.find(this_thread::get_id()) != pKF->thread_id_collection_map.end())
                 {
 
-                    pKF->thread_id_collection_map[this_thread::get_id()]--;
+                    // pKF->thread_id_collection_map[this_thread::get_id()]--;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == pKF->tracking_thread_id)
+                    {
+
+                        pKF->tracking_count--;
+                    }
+                    else if (checker_thread_id == pKF->local_mapping_thread_id)
+                    {
+
+                        pKF->local_mapping_count--;
+                    }
+                    else if (checker_thread_id == pKF->loop_closing_thread_id)
+                    {
+
+                        pKF->loop_closing_count--;
+                    }
+                    else
+                    {
+
+                        pKF->viewer_count--;
+                    }
                     // cout << "This is being executed " << endl;
                     // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                 }
@@ -323,7 +365,28 @@ namespace ORB_SLAM3
             // if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
             {
 
-                it.first->thread_id_collection_map[this_thread::get_id()]++;
+                // it.first->thread_id_collection_map[this_thread::get_id()]++;
+                std::thread::id checker_thread_id = this_thread::get_id();
+                if (checker_thread_id == it.first->tracking_thread_id)
+                {
+
+                    it.first->tracking_count++;
+                }
+                else if (checker_thread_id == it.first->local_mapping_thread_id)
+                {
+
+                    it.first->local_mapping_count++;
+                }
+                else if (checker_thread_id == it.first->loop_closing_thread_id)
+                {
+
+                    it.first->loop_closing_count++;
+                }
+                else
+                {
+
+                    it.first->viewer_count++;
+                }
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
@@ -407,7 +470,30 @@ namespace ORB_SLAM3
             // if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
             {
 
-                it.first->thread_id_collection_map[this_thread::get_id()]--;
+                // it.first->thread_id_collection_map[this_thread::get_id()]--;
+                std::thread::id checker_thread_id = this_thread::get_id();
+                if (checker_thread_id == it.first->tracking_thread_id)
+                {
+
+                    it.first->tracking_count--;
+                }
+                else if (checker_thread_id == it.first->local_mapping_thread_id)
+                {
+
+                    it.first->local_mapping_count--;
+                }
+                else if (checker_thread_id == it.first->loop_closing_thread_id)
+                {
+
+                    it.first->loop_closing_count--;
+                }
+                else
+
+                {
+
+                    it.first->viewer_count--;
+                }
+
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
@@ -523,7 +609,29 @@ namespace ORB_SLAM3
             // if (it.first->thread_id_collection_map.find(this_thread::get_id()) != it.first->thread_id_collection_map.end())
             {
 
-                it.first->thread_id_collection_map[this_thread::get_id()]--;
+                // it.first->thread_id_collection_map[this_thread::get_id()]--;
+                std::thread::id checker_thread_id = this_thread::get_id();
+                if (checker_thread_id == it.first->tracking_thread_id)
+                {
+
+                    it.first->tracking_count--;
+                }
+                else if (checker_thread_id == it.first->local_mapping_thread_id)
+                {
+
+                    it.first->local_mapping_count--;
+                }
+                else if (checker_thread_id == it.first->loop_closing_thread_id)
+                {
+
+                    it.first->loop_closing_count--;
+                }
+                else
+
+                {
+
+                    it.first->viewer_count--;
+                }
                 // cout << "This is being executed " << endl;
                 // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
             }
@@ -586,9 +694,29 @@ namespace ORB_SLAM3
                         // if (itx->thread_id_collection_map.find(this_thread::get_id()) != itx->thread_id_collection_map.end())
                         {
 
-                            itx->thread_id_collection_map[this_thread::get_id()]--;
-                            itx = static_cast<MapPoint *>(NULL);
+                            // itx->thread_id_collection_map[this_thread::get_id()]--;
+                            std::thread::id checker_thread_id = this_thread::get_id();
+                            if (checker_thread_id == itx->tracking_thread_id)
+                            {
 
+                                itx->tracking_count--;
+                            }
+                            else if (checker_thread_id == itx->local_mapping_thread_id)
+                            {
+
+                                itx->local_mapping_count--;
+                            }
+                            else if (checker_thread_id == itx->loop_closing_thread_id)
+                            {
+
+                                itx->loop_closing_count--;
+                            }
+                            else
+                            {
+
+                                itx->viewer_count--;
+                            }
+                            itx = static_cast<MapPoint *>(NULL);
                         }
                         // else
                         // {
