@@ -475,7 +475,7 @@ namespace ORB_SLAM3
                         {
 
                             totaldeletion_mp++;
-                            // cout << "This is happening" << endl;
+                            // cout << "This is happening ie deletion for mappoints" << endl;
                             (*it)->pass_d = true;
                             auto something = it;
                             it = arr_mp.erase(it);
@@ -1787,7 +1787,7 @@ namespace ORB_SLAM3
                     if (result != 0)
                     {
                         it++;
-                        // cout << result << endl;
+                        cout << result << endl;
                     }
                     else
                     {
@@ -1796,7 +1796,7 @@ namespace ORB_SLAM3
                         it = arr.erase(it);
                         result = 0;
                         // cout << something->mnId << endl;
-                        // cout << "Deleted successfully" << endl;
+                        cout << "Deleted successfully this for keyframes" << endl;
                         delete *something;
                     }
                     // cout << "This is the final result for each keyframe: " << result << endl;

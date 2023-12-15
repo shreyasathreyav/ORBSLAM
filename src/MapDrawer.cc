@@ -419,16 +419,6 @@ namespace ORB_SLAM3
                         // cout << "This is being executed " << endl;
                         // cout << itr->thread_id_collection_map[this_thread::get_id()] << endl;
                     }
-                    if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
-                    {
-
-                        i->thread_id_collection_map[this_thread::get_id()]--;
-                    }
-                    else
-                    {
-
-                        cout << "This is not good for mappoints" << endl;
-                    }
                     // else
                     // {
                     //     cout << "This is not good news" << endl;
