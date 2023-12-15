@@ -201,8 +201,8 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
                          mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor == IMU_RGBD, strSequence);
     mptLocalMapping = new thread(&ORB_SLAM3::LocalMapping::Run, mpLocalMapper);
 
-    // cout << "This is the tracking thread id inside System.cc: " << this_thread::get_id() << endl;
-    // cout << "This is the local mapping thread id inside System.cc: " << mptLocalMapping->get_id() << endl;
+    cout << "This is the tracking thread id inside System.cc: " << this_thread::get_id() << endl;
+    cout << "This is the local mapping thread id inside System.cc: " << mptLocalMapping->get_id() << endl;
 
     mpLocalMapper->mInitFr = initFr;
     if (settings_)
@@ -222,7 +222,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLoopCloser = new LoopClosing(mpAtlas, mpKeyFrameDatabase, mpVocabulary, mSensor != MONOCULAR,
                                    activeLC); // mSensor!=MONOCULAR);
     mptLoopClosing = new thread(&ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
-    // cout << "This is the loop closing thread id inside System.cc: " << mptLoopClosing->get_id() << endl;
+    cout << "This is the loop closing thread id inside System.cc: " << mptLoopClosing->get_id() << endl;
 
     // This is where the thread ids are passed
     tracking_thread_id = this_thread::get_id();
@@ -270,7 +270,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
         // This is where the viewer thread id is passed
         // viewer_thread_id = mptViewer->get_id();
-        // cout << "This is the viewer thread id: " << mptViewer->get_id() << endl;
+        cout << "This is the viewer thread id: " << mptViewer->get_id() << endl;
 
         // Viewer thread id has been passed into the tracker thread
         mpTracker->SetViewer(mpViewer);

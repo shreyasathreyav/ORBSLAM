@@ -1006,8 +1006,10 @@ namespace ORB_SLAM3
                 pMP->tracking_thread_id = tracking_thread_id;
                 pMP->local_mapping_thread_id = local_mapping_thread_id;
                 pMP->loop_closing_thread_id = loop_closing_thread_id;
+                // cout << "This is the viewer thread id in new Mappoint" << endl;
+                // cout << viewer_thread_id << endl;
                 pMP->viewer_thread_id = viewer_thread_id;
-                
+
                 pMP->AddObservation(mpCurrentKeyFrame, idx1);
                 pMP->AddObservation(pKF2, idx2);
 
@@ -1558,7 +1560,28 @@ namespace ORB_SLAM3
                 // (*vit)->thread_id_collection_map.end())
                 {
 
-                    (*vit)->thread_id_collection_map[this_thread::get_id()]++;
+                    // (*vit)->thread_id_collection_map[this_thread::get_id()]++;
+                    std::thread::id checker_thread_id = this_thread::get_id();
+                    if (checker_thread_id == (*vit)->tracking_thread_id)
+                    {
+
+                        (*vit)->tracking_count++;
+                    }
+                    else if (checker_thread_id == (*vit)->local_mapping_thread_id)
+                    {
+
+                        (*vit)->local_mapping_count++;
+                    }
+                    else if (checker_thread_id == (*vit)->loop_closing_thread_id)
+                    {
+
+                        (*vit)->loop_closing_count++;
+                    }
+                    else
+                    {
+
+                        (*vit)->viewer_count++;
+                    }
                 }
                 // else
                 // {
@@ -1593,7 +1616,28 @@ namespace ORB_SLAM3
                     //     (*vit)->thread_id_collection_map.end())
                     {
 
-                        (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                        // (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                        std::thread::id checker_thread_id = this_thread::get_id();
+                        if (checker_thread_id == (*vit)->tracking_thread_id)
+                        {
+
+                            (*vit)->tracking_count--;
+                        }
+                        else if (checker_thread_id == (*vit)->local_mapping_thread_id)
+                        {
+
+                            (*vit)->local_mapping_count--;
+                        }
+                        else if (checker_thread_id == (*vit)->loop_closing_thread_id)
+                        {
+
+                            (*vit)->loop_closing_count--;
+                        }
+                        else
+                        {
+
+                            (*vit)->viewer_count--;
+                        }
                     }
                     // else
                     // {
@@ -1700,7 +1744,32 @@ namespace ORB_SLAM3
                             //     (*vit)->thread_id_collection_map.end())
                             {
 
-                                (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                                // (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                                {
+
+                                    // (*vit)->thread_id_collection_map[this_thread::get_id()]--;
+                                    std::thread::id checker_thread_id = this_thread::get_id();
+                                    if (checker_thread_id == (*vit)->tracking_thread_id)
+                                    {
+
+                                        (*vit)->tracking_count--;
+                                    }
+                                    else if (checker_thread_id == (*vit)->local_mapping_thread_id)
+                                    {
+
+                                        (*vit)->local_mapping_count--;
+                                    }
+                                    else if (checker_thread_id == (*vit)->loop_closing_thread_id)
+                                    {
+
+                                        (*vit)->loop_closing_count--;
+                                    }
+                                    else
+                                    {
+
+                                        (*vit)->viewer_count--;
+                                    }
+                                }
                             }
                             // else
                             // {
@@ -1742,22 +1811,22 @@ namespace ORB_SLAM3
                                 if (checker_thread_id == (*vit)->tracking_thread_id)
                                 {
 
-                                    (*vit)->tracking_count++;
+                                    (*vit)->tracking_count--;
                                 }
                                 else if (checker_thread_id == (*vit)->local_mapping_thread_id)
                                 {
 
-                                    (*vit)->local_mapping_count++;
+                                    (*vit)->local_mapping_count--;
                                 }
                                 else if (checker_thread_id == (*vit)->loop_closing_thread_id)
                                 {
 
-                                    (*vit)->loop_closing_count++;
+                                    (*vit)->loop_closing_count--;
                                 }
                                 else
                                 {
 
-                                    (*vit)->viewer_count++;
+                                    (*vit)->viewer_count--;
                                 }
                             }
                             // else
@@ -2043,7 +2112,11 @@ namespace ORB_SLAM3
                         delete *something;
                     }
                     else
+                    {
+
+                        cout << (*it)->tracking_count + (*it)->local_mapping_count + (*it)->loop_closing_count + (*it)->viewer_count << endl;
                         it++;
+                    }
                 }
                 // else it++;
             }

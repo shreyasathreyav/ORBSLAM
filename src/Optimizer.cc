@@ -1809,22 +1809,22 @@ namespace ORB_SLAM3
                     if (checker_thread_id == (*lit)->tracking_thread_id)
                     {
 
-                        (*lit)->tracking_count--;
+                        (*lit)->tracking_count++;
                     }
                     else if (checker_thread_id == (*lit)->local_mapping_thread_id)
                     {
 
-                        (*lit)->local_mapping_count--;
+                        (*lit)->local_mapping_count++;
                     }
                     else if (checker_thread_id == (*lit)->loop_closing_thread_id)
                     {
 
-                        (*lit)->loop_closing_count--;
+                        (*lit)->loop_closing_count++;
                     }
                     else
                     {
 
-                        (*lit)->viewer_count--;
+                        (*lit)->viewer_count++;
                     }
                 }
                 // else

@@ -2594,6 +2594,9 @@ namespace ORB_SLAM3
                         pNewMP->tracking_thread_id = tracking_thread_id;
                         pNewMP->local_mapping_thread_id = local_mapping_thread_id;
                         pNewMP->loop_closing_thread_id = loop_closing_thread_id;
+                        // cout << "This is the viewer thread id in new Mappoint" << endl;
+                        // cout << viewer_thread_id << endl;
+
                         pNewMP->viewer_thread_id = viewer_thread_id;
 
                         pNewMP->AddObservation(pKFini, i);
@@ -2626,6 +2629,9 @@ namespace ORB_SLAM3
                         pNewMP->tracking_thread_id = tracking_thread_id;
                         pNewMP->local_mapping_thread_id = local_mapping_thread_id;
                         pNewMP->loop_closing_thread_id = loop_closing_thread_id;
+                        // cout << "This is the viewer thread id in new Mappoint" << endl;
+                        // cout << viewer_thread_id << endl;
+
                         pNewMP->viewer_thread_id = viewer_thread_id;
 
                         pNewMP->AddObservation(pKFini, i);
@@ -2828,6 +2834,7 @@ namespace ORB_SLAM3
             pMP->local_mapping_thread_id = local_mapping_thread_id;
             pMP->loop_closing_thread_id = loop_closing_thread_id;
             pMP->viewer_thread_id = viewer_thread_id;
+            // cout << "This is the viewer thread id in new Mappoint" << endl;
 
             pKFini->AddMapPoint(pMP, i);
             pKFcur->AddMapPoint(pMP, mvIniMatches[i]);
@@ -3248,6 +3255,8 @@ namespace ORB_SLAM3
                 pNewMP->local_mapping_thread_id = local_mapping_thread_id;
                 pNewMP->loop_closing_thread_id = loop_closing_thread_id;
                 pNewMP->viewer_thread_id = viewer_thread_id;
+                // cout << "This is the viewer thread id in new Mappoint" << endl;
+                cout << viewer_thread_id << endl;
 
                 if (mLastFrame.mvpMapPoints[i])
                 {
@@ -3872,6 +3881,9 @@ namespace ORB_SLAM3
                         pNewMP->local_mapping_thread_id = local_mapping_thread_id;
                         pNewMP->loop_closing_thread_id = loop_closing_thread_id;
                         pNewMP->viewer_thread_id = viewer_thread_id;
+                        // cout << "This is the viewer thread id in new Mappoint" << endl;
+                        // cout << viewer_thread_id << endl;
+
                         pNewMP->AddObservation(pKF, i);
 
                         // Check if it is a stereo observation in order to not

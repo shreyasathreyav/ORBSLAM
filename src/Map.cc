@@ -480,7 +480,7 @@ namespace ORB_SLAM3
                 //     unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
                 //     i->mReferencecount_msp++;
                 // }
-                if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
+                // if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     // i->thread_id_collection_map[this_thread::get_id()]++;
@@ -582,10 +582,18 @@ namespace ORB_SLAM3
 
                     i->loop_closing_count++;
                 }
+                else if (checker_thread_id == i->viewer_thread_id)
+                {
+                    // cout << this_thread::get_id() << endl;
+                    i->viewer_count++;
+                }
                 else
                 {
 
-                    i->viewer_count++;
+                    cout << "Here is the information" << endl;
+                    cout << i->viewer_thread_id << endl;
+                    cout << this_thread::get_id() << endl;
+                    cout << "This is not good" << endl;
                 }
             }
             // else
