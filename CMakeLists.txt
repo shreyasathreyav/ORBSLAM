@@ -120,9 +120,9 @@ include/Settings.h
 include/MapGarbageCollector.h)
 add_subdirectory(Thirdparty/g2o)
 
-option ( TRACY_ENABLE "" ON)
-option ( TRACY_ON_DEMAND "" ON)
-add_subdirectory (tracy)
+# option ( TRACY_ENABLE "" ON)
+# option ( TRACY_ON_DEMAND "" ON)
+# add_subdirectory (tracy)
 
 
 target_link_libraries(${PROJECT_NAME}
@@ -133,7 +133,7 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 -lboost_serialization
 -lcrypto
-Tracy::TracyClient
+# Tracy::TracyClient
 )
 
 # If RealSense SDK is found the library is added and its examples compiled

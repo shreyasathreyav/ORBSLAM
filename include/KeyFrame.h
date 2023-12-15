@@ -318,6 +318,11 @@ namespace ORB_SLAM3
 
         // This is to create the key value pair to hold the reference count without exposing the native thread handle
         unordered_map <std::thread::id,int> thread_id_collection_map;
+
+        // Thread counts for switch
+        int tracking_count;
+        int local_mapping_count;
+        int loop_closing_count;
         // The following variables are accesed from only 1 thread or never change (no mutex needed).
     public:
         bool DeletionSafe;
