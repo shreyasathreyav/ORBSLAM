@@ -377,15 +377,17 @@ namespace ORB_SLAM3
                 }
 #endif
 #ifdef RF
-                {
+                // {
 
-                    unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
-                    i->mReferencecount_msp++;
-                }
+                //     unique_lock<mutex> lock1(i->mMutexReferencecount_mp);
+                //     i->mReferencecount_msp++;
+                // }
                 if (i->thread_id_collection_map.find(this_thread::get_id()) != i->thread_id_collection_map.end())
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]++;
+                    i->o_checker = true;
+
                 }
                 else
                 {

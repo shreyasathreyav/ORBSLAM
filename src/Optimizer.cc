@@ -77,11 +77,11 @@ namespace ORB_SLAM3
             }
 #endif
 #ifdef RF
-            {
+            // {
 
-                unique_lock<mutex> lock(it->mMutexReferencecount_mp);
-                it->mReferencecount_msp--;
-            }
+            //     unique_lock<mutex> lock(it->mMutexReferencecount_mp);
+            //     it->mReferencecount_msp--;
+            // }
             if (it->thread_id_collection_map.find(this_thread::get_id()) != it->thread_id_collection_map.end())
             {
 
@@ -100,6 +100,11 @@ namespace ORB_SLAM3
                                      bool *pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
     {
         // cout << "Inside Bundle Adjustment" << endl;
+        for (auto it : vpMP)
+        {
+
+            it->thread_id_collection_map[this_thread::get_id()]++;
+        }
         vector<bool> vbNotIncludedMP;
         vbNotIncludedMP.resize(vpMP.size());
 
@@ -442,6 +447,12 @@ namespace ORB_SLAM3
             // it->mReferencecount_canonical--;
             // cout << it->mnId << " " << it->mReferencecount_canonical << endl;
         }
+        for (auto it : vpMP)
+        {
+
+            it->thread_id_collection_map[this_thread::get_id()]--;
+        }
+        // Function marker
     }
 
     void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const long unsigned int nLoopId,

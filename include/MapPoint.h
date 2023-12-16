@@ -231,7 +231,7 @@ class MapPoint
     std::map<KeyFrame *, std::tuple<int, int>> mObservations;
     // This is to create the key value pair to hold the reference count without exposing the native thread handle
     unordered_map<std::thread::id, int> thread_id_collection_map;
-
+    bool o_checker;
   protected:
     // Position in absolute coordinates
     Eigen::Vector3f mWorldPos;

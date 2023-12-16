@@ -475,7 +475,7 @@ namespace ORB_SLAM3
                         {
 
                             totaldeletion_mp++;
-                            // cout << "This is happening ie deletion for mappoints" << endl;
+                            cout << "This is happening ie deletion for mappoints" << endl;
                             (*it)->pass_d = true;
                             auto something = it;
                             it = arr_mp.erase(it);
