@@ -386,7 +386,7 @@ namespace ORB_SLAM3
                 {
 
                     i->thread_id_collection_map[this_thread::get_id()]++;
-                    i->o_checker = true;
+                  
 
                 }
                 else
