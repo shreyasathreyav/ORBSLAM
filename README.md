@@ -12,7 +12,7 @@ We provide examples to run ORB-SLAM3 in the [EuRoC dataset](http://projects.asl.
 This software is based on [ORB-SLAM2](https://github.com/raulmur/ORB_SLAM2) developed by [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2)).
 
 # Modifications
-**Authors:** Shreyas Athreya Venkatesh, Nitin Vinod. Advised by Dr Lukasz Ziarek (State University of New York at Buffalo)
+**Authors:** Shreyas Athreya Venkatesh, Nitin Vinod. Advised by Dr Lukasz Ziarek (all associated with the State University of New York at Buffalo)
 
 ORBSLAM3 suffers from memory leaks owing to the lack of a deletion scheme for keyframes and map points. This work is an attempt to alleviate this issue by providing a custom reference counting scheme. The scheme successfully deletes most keyframes and mappoints without segmentation faults. This was tested on the sequences in the EuRoC dataset. This work further explores reference counting using "compare and swap". 
 
