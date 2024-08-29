@@ -15,3 +15,5 @@ This software is based on [ORB-SLAM2](https://github.com/raulmur/ORB_SLAM2) deve
 **Authors:** Shreyas Athreya Venkatesh, Nitin Vinod. Advised by Dr Lukasz Ziarek (State University of New York at Buffalo)
 
 ORBSLAM3 suffers from memory leaks owing to the lack of a deletion scheme for keyframes and map points. This work is an attempt to alleviate this issue by providing a custom reference counting scheme. The scheme successfully deletes most keyframes and mappoints without segmentation faults. This was tested on the sequences in the EuRoC dataset. This work further explores reference counting using "compare and swap". 
+
+We recommend the branch called "CAS_WITH_PROFILING" as this should have statisitics that are printed while the code executes
